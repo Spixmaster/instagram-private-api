@@ -1,0 +1,16 @@
+#eclipse files
+.cproject
+.project
+.settings
+
+#codeblocks files
+pronos-bot.cbp
+pronos-bot.depend
+pronos-bot.layout
+
+#Linux
+.directory
+
+#builts
+Debug/
+Release/
