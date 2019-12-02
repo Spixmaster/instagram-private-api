@@ -29,10 +29,13 @@ namespace ig
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("chat_id", "asdf"));
+		//todo normally, url query but I do not like that
+		http_args.push_back(tools::HttpArg("challenge_type", "signup"));
+		http_args.push_back(tools::HttpArg("guid", uuid));
 
-		tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, http_args);
-		std::string json = http_client.send_post_req_multipart().txt;
+
+		tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/", http_headers, http_args);
+		std::string json = http_client.send_post_req_urlencoded().txt;
 
 
 	}
