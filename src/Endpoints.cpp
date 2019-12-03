@@ -16,7 +16,7 @@ namespace ig
 
 	bool Endpoints::login() const
 	{
-		boost::uuids::uuid uuid = boost::uuids::random_generator()();
+		std::string uuid = boost::uuids::to_string(boost::uuids::random_generator()());
 
 		//http headers
 		std::vector<tools::HttpHeader> http_headers;
