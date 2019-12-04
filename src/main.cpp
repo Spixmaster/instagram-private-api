@@ -1,11 +1,10 @@
-#include "ig/SpecialTools.h"
 #include <iostream>
+#include "ig/Endpoints.h"
 
 int main()
 {
-	std::string temp = ig::SpecialTools::md5_hash("abc1234");
-
-	std::cout << temp << std::endl;
+	ig::Endpoints temp("nutzername", "pw");
+	temp.login();
 
 	return 0;
 }
