@@ -32,10 +32,11 @@ namespace ig
 			http_headers.push_back(tools::HttpHeader("User-Agent", Constants::ig_user_agent));
 
 			tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, http_headers);
-			std::string json = http_client.send_post_req_urlencoded().txt;
+			std::string json = http_client.send_post_req_urlencoded(true).txt;
 		}
 
 		//#####second request#####
+		//todo
 		{
 			std::string uuid = boost::uuids::to_string(boost::uuids::random_generator()());
 
