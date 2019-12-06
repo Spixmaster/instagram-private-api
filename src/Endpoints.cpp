@@ -10,6 +10,7 @@
 #include "ig/Constants.h"
 #include <boost/uuid/detail/md5.hpp>
 #include <iomanip>
+#include <Poco/URI.h>
 
 namespace ig
 {
@@ -23,9 +24,9 @@ namespace ig
 		m_http_headers.push_back(tools::HttpHeader("User-Agent", Constants::ig_user_agent));
 	}
 
-	tools::HttpResponse Endpoints::send_req(const std::vector<tools::HttpArg> &http_args) const
+	tools::HttpResponse Endpoints::send_req_ig(const std::string &url, const std::vector<tools::HttpArg> &http_args, const bool &debug) const
 	{
-			//http body
+		//http body
 		std::string pre_http_body;
 		for (std::size_t j = 0; j < http_args.size(); ++j)
 		{
@@ -48,13 +49,20 @@ namespace ig
 			//value is type of InputFile::ptr and thus ignored
 		}
 
-		//make the http body
+		//make the http body with the encryption
 		std::string http_body;
 		//return 'ig_sig_key_version=' + self.SIG_KEY_VERSION + '&signed_body=' + hmac.new(self.IG_SIG_KEY.encode('utf-8'), data.encode('utf-8'),
 			//hashlib.sha256).hexdigest() + '.' + parsedData
 		http_body.append("ig_sig_key_version=" + Constants::ig_sig_key_version) + "&signed_body=";
 			//encrypt (hmac sha256) the pre_http_body
-		http_body.append(tools::Tools::hmac_sha256_hash())
+		Poco::URI parsed_http_body(http_body); //toString() encodes to utf-8
+		http_body.append(tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, pre_http_body) + "." + parsed_http_body.toString());
+
+		//send the request
+		tools::HttpClient http_client(url, m_http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(http_body, debug);
+
+		return http_res;
 	}
 
 	bool Endpoints::login() const
@@ -124,9 +132,8 @@ namespace ig
 
 			//todo create http body
 
-			tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, m_http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
-
+			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", m_http_headers, http_args);
+			send_req_ig(Constants::ig_url + "accounts/login/", http_args, true);
 		}
 		return true;
 	}
