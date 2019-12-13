@@ -27,36 +27,32 @@ namespace ig
 	tools::HttpResponse Endpoints::send_req_ig(const std::string &url, const std::vector<tools::HttpArg> &http_args, const bool &debug) const
 	{
 		//http body
-		std::string pre_http_body;
+		std::string raw_http_body;
 		for (std::size_t j = 0; j < http_args.size(); ++j)
 		{
 			if(std::holds_alternative<long long>(http_args.at(j).m_value))
 			{
-				pre_http_body.append(http_args.at(j).m_key + "=" + std::to_string(std::get<long long>(http_args.at(j).m_value)));
+				raw_http_body.append(http_args.at(j).m_key + "=" + std::to_string(std::get<long long>(http_args.at(j).m_value)));
 
 				//add & for next key value pair
 				if(j < (http_args.size() - 1))
-					pre_http_body.append("&");
+					raw_http_body.append("&");
 			}
 			else if(std::holds_alternative<std::string>(http_args.at(j).m_value))
 			{
-				pre_http_body.append(http_args.at(j).m_key + "=" + std::get<std::string>(http_args.at(j).m_value));
+				raw_http_body.append(http_args.at(j).m_key + "=" + std::get<std::string>(http_args.at(j).m_value));
 
 				//add & for next key value pair
 				if(j < (http_args.size() - 1))
-					pre_http_body.append("&");
+					raw_http_body.append("&");
 			}
 			//value is type of InputFile::ptr and thus ignored
 		}
 
-		//make the http body with the encryption
+		//raw_http_body --> http_body
 		std::string http_body;
-		//return 'ig_sig_key_version=' + self.SIG_KEY_VERSION + '&signed_body=' + hmac.new(self.IG_SIG_KEY.encode('utf-8'), data.encode('utf-8'),
-			//hashlib.sha256).hexdigest() + '.' + parsedData
-		http_body.append("ig_sig_key_version=" + Constants::ig_sig_key_version) + "&signed_body=";
-			//encrypt (hmac sha256) the pre_http_body
-		Poco::URI parsed_http_body(http_body); //toString() encodes to utf-8
-		http_body.append(tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, pre_http_body) + "." + parsed_http_body.toString());
+		http_body.append("ig_sig_key_version=" + Constants::ig_sig_key_version + "&signed_body=");
+		http_body.append(tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) + "." + tools::Tools::parse_url(raw_http_body, "@&="));
 
 		//send the request
 		tools::HttpClient http_client(url, m_http_headers);
@@ -132,7 +128,6 @@ namespace ig
 
 			//todo create http body
 
-			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", m_http_headers, http_args);
 			send_req_ig(Constants::ig_url + "accounts/login/", http_args, true);
 		}
 		return true;
