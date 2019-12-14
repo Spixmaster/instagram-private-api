@@ -5,11 +5,8 @@
 
 int main()
 {
-//	ig::Endpoints temp("hija_look", "generic_password");
-//	temp.login();
-
-	std::string temp = "pythön!";
-	temp = Poco::UTF8::escape(temp);
+	ig::Endpoints temp("hija_look", "161861joanf");
+	temp.login();
 
 	return 0;
 }
