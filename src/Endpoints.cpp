@@ -22,9 +22,10 @@ namespace ig
 		m_http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
 		m_http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
 		m_http_headers.push_back(tools::HttpHeader("User-Agent", Constants::ig_user_agent));
+		m_http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
 	}
 
-	tools::HttpResponse Endpoints::send_req_ig(const std::string &url, const std::vector<tools::HttpArg> &http_args, const bool &debug) const
+	tools::HttpResponse Endpoints::send_req_ig(const std::string &url, const std::vector<tools::HttpArg> &http_args, const bool &debug)
 	{
 		//http body
 		std::string raw_http_body;
@@ -52,7 +53,11 @@ namespace ig
 		//raw_http_body --> http_body
 		std::string http_body;
 		http_body.append("ig_sig_key_version=" + Constants::ig_sig_key_version + "&signed_body=");
-		http_body.append(tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) + "." + tools::Tools::parse_url(raw_http_body, "@&="));
+		http_body.append(tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) +
+				"." + tools::Tools::parse_url(raw_http_body, "@&="));
+
+		//http headers
+		m_http_headers.push_back(tools::HttpHeader("Content-Length", std::to_string(http_body.size())));
 
 		//send the request
 		tools::HttpClient http_client(url, m_http_headers);
@@ -61,7 +66,7 @@ namespace ig
 		return http_res;
 	}
 
-	bool Endpoints::login() const
+	bool Endpoints::login()
 	{
 		std::string csrftoken;
 		//#####first request#####
@@ -70,7 +75,7 @@ namespace ig
 			uuid.erase(std::remove(uuid.begin(), uuid.end(), '-'), uuid.end());
 
 			tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, m_http_headers);
-			tools::HttpResponse http_res = http_client.send_get_req();
+			tools::HttpResponse http_res = http_client.send_get_req(true);
 
 			//get the csrftoken
 			bool csrf_found = false;
@@ -126,8 +131,7 @@ namespace ig
 			http_args.push_back(tools::HttpArg("password", m_password));
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
-			//todo create http body
-
+			//todo still in debug mode
 			send_req_ig(Constants::ig_url + "accounts/login/", http_args, true);
 		}
 		return true;
