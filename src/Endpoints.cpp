@@ -25,7 +25,8 @@ namespace ig
 		m_http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
 	}
 
-	tools::HttpResponse Endpoints::send_req_ig(const std::string &url, const std::vector<tools::HttpArg> &http_args, const bool &debug)
+	tools::HttpResponse Endpoints::send_req_ig(const std::string &url, const std::vector<tools::HttpHeader> &http_headers,
+			const std::vector<tools::HttpArg> &http_args, const bool &debug)
 	{
 		//http body
 		std::string raw_http_body;
@@ -58,6 +59,8 @@ namespace ig
 
 		//http headers
 		m_http_headers.push_back(tools::HttpHeader("Content-Length", std::to_string(http_body.size())));
+		for(size_t j = 0; j < http_headers.size(); ++j)
+			m_http_headers.push_back(tools::HttpHeader(http_headers.at(j).m_key, http_headers.at(j).m_value));
 
 		//send the request
 		tools::HttpClient http_client(url, m_http_headers);
@@ -69,6 +72,8 @@ namespace ig
 	bool Endpoints::login()
 	{
 		std::string csrftoken;
+		std::string mid;
+		std::string rur = "FRC";
 		//#####first request#####
 		{
 			std::string uuid = boost::uuids::to_string(boost::uuids::random_generator()());
@@ -77,37 +82,21 @@ namespace ig
 			tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, m_http_headers);
 			tools::HttpResponse http_res = http_client.send_get_req(true);
 
-			//get the csrftoken
-			bool csrf_found = false;
+			/*
+			 * get the cookies
+			 * get the csrftoken
+			 */
 			for(size_t j = 0; j < http_res.m_headers.size(); ++j)
 			{
-				//second condition as there are several "Set-Cookie" headers
-				if(http_res.m_headers.at(j).m_key == "Set-Cookie" && http_res.m_headers.at(j).m_value.find("csrf") != std::string::npos)
-				{
-					csrf_found = true;
+				if(csrftoken.empty())
+					csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
 
-					std::string cookie = http_res.m_headers.at(j).m_value;
-					for(size_t j = 0; j < cookie.length(); ++j)
-					{
-						if(cookie.length() >= 10)
-						{
-							if(cookie.at(j) == 'c' && cookie.at(j + 1) == 's' && cookie.at(j + 2) == 'r' && cookie.at(j + 3) == 'f' && cookie.at(j + 4) == 't'
-									&& cookie.at(j + 5) == 'o' && cookie.at(j + 6) == 'k' && cookie.at(j + 7) == 'e' && cookie.at(j + 8) == 'n' && cookie.at(j + 9) == '=')
-							{
-								size_t k = j + 10;
-								while(cookie.at(k) != ';' && k < cookie.length())
-								{
-									csrftoken += cookie.at(k);
-									++k;
-								}
-							}
-						}
-					}
-				}
+				if(mid.empty())
+					mid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "mid");
+
+				if(rur.empty())
+					rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
 			}
-
-			if(!csrf_found)
-				return false;
 		}
 
 		//#####second request#####
@@ -121,6 +110,11 @@ namespace ig
 			sstream << std::hex << device_id_temp;
 			std::string device_id = "android-" + sstream.str();
 
+			//http headers
+			std::vector<tools::HttpHeader> http_headers;
+			//csrftoken=CKb0QvsxBuqzVr0b1sxLpDlqq2M85oTl; mid=XfSLcAABAAGrbIXIQOY8uOjJIPMi; rur=FRC
+			http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + csrftoken + "; mid=" + mid + "; rur=" + rur));
+
 			//http args
 			std::vector<tools::HttpArg> http_args;
 			http_args.push_back(tools::HttpArg("phone_id", uuid));
@@ -131,8 +125,7 @@ namespace ig
 			http_args.push_back(tools::HttpArg("password", m_password));
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
-			//todo still in debug mode
-			send_req_ig(Constants::ig_url + "accounts/login/", http_args, true);
+			send_req_ig(Constants::ig_url + "accounts/login/", http_headers, http_args, true);
 		}
 		return true;
 	}
