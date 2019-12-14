@@ -16,40 +16,49 @@ namespace ig
 {
 	Endpoints::Endpoints(const std::string &username, const std::string &password) : m_username(username), m_password(password)
 	{
-		m_http_headers.push_back(tools::HttpHeader("Connection", "close"));
-		m_http_headers.push_back(tools::HttpHeader("Accept", "*/*"));
-		m_http_headers.push_back(tools::HttpHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8"));
-		m_http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
-		m_http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
-		m_http_headers.push_back(tools::HttpHeader("User-Agent", Constants::ig_user_agent));
-		m_http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		login();
 	}
 
-	tools::HttpResponse Endpoints::send_req_ig(const std::string &url, const std::vector<tools::HttpHeader> &http_headers,
-			const std::vector<tools::HttpArg> &http_args, const bool &debug)
+	std::vector<tools::HttpHeader> Endpoints::get_ig_http_headers()
 	{
-		//http body
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		http_headers.push_back(tools::HttpHeader("Accept", "*/*"));
+		http_headers.push_back(tools::HttpHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("User-Agent", Constants::ig_user_agent));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+
+		return http_headers;
+	}
+
+	std::string Endpoints::mk_ig_http_body(const std::vector<tools::HttpArg> &http_args) const
+	{
+		//http body as json
 		std::string raw_http_body;
+		raw_http_body.append("{");
 		for (std::size_t j = 0; j < http_args.size(); ++j)
 		{
 			if(std::holds_alternative<long long>(http_args.at(j).m_value))
 			{
-				raw_http_body.append(http_args.at(j).m_key + "=" + std::to_string(std::get<long long>(http_args.at(j).m_value)));
+				raw_http_body.append("\"" + http_args.at(j).m_key + "\": " + std::to_string(std::get<long long>(http_args.at(j).m_value)));
 
 				//add & for next key value pair
 				if(j < (http_args.size() - 1))
-					raw_http_body.append("&");
+					raw_http_body.append(", ");
 			}
 			else if(std::holds_alternative<std::string>(http_args.at(j).m_value))
 			{
-				raw_http_body.append(http_args.at(j).m_key + "=" + std::get<std::string>(http_args.at(j).m_value));
+				raw_http_body.append("\"" + http_args.at(j).m_key + "\": \"" + std::get<std::string>(http_args.at(j).m_value) + "\"");
 
 				//add & for next key value pair
 				if(j < (http_args.size() - 1))
-					raw_http_body.append("&");
+					raw_http_body.append(", ");
 			}
 			//value is type of InputFile::ptr and thus ignored
 		}
+		raw_http_body.append("}");
 
 		//raw_http_body --> http_body
 		std::string http_body;
@@ -57,35 +66,23 @@ namespace ig
 		http_body.append(tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) +
 				"." + tools::Tools::parse_url(raw_http_body, "@&="));
 
-		//http headers
-		m_http_headers.push_back(tools::HttpHeader("Content-Length", std::to_string(http_body.size())));
-		for(size_t j = 0; j < http_headers.size(); ++j)
-			m_http_headers.push_back(tools::HttpHeader(http_headers.at(j).m_key, http_headers.at(j).m_value));
-
-		//send the request
-		tools::HttpClient http_client(url, m_http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(http_body, debug);
-
-		return http_res;
+		return http_body;
 	}
 
 	bool Endpoints::login()
 	{
 		std::string csrftoken;
 		std::string mid;
-		std::string rur = "FRC";
+		std::string rur;
 		//#####first request#####
 		{
 			std::string uuid = boost::uuids::to_string(boost::uuids::random_generator()());
 			uuid.erase(std::remove(uuid.begin(), uuid.end(), '-'), uuid.end());
 
-			tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, m_http_headers);
-			tools::HttpResponse http_res = http_client.send_get_req(true);
+			tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, get_ig_http_headers());
+			tools::HttpResponse http_res = http_client.send_get_req();
 
-			/*
-			 * get the cookies
-			 * get the csrftoken
-			 */
+			//get the cookies
 			for(size_t j = 0; j < http_res.m_headers.size(); ++j)
 			{
 				if(csrftoken.empty())
@@ -100,7 +97,6 @@ namespace ig
 		}
 
 		//#####second request#####
-		//todo
 		{
 			std::string uuid = boost::uuids::to_string(boost::uuids::random_generator()());
 			//device id has to be uuid with length 16 and hex in format android-...
@@ -111,8 +107,7 @@ namespace ig
 			std::string device_id = "android-" + sstream.str();
 
 			//http headers
-			std::vector<tools::HttpHeader> http_headers;
-			//csrftoken=CKb0QvsxBuqzVr0b1sxLpDlqq2M85oTl; mid=XfSLcAABAAGrbIXIQOY8uOjJIPMi; rur=FRC
+			std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 			http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + csrftoken + "; mid=" + mid + "; rur=" + rur));
 
 			//http args
@@ -125,7 +120,8 @@ namespace ig
 			http_args.push_back(tools::HttpArg("password", m_password));
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
-			send_req_ig(Constants::ig_url + "accounts/login/", http_headers, http_args, true);
+			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 		}
 		return true;
 	}

@@ -5,8 +5,7 @@
 
 int main()
 {
-	ig::Endpoints temp("hija_look", "161861joanf");
-	temp.login();
+	ig::Endpoints api("hija_look", "generic_password");
 
 	return 0;
 }
