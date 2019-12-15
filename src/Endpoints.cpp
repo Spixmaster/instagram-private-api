@@ -11,6 +11,9 @@
 #include <boost/uuid/detail/md5.hpp>
 #include <iomanip>
 #include <Poco/URI.h>
+#include "ig/devices/one_plus_7.h"
+#include <cstdlib>
+#include <rapidjson/document.h>
 
 namespace ig
 {
@@ -21,14 +24,31 @@ namespace ig
 
 	std::vector<tools::HttpHeader> Endpoints::get_ig_http_headers()
 	{
+		//get time
+		time_t raw_time;
+		time(&raw_time);
+
+		//seed for rand
+		srand(raw_time);
+
 		std::vector<tools::HttpHeader> http_headers;
-		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		http_headers.push_back(tools::HttpHeader("Connection", "Keep-Alive"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", "IT7nCQ=="));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", "567067343352427"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Prefetch-Request", "foreground"));
+		http_headers.push_back(tools::HttpHeader("X-IG-VP9-Capable", "false"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
 		http_headers.push_back(tools::HttpHeader("Accept", "*/*"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip,deflate"));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
 		http_headers.push_back(tools::HttpHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8"));
 		http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
-		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
-		http_headers.push_back(tools::HttpHeader("User-Agent", Constants::ig_user_agent));
-		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("User-Agent", one_plus_7::user_agent));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", std::to_string(rand() % 3000 + 7000)));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string(rand() % 400000 + 500000)));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", std::to_string(rand() % 100 + 50)));
 
 		return http_headers;
 	}
@@ -80,7 +100,7 @@ namespace ig
 			uuid.erase(std::remove(uuid.begin(), uuid.end(), '-'), uuid.end());
 
 			tools::HttpClient http_client(Constants::ig_url + "si/fetch_headers/?challenge_type=signup&guid=" + uuid, get_ig_http_headers());
-			tools::HttpResponse http_res = http_client.send_get_req();
+			tools::HttpResponse http_res = http_client.send_get_req(true);
 
 			//get the cookies
 			for(size_t j = 0; j < http_res.m_headers.size(); ++j)
@@ -121,7 +141,58 @@ namespace ig
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true);
+
+			//get the cookies
+			for(size_t j = 0; j < http_res.m_headers.size(); ++j)
+			{
+				if(csrftoken.empty())
+					csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
+
+				if(mid.empty())
+					mid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "mid");
+
+				if(rur.empty())
+					rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
+			}
+
+			//todo
+			std::cout << "ACHHTUNLAKSDNFÖLKSDJF: " << tools::Tools::encode_utf8(http_res.m_body) << std::endl;
+
+			//#####checkpoint_challenge_required#####
+			rapidjson::Document doc;
+			doc.Parse(http_res.m_body.c_str());
+
+			if(doc.IsObject())
+			{
+				if(doc.HasMember("error_type"))
+				{
+					if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
+					{
+						if(doc.HasMember("challenge"))
+						{
+							const rapidjson::Value &challenge = doc["challenge"];
+
+							if(challenge.HasMember("api_path"))
+							{
+								std::string api_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
+
+								//http headers
+								std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+								http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + csrftoken + "; mid=" + mid + "; rur=" + rur));
+
+								tools::HttpClient http_client(Constants::ig_url + api_path, http_headers);
+								tools::HttpResponse http_res = http_client.send_get_req();
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				std::cerr << "Error. The server response on the login request is not a json object." << std::endl;
+				return false;
+			}
 		}
 		return true;
 	}

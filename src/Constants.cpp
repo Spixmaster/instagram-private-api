@@ -4,17 +4,10 @@
 
 namespace ig
 {
-	const std::string Constants::version = "0.0.12";
-	const std::string Constants::release = "14.Dec.2019";
+	const std::string Constants::version = "0.0.13";
+	const std::string Constants::release = "15.Dec.2019";
 
 	const std::string Constants::ig_url = "https://i.instagram.com/api/v1/";
 	const std::string Constants::ig_sig_key_version = "4";
-	const std::string Constants::ig_sig_key = "19ce5f445dbfd9d29c59dc2a78c616a7fc090a8e018b9267bc4240a30244c53b";
-
-	const std::string Constants::device_manufacturer = "Xiaomi";
-	const std::string Constants::device_model = "HM 1SW";
-	const std::string Constants::device_android_version = "18";
-	const std::string Constants::device_android_release = "4.3";
-	const std::string Constants::ig_user_agent = "Instagram 10.26.0 Android (" + Constants::device_android_version +
-			"/" + Constants::device_android_release + "; 320dpi; 720x1280; " + Constants::device_manufacturer + "; " + Constants::device_model + "; armani; qcom; en_US)";
+	const std::string Constants::ig_sig_key = "5f3e50f435583c9ae626302a71f7340044087a7e2c60adacfc254205a993e305";
 }
