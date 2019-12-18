@@ -20,7 +20,7 @@ namespace ig
 {
 	Endpoints::Endpoints(const std::string &username, const std::string &password) : m_username(username), m_password(password)
 	{
-		//load the uuids and cookies if available
+		//load the uuids and cookies if available in the proper file
 		if(tools::Tools::file_exists(Constants::file_cookies))
 		{
 			//uuids
@@ -223,7 +223,7 @@ namespace ig
 		return http_body;
 	}
 
-	bool Endpoints::login()
+	void Endpoints::login()
 	{
 		/*
 		 * #####accounts/read_msisdn_header/#####
@@ -292,6 +292,7 @@ namespace ig
 
 		/*
 		 * #####qe/sync/#####
+		 * depends on m_new_login
 		 * Cookie: csrftoken, rur, mid
 		 * Set-Cookie: csrftoken, rur (same as before)
 		 */
@@ -385,126 +386,131 @@ namespace ig
 			}
 		}
 
-		//as it is needed for the checkpoint_challenge_required situation
-		std::string response_body;
-		/*
-		 * actual login
-		 * #####accounts/login/#####
-		 * Cookie: csrftoken, rur, mid
-		 * Set-Cookie: ds_user, csrftoken (csrftoken is different to before), shbid, shbts, rur, ds_user_id, urlgen, sessionid
-		 */
+		if(m_new_login == true)
 		{
-			//http headers
-			std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-			http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
-
-			//http args
-			std::vector<tools::HttpArg> http_args;
-			http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-			http_args.push_back(tools::HttpArg("_csrftoken", m_csrftoken));
-			http_args.push_back(tools::HttpArg("username", m_username));
-			http_args.push_back(tools::HttpArg("guid", m_uuid));
-			http_args.push_back(tools::HttpArg("device_id", m_device_id));
-			http_args.push_back(tools::HttpArg("password", m_password));
-			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
-
-			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true);
-
-			//get the cookies
-			for(size_t j = 0; j < http_res.m_headers.size(); ++j)
+			//as it is needed for the checkpoint_challenge_required situation
+			std::string login_response_body;
+			/*
+			 * actual login
+			 * #####accounts/login/#####
+			 * Cookie: csrftoken, rur, mid
+			 * Set-Cookie: ds_user, csrftoken (csrftoken is different to before), shbid, shbts, rur, ds_user_id, urlgen, sessionid
+			 */
 			{
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user").empty())
-					m_ds_user = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user");
+				//http headers
+				std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+				http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
 
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-					m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
+				//http args
+				std::vector<tools::HttpArg> http_args;
+				http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
+				http_args.push_back(tools::HttpArg("_csrftoken", m_csrftoken));
+				http_args.push_back(tools::HttpArg("username", m_username));
+				http_args.push_back(tools::HttpArg("guid", m_uuid));
+				http_args.push_back(tools::HttpArg("device_id", m_device_id));
+				http_args.push_back(tools::HttpArg("password", m_password));
+				http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid").empty())
-					m_shbid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid");
+				tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
+				tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true);
 
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts").empty())
-					m_shbts = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts");
+				//get the cookies
+				for(size_t j = 0; j < http_res.m_headers.size(); ++j)
+				{
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user").empty())
+						m_ds_user = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user");
 
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-					m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
+						m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
 
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id").empty())
-					m_ds_user_id = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id");
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid").empty())
+						m_shbid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid");
 
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen").empty())
-					m_urlgen = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen");
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts").empty())
+						m_shbts = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts");
 
-				if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid").empty())
-					m_sessionid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid");
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
+						m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
+
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id").empty())
+						m_ds_user_id = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id");
+
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen").empty())
+						m_urlgen = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen");
+
+					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid").empty())
+						m_sessionid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid");
+				}
+
+				if(http_res.m_code == 200)
+				{
+					//save the cookies in a file
+					std::ofstream outf(Constants::file_cookies);
+					outf << "All ids:" << std::endl;
+					outf << "phone id: " << m_phone_id << std::endl;
+					outf << "uuid: " << m_uuid << std::endl;
+					outf << "client session id: " << m_client_session_id << std::endl;
+					outf << "advertising id: " << m_advertising_id << std::endl;
+					outf << "device id: " << m_device_id << std::endl;
+					outf << std::endl;
+					outf << "The cookies:" << std::endl;
+					outf << "ds user: " << m_ds_user << std::endl;
+					outf << "csrftoken: " << m_csrftoken << std::endl;
+					outf << "shbid: " << m_shbid << std::endl;
+					outf << "shbts: " << m_shbts << std::endl;
+					outf << "rur: " << m_rur << std::endl;
+					outf << "ds user id: " << m_ds_user_id << std::endl;
+					outf << "urlgen: " << m_urlgen << std::endl;
+					outf << "session id: " << m_sessionid << std::endl;
+					outf << "mid: " << m_mid << std::endl;
+
+					//save the cookies in one string
+					m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
+									"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" + m_urlgen;
+
+					std::cout << "The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+				}
+				else
+					std::cerr << "Error. The server response on the login request does not have status code 200." << std::endl;
+
+				login_response_body = http_res.m_body;
 			}
 
-			response_body = http_res.m_body;
-		}
-
-		//#####checkpoint_challenge_required#####
-		{
-			//todo
-			rapidjson::Document doc;
-			doc.Parse(response_body.c_str());
-
-			if(doc.IsObject())
+			//#####checkpoint_challenge_required#####
 			{
-				if(doc.HasMember("error_type"))
+				//todo
+				rapidjson::Document doc;
+				doc.Parse(login_response_body.c_str());
+
+				if(doc.IsObject())
 				{
-					if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
+					if(doc.HasMember("error_type"))
 					{
-						if(doc.HasMember("challenge"))
+						if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
 						{
-							const rapidjson::Value &challenge = doc["challenge"];
-
-							if(challenge.HasMember("api_path"))
+							if(doc.HasMember("challenge"))
 							{
-								std::string api_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
+								const rapidjson::Value &challenge = doc["challenge"];
 
-								//http headers
-								std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-								http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; mid=" + m_mid + "; rur=" + m_rur));
+								if(challenge.HasMember("api_path"))
+								{
+									std::string api_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
 
-								tools::HttpClient http_client(Constants::ig_url + api_path, http_headers);
-								tools::HttpResponse http_res = http_client.send_get_req();
+									//http headers
+									std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+									http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; mid=" + m_mid + "; rur=" + m_rur));
+
+									tools::HttpClient http_client(Constants::ig_url + api_path, http_headers);
+									tools::HttpResponse http_res = http_client.send_get_req();
+								}
 							}
 						}
 					}
 				}
-			}
-			else
-			{
-				std::cerr << "Error. The server response on the login request is not a json object." << std::endl;
-				return false;
+				else
+					std::cerr << "Error. The server response on the login request is not a json object." << std::endl;
 			}
 		}
-
-		//save the cookies in a file
-		std::ofstream outf(Constants::file_cookies);
-		outf << "All ids:" << std::endl;
-		outf << "phone id: " << m_phone_id << std::endl;
-		outf << "uuid: " << m_uuid << std::endl;
-		outf << "client session id: " << m_client_session_id << std::endl;
-		outf << "advertising id: " << m_advertising_id << std::endl;
-		outf << "device id: " << m_device_id << std::endl;
-		outf << std::endl;
-		outf << "The cookies:" << std::endl;
-		outf << "ds user: " << m_ds_user << std::endl;
-		outf << "csrftoken: " << m_csrftoken << std::endl;
-		outf << "shbid: " << m_shbid << std::endl;
-		outf << "shbts: " << m_shbts << std::endl;
-		outf << "rur: " << m_rur << std::endl;
-		outf << "ds user id: " << m_ds_user_id << std::endl;
-		outf << "urlgen: " << m_urlgen << std::endl;
-		outf << "session id: " << m_sessionid << std::endl;
-		outf << "mid: " << m_mid << std::endl;
-
-		//save the cookies in one string
-		m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
-						"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" + m_urlgen;
-
-		return true;
 	}
 
 	std::string Endpoints::get_media_likers(const std::string &media_id)
