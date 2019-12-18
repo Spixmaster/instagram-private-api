@@ -6,6 +6,7 @@
 int main()
 {
 	ig::Endpoints api("hija_look", "generic_password");
+	api.login();
 
 	return 0;
 }
