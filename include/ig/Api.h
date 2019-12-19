@@ -1,15 +1,32 @@
-/*
- * Api.h
- *
- *  Created on: 19.12.2019
- *      Author: matheus
- */
+#ifndef TGBOT_ENDPOINTS_H
+#define TGBOT_ENDPOINTS_H
 
-#ifndef INCLUDE_IG_API_H_
-#define INCLUDE_IG_API_H_
+#include <string>
+#include <memory>
 
+//@brief represents the Instagram Api which interacts with the Instagram servers
 
+namespace ig
+{
+	class Api
+	{
+	public:
+		//pointer of itself
+		typedef std::shared_ptr<Api> ptr;
 
+	private:
+		//member variables
+		//needed for the endpoints
+		std::string m_token;
 
+	public:
+		//constructors
+		//@param token: token which the member functions need for the requests they make
+		Api(const std::string &token);
 
-#endif /* INCLUDE_IG_API_H_ */
+		//member functions
+
+	};
+}
+
+#endif
