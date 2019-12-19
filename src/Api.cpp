@@ -10,7 +10,7 @@
 #include <boost/uuid/detail/md5.hpp>
 #include <iomanip>
 #include <Poco/URI.h>
-#include "ig/devices/one_plus_7.h"
+#include "ig/devices/OnePlus7.h"
 #include <cstdlib>
 #include <rapidjson/document.h>
 #include <fstream>
