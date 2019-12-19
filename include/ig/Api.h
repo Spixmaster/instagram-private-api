@@ -51,6 +51,26 @@ namespace ig
 		//member functions
 	private:
 		/*
+		 * @brief Instagram only accepts very specific http bodies which the function provides
+		 * @param http_args: the key value pairs which shall be contained in the request's http body
+		 * @return the modified http body
+		 */
+		std::string Api::mk_ig_http_body(const std::vector<tools::HttpArg> &http_args) const;
+
+		/*
+		 * @brief contains all the http headers which each request to the Instagram server should contain
+		 * @return vecor of the headers
+		 */
+		std::vector<tools::HttpHeader> Api::get_ig_http_headers() const;
+
+		/*
+		 * @brief gets all uuids and cookie values from the cookie file
+		 * @brief if it cannot get all necessary values it generates new ones and set m_new_login = true
+		 * @brief also sets m_final_cookies
+		 */
+		void Api::get_cookies_uuids();
+
+		/*
 		 * @brief the request is part of the login process
 		 * @brief Cookie: /
 		 * @brief Set-Cookie: csrftoken, rur, mid
@@ -60,11 +80,38 @@ namespace ig
 
 		/*
 		 * @brief the request is part of the login process
-		 * @brief Cookie: /
-		 * @brief Set-Cookie: csrftoken, rur, mid
+		 * @brief Cookie: csrftoken, rur, mid
+		 * @brief Set-Cookie: csrftoken, rur (same as before)
 		 * @return server response
 		 */
-		std::string Api::read_msisdn_header() const;
+		std::string Api::launcher_sync() const;
+
+		/*
+		 * @brief the request is part of the login process
+		 * @brief Cookie: csrftoken, rur, mid
+		 * @brief Set-Cookie: csrftoken, rur (same as before)
+		 * @return server response
+		 */
+		std::string Api::qe_sync() const;
+
+		/*
+		 * @brief the request is part of the login process
+		 * @brief Cookie: csrftoken, rur, mid
+		 * @brief Set-Cookie: csrftoken, rur (same as before)
+		 * @return server response
+		 */
+		std::string Api::log_attribution() const;
+
+		/*
+		 * @brief the request is part of the login process
+		 * @brief Cookie: csrftoken, rur, mid
+		 * @brief Set-Cookie: csrftoken, rur (same as before)
+		 * @return server response
+		 */
+		std::string Api::contact_point_prefill() const;
+
+	public:
+		bool login();
 	};
 }
 

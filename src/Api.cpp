@@ -37,7 +37,7 @@ namespace ig
 		login();
 	}
 
-	std::vector<tools::HttpHeader> Api::get_ig_http_headers()
+	std::vector<tools::HttpHeader> Api::get_ig_http_headers() const
 	{
 		//get time
 		time_t raw_time;
@@ -59,7 +59,7 @@ namespace ig
 		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
 		http_headers.push_back(tools::HttpHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8"));
 		http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
-		http_headers.push_back(tools::HttpHeader("User-Agent", one_plus_7::user_agent));
+		http_headers.push_back(tools::HttpHeader("User-Agent", OnePlus7::user_agent));
 		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", std::to_string(rand() % 3000 + 7000)));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string(rand() % 400000 + 500000)));
@@ -392,7 +392,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	void Api::login()
+	bool Api::login()
 	{
 		read_msisdn_header();
 		launcher_sync();
