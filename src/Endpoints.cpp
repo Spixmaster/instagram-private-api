@@ -15,11 +15,22 @@
 #include <cstdlib>
 #include <rapidjson/document.h>
 #include <fstream>
+#include <boost/filesystem.hpp>
 
 namespace ig
 {
 	Endpoints::Endpoints(const std::string &username, const std::string &password) : m_username(username), m_password(password)
 	{
+		//create necessary folders
+		try
+		{
+			boost::filesystem::create_directories("files");
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << e.what() << std::endl;
+		}
+
 		//load the uuids and cookies if available in the proper file
 		if(tools::Tools::file_exists(Constants::file_cookies))
 		{
@@ -141,6 +152,8 @@ namespace ig
 			std::stringstream sstream;
 			sstream << std::hex << device_id_temp;
 			m_device_id = "android-" + sstream.str();
+
+			std::cout << "No cookies from a previous session were found. Thus a new login is required whose cookies will be stored for the next logins." << std::endl;
 		}
 		else
 		{
@@ -149,6 +162,8 @@ namespace ig
 			//save the cookies in one string
 			m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
 							"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" + m_urlgen;
+
+			std::cout << "Cookies are used from a previous session!" << std::endl;
 		}
 
 		//login
@@ -463,6 +478,7 @@ namespace ig
 					outf << "urlgen: " << m_urlgen << std::endl;
 					outf << "session id: " << m_sessionid << std::endl;
 					outf << "mid: " << m_mid << std::endl;
+					outf.close();
 
 					//save the cookies in one string
 					m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
