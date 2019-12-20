@@ -233,9 +233,7 @@ namespace ig
 		{
 			m_new_login = false;
 
-			//save the cookies in one string
-			m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
-							"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" + m_urlgen;
+			save_whole_cookie();
 
 			std::cout << "Cookies are used from a previous session!" << std::endl;
 		}
@@ -296,9 +294,8 @@ namespace ig
 
 	void Api::save_whole_cookie()
 	{
-		m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
-						"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" +
-						m_urlgen;
+		m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid + "; rur=" + m_rur +
+				"; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" + m_urlgen;
 	}
 
 	std::string Api::read_msisdn_header()
@@ -567,16 +564,10 @@ namespace ig
 
 												return true;
 											}
-											else
-												return false;
 										}
 									}
 									else
-									{
 										std::cout << "Error: It was received an unknown challenge and thus cannot be handled." << std::endl;
-
-										return false;
-									}
 								}
 							}
 						}
@@ -620,28 +611,6 @@ namespace ig
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
 			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-			/*
-			 * #####checkpoint_challenge_required#####
-			 * Cookie: csrftoken, rur, mid
-			 * Set-Cookie: csrftoken, rur (both same as before)
-			 */
-			rapidjson::Document doc;
-			doc.Parse(http_res.m_body.c_str());
-
-			if(doc.IsObject())
-			{
-				if(doc.HasMember("error_type"))
-				{
-					if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
-					{
-						if(solve_challenge(http_res.m_body))
-							return true;
-						else
-							return false;
-					}
-				}
-			}
-
 			if(http_res.m_code == 200)
 			{
 				get_cookies_from_headers(http_res.m_headers);
@@ -654,6 +623,28 @@ namespace ig
 			else
 			{
 				std::cerr << "Error: The server response on the login request does not have status code 200." << std::endl;
+
+				/*
+				 * #####checkpoint_challenge_required#####
+				 * Cookie: csrftoken, rur, mid
+				 * Set-Cookie: csrftoken, rur (both same as before)
+				 */
+				rapidjson::Document doc;
+				doc.Parse(http_res.m_body.c_str());
+
+				if(doc.IsObject())
+				{
+					if(doc.HasMember("error_type"))
+					{
+						if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
+						{
+							if(solve_challenge(http_res.m_body))
+								return true;
+							else
+								std::cerr << "Error: The login challenge could not be solved." << std::endl;
+						}
+					}
+				}
 
 				return false;
 			}
