@@ -45,8 +45,10 @@ namespace ig
 	public:
 		//constructors
 
-		//@param username: username for the Instagram login
-		//@param password: password for the Instagram login
+		/*
+		 * @param username: username for the Instagram login
+		 * @param password: password for the Instagram login
+		 */
 		Api(const std::string &username, const std::string &password);
 
 		//member functions
