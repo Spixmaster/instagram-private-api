@@ -1,4 +1,4 @@
-#include "include/ig/devices/OnePlus7.h"
+#include "ig/devices/OnePlus7.h"
 
 namespace ig
 {

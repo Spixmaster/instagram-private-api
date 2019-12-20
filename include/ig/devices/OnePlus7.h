@@ -5,7 +5,7 @@
 #include <memory>
 
 /*
- * @brief this struct simpy contains information about a mobile device
+ * @brief this struct simply contains information about a mobile device
  * @brief the information is needed for Instagram
  */
 
@@ -17,16 +17,16 @@ namespace ig
 		typedef std::shared_ptr<OnePlus7> ptr;
 
 		//member variables
-		std::string ig_version;
-		std::string android_version;
-		std::string android_release;
-		std::string dpi;
-		std::string resolution;
-		std::string manufacturer;
-		std::string device;
-		std::string model;
-		std::string cpu;
-		std::string user_agent;
+		static const std::string ig_version;
+		static const std::string android_version;
+		static const std::string android_release;
+		static const std::string dpi;
+		static const std::string resolution;
+		static const std::string manufacturer;
+		static const std::string device;
+		static const std::string model;
+		static const std::string cpu;
+		static const std::string user_agent;
 	};
 }
 

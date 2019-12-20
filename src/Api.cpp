@@ -31,10 +31,8 @@ namespace ig
 			std::cerr << e.what() << std::endl;
 		}
 
-		get_cookies_uuids();
-
-		//login
-		login();
+		//also determines whether an new login is required
+		get_cookies_uuids_from_file();
 	}
 
 	std::vector<tools::HttpHeader> Api::get_ig_http_headers() const
@@ -105,7 +103,7 @@ namespace ig
 		return http_body;
 	}
 
-	void Api::get_cookies_uuids()
+	void Api::get_cookies_uuids_from_file()
 	{
 		//load the uuids and cookies if available in the proper file
 		if(tools::Tools::file_exists(Constants::file_cookies))
@@ -243,7 +241,67 @@ namespace ig
 		}
 	}
 
-	std::string Api::read_msisdn_header() const
+	void Api::get_cookies_from_headers(const std::vector<tools::HttpHeader> &http_headers)
+	{
+		for(size_t j = 0; j < http_headers.size(); ++j)
+		{
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user").empty())
+				m_ds_user = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken").empty())
+				m_csrftoken = tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbid").empty())
+				m_shbid = tools::Tools::get_val(http_headers.at(j).m_value, "shbid");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbts").empty())
+				m_shbts = tools::Tools::get_val(http_headers.at(j).m_value, "shbts");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "rur").empty())
+				m_rur = tools::Tools::get_val(http_headers.at(j).m_value, "rur");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id").empty())
+				m_ds_user_id = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "urlgen").empty())
+				m_urlgen = tools::Tools::get_val(http_headers.at(j).m_value, "urlgen");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "sessionid").empty())
+				m_sessionid = tools::Tools::get_val(http_headers.at(j).m_value, "sessionid");
+		}
+	}
+
+	void Api::save_cookies_in_file() const
+	{
+		std::ofstream outf(Constants::file_cookies);
+		outf << "All ids:" << std::endl;
+		outf << "phone id: " << m_phone_id << std::endl;
+		outf << "uuid: " << m_uuid << std::endl;
+		outf << "client session id: " << m_client_session_id << std::endl;
+		outf << "advertising id: " << m_advertising_id << std::endl;
+		outf << "device id: " << m_device_id << std::endl;
+		outf << std::endl;
+		outf << "The cookies:" << std::endl;
+		outf << "ds user: " << m_ds_user << std::endl;
+		outf << "csrftoken: " << m_csrftoken << std::endl;
+		outf << "shbid: " << m_shbid << std::endl;
+		outf << "shbts: " << m_shbts << std::endl;
+		outf << "rur: " << m_rur << std::endl;
+		outf << "ds user id: " << m_ds_user_id << std::endl;
+		outf << "urlgen: " << m_urlgen << std::endl;
+		outf << "session id: " << m_sessionid << std::endl;
+		outf << "mid: " << m_mid << std::endl;
+		outf.close();
+	}
+
+	void Api::save_whole_cookie()
+	{
+		m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
+						"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" +
+						m_urlgen;
+	}
+
+	std::string Api::read_msisdn_header()
 	{
 		//http args
 		std::vector<tools::HttpArg> http_args;
@@ -269,7 +327,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::launcher_sync() const
+	std::string Api::launcher_sync()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -303,7 +361,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::qe_sync() const
+	std::string Api::qe_sync()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -337,7 +395,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::log_attribution() const
+	std::string Api::log_attribution()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -363,7 +421,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::contact_point_prefill() const
+	std::string Api::contact_point_prefill()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -390,6 +448,143 @@ namespace ig
 		}
 
 		return http_res.m_body;
+	}
+
+	bool Api::solve_challenge(const std::string &server_resp)
+	{
+		rapidjson::Document doc;
+		doc.Parse(server_resp.c_str());
+
+		if(doc.IsObject())
+		{
+			if(doc.HasMember("error_type"))
+			{
+				if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
+				{
+					if(doc.HasMember("challenge"))
+					{
+						const rapidjson::Value &challenge = doc["challenge"];
+
+						if(challenge.HasMember("api_path"))
+						{
+							std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
+
+							//http headers
+							std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+							http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; mid=" + m_mid + "; rur=" + m_rur));
+
+							tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers);
+							tools::HttpResponse http_res = http_client.send_get_req();
+
+							rapidjson::Document doc;
+							doc.Parse(http_res.m_body.c_str());
+
+							if(doc.IsObject())
+							{
+								if(doc.HasMember("step_name"))
+								{
+									if(doc["step_name"].GetString() == std::string("select_verify_method"))
+									{
+										const rapidjson::Value &step_data = doc["step_data"];
+										std::string choices;
+
+										if(step_data.HasMember("phone_number"))
+											choices.append("0 - Phone number");
+										else if(step_data.HasMember("email"))
+											choices.append("1 - Email");
+
+										std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
+										int choice = -1;
+
+										if(step_data.HasMember("phone_number") && step_data.HasMember("email"))
+										{
+											while(!(choice == 0 || choice == 1))
+											{
+												std::cout << "Your choice: ";
+												std::cin >> choice;
+
+												if(!(choice == 0 || choice == 1))
+													std::cout << "Error: Wrong choice. Try again!" << std::endl;
+											}
+										}
+										else if(step_data.HasMember("phone_number"))
+										{
+											while(choice != 0)
+											{
+												std::cout << "Your choice: ";
+												std::cin >> choice;
+
+												if(choice != 0)
+													std::cout << "Error: Wrong choice. Try again!" << std::endl;
+											}
+										}
+										else if(step_data.HasMember("email"))
+										{
+											while(choice != 1)
+											{
+												std::cout << "Your choice: ";
+												std::cin >> choice;
+
+												if(choice != 1)
+													std::cout << "Error: Wrong choice. Try again!" << std::endl;
+											}
+										}
+
+										//http headers
+										std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+										http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+
+										//http args
+										std::vector<tools::HttpArg> http_args;
+										http_args.push_back(tools::HttpArg("choice", choice));
+
+										tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
+										tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
+										std::string security_code;
+										std::cout << "Enter your verification code: ";
+										std::cin >> security_code;
+
+										{
+											//http headers
+											std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+											http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+
+											//http args
+											std::vector<tools::HttpArg> http_args;
+											http_args.push_back(tools::HttpArg("security_code", security_code));
+
+											tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
+											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+											if(http_res.m_code == 200)
+											{
+												get_cookies_from_headers(http_res.m_headers);
+												save_cookies_in_file();
+												save_whole_cookie();
+												std::cout << "The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+
+												return true;
+											}
+											else
+												return false;
+										}
+									}
+									else
+									{
+										std::cout << "Error: It was received an unknown challenge and thus cannot be handled." << std::endl;
+
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	bool Api::login()
@@ -439,235 +634,31 @@ namespace ig
 				{
 					if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
 					{
-						if(doc.HasMember("challenge"))
-						{
-							const rapidjson::Value &challenge = doc["challenge"];
-
-							if(challenge.HasMember("api_path"))
-							{
-								std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
-
-								//http headers
-								std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-								http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; mid=" + m_mid + "; rur=" + m_rur));
-
-								tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers);
-								tools::HttpResponse http_res = http_client.send_get_req();
-
-								rapidjson::Document doc;
-								doc.Parse(http_res.m_body.c_str());
-
-								if(doc.IsObject())
-								{
-									if(doc.HasMember("step_name"))
-									{
-										if(doc["step_name"].GetString() == std::string("select_verify_method"))
-										{
-											const rapidjson::Value &step_data = doc["step_data"];
-											std::string choices;
-
-											if(step_data.HasMember("phone_number"))
-												choices.append("0 - Phone number");
-											else if(step_data.HasMember("email"))
-												choices.append("1 - Email");
-
-											std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
-											int choice = -1;
-
-											if(step_data.HasMember("phone_number") && step_data.HasMember("email"))
-											{
-												while(!(choice == 0 || choice == 1))
-												{
-													std::cout << "Your choice: ";
-													std::cin >> choice;
-
-													if(!(choice == 0 || choice == 1))
-														std::cout << "Error. Wrong choice. Try again!" << std::endl;
-												}
-											}
-											else if(step_data.HasMember("phone_number"))
-											{
-												while(choice != 0)
-												{
-													std::cout << "Your choice: ";
-													std::cin >> choice;
-
-													if(choice != 0)
-														std::cout << "Error. Wrong choice. Try again!" << std::endl;
-												}
-											}
-											else if(step_data.HasMember("email"))
-											{
-												while(choice != 1)
-												{
-													std::cout << "Your choice: ";
-													std::cin >> choice;
-
-													if(choice != 1)
-														std::cout << "Error. Wrong choice. Try again!" << std::endl;
-												}
-											}
-
-											//http headers
-											std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-											http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
-
-											//http args
-											std::vector<tools::HttpArg> http_args;
-											http_args.push_back(tools::HttpArg("choice", choice));
-
-											tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
-											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-											//todo
-											std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
-											std::string security_code;
-											std::cout << "Enter your verification code: ";
-											std::cin >> security_code;
-
-											{
-												//http headers
-												std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-												http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
-
-												//http args
-												std::vector<tools::HttpArg> http_args;
-												http_args.push_back(tools::HttpArg("security_code", security_code));
-
-												tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
-												tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-												if(http_res.m_code == 200)
-												{
-													//get the cookies
-													for(size_t j = 0; j < http_res.m_headers.size(); ++j)
-													{
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user").empty())
-															m_ds_user = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user");
-
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-															m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
-
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid").empty())
-															m_shbid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid");
-
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts").empty())
-															m_shbts = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts");
-
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-															m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
-
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id").empty())
-															m_ds_user_id = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id");
-
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen").empty())
-															m_urlgen = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen");
-
-														if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid").empty())
-															m_sessionid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid");
-													}
-
-													//save the cookies in a file
-													std::ofstream outf(Constants::file_cookies);
-													outf << "All ids:" << std::endl;
-													outf << "phone id: " << m_phone_id << std::endl;
-													outf << "uuid: " << m_uuid << std::endl;
-													outf << "client session id: " << m_client_session_id << std::endl;
-													outf << "advertising id: " << m_advertising_id << std::endl;
-													outf << "device id: " << m_device_id << std::endl;
-													outf << std::endl;
-													outf << "The cookies:" << std::endl;
-													outf << "ds user: " << m_ds_user << std::endl;
-													outf << "csrftoken: " << m_csrftoken << std::endl;
-													outf << "shbid: " << m_shbid << std::endl;
-													outf << "shbts: " << m_shbts << std::endl;
-													outf << "rur: " << m_rur << std::endl;
-													outf << "ds user id: " << m_ds_user_id << std::endl;
-													outf << "urlgen: " << m_urlgen << std::endl;
-													outf << "session id: " << m_sessionid << std::endl;
-													outf << "mid: " << m_mid << std::endl;
-													outf.close();
-
-													//save the cookies in one string
-													m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
-																	"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" +
-																	m_urlgen;
-
-													std::cout << "The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
-											}
-										}
-										else
-											std::cout << "Error. It was received an unknown challenge and thus cannot be handled." << std::endl;
-									}
-								}
-							}
-						}
+						if(solve_challenge(http_res.m_body))
+							return true;
+						else
+							return false;
 					}
 				}
 			}
-			else
-				std::cerr << "Error. The server response on the login request is not a json object." << std::endl;
 
 			if(http_res.m_code == 200)
 			{
-				//get the cookies
-				for(size_t j = 0; j < http_res.m_headers.size(); ++j)
-				{
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user").empty())
-						m_ds_user = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user");
-
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-						m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
-
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid").empty())
-						m_shbid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbid");
-
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts").empty())
-						m_shbts = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "shbts");
-
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-						m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
-
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id").empty())
-						m_ds_user_id = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "ds_user_id");
-
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen").empty())
-						m_urlgen = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "urlgen");
-
-					if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid").empty())
-						m_sessionid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "sessionid");
-				}
-
-				//save the cookies in a file
-				std::ofstream outf(Constants::file_cookies);
-				outf << "All ids:" << std::endl;
-				outf << "phone id: " << m_phone_id << std::endl;
-				outf << "uuid: " << m_uuid << std::endl;
-				outf << "client session id: " << m_client_session_id << std::endl;
-				outf << "advertising id: " << m_advertising_id << std::endl;
-				outf << "device id: " << m_device_id << std::endl;
-				outf << std::endl;
-				outf << "The cookies:" << std::endl;
-				outf << "ds user: " << m_ds_user << std::endl;
-				outf << "csrftoken: " << m_csrftoken << std::endl;
-				outf << "shbid: " << m_shbid << std::endl;
-				outf << "shbts: " << m_shbts << std::endl;
-				outf << "rur: " << m_rur << std::endl;
-				outf << "ds user id: " << m_ds_user_id << std::endl;
-				outf << "urlgen: " << m_urlgen << std::endl;
-				outf << "session id: " << m_sessionid << std::endl;
-				outf << "mid: " << m_mid << std::endl;
-				outf.close();
-
-				//save the cookies in one string
-				m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid +
-								"; rur=" + m_rur + "; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" + m_urlgen;
-
+				get_cookies_from_headers(http_res.m_headers);
+				save_cookies_in_file();
+				save_whole_cookie();
 				std::cout << "The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+
+				return true;
 			}
 			else
-				std::cerr << "Error. The server response on the login request does not have status code 200." << std::endl;
+			{
+				std::cerr << "Error: The server response on the login request does not have status code 200." << std::endl;
+
+				return false;
+			}
 		}
+		return true;
 	}
 
 	std::string Api::get_media_likers(const std::string &media_id)
