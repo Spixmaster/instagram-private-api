@@ -347,7 +347,7 @@ namespace ig
 		std::vector<tools::HttpArg> http_args;
 		http_args.push_back(tools::HttpArg("adid", m_advertising_id));
 
-		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers);
+		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers); // @suppress("Invalid arguments")
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		//get the cookies
@@ -376,7 +376,7 @@ namespace ig
 		http_args.push_back(tools::HttpArg("_csrftoken", m_csrftoken));
 		http_args.push_back(tools::HttpArg("usage", "prefill"));
 
-		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers);
+		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers); // @suppress("Invalid arguments")
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		//get the cookies
