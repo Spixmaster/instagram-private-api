@@ -163,10 +163,11 @@ namespace ig
 
 		/*
 		 * if a uuid is missing
-		 * it is not checked for the cookies very accurate
+		 * if a cookie is missing (I already know the names of those which are needed)
 		 */
 		if(m_phone_id.empty() || m_uuid.empty() || m_client_session_id.empty() || m_advertising_id.empty() || m_device_id.empty() ||
-				tools::Tools::get_file_cont(Constants::file_cookies).empty())
+				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("shbid").empty() || get_cookie_val("shbts").empty() ||
+				get_cookie_val("rur").empty() || get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty())
 		{
 			m_new_login = true;
 
@@ -588,8 +589,8 @@ namespace ig
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
-		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/?", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
+		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req(true); //todo
 
 		update_cookies(http_res.m_cookies);
 
