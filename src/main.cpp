@@ -10,14 +10,14 @@ int main()
 
 	tools::HttpCookie http_cookie(cookie);
 
-	std::cout << http_cookie.get_domain() << std::endl;
-	std::cout << http_cookie.get_expires() << std::endl;
-	std::cout << http_cookie.get_http_only() << std::endl;
-	std::cout << http_cookie.get_max_age() << std::endl;
 	std::cout << http_cookie.get_name() << std::endl;
-	std::cout << http_cookie.get_path() << std::endl;
-	std::cout << http_cookie.get_secure() << std::endl;
 	std::cout << http_cookie.get_value() << std::endl;
+	std::cout << http_cookie.get_domain() << std::endl;
+	std::cout << http_cookie.get_path() << std::endl;
+	std::cout << http_cookie.get_expires() << std::endl;
+	std::cout << http_cookie.get_max_age() << std::endl;
+	std::cout << http_cookie.get_http_only() << std::endl;
+	std::cout << http_cookie.get_secure() << std::endl;
 
 //	ig::Api api("hija_look", "generic_password");
 //	api.login();
