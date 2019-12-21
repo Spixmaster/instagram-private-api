@@ -7,7 +7,10 @@
 #include "tools/http/HttpHeader.h"
 #include "tools/http/HttpArg.h"
 
-//@brief represents the Instagram Api which interacts with the Instagram servers
+/*
+ * @brief represents the Instagram Api which interacts with the Instagram servers
+ * @brief the cookies need to be updated everytime whenever an endpoint is called as even then cookies are set
+ */
 
 namespace ig
 {
