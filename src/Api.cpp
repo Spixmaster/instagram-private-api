@@ -243,32 +243,32 @@ namespace ig
 	{
 		for(size_t j = 0; j < http_headers.size(); ++j)
 		{
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user").empty())
-				m_ds_user = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken").empty())
-				m_csrftoken = tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbid").empty())
-				m_shbid = tools::Tools::get_val(http_headers.at(j).m_value, "shbid");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbts").empty())
-				m_shbts = tools::Tools::get_val(http_headers.at(j).m_value, "shbts");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "rur").empty())
-				m_rur = tools::Tools::get_val(http_headers.at(j).m_value, "rur");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id").empty())
-				m_ds_user_id = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "urlgen").empty())
-				m_urlgen = tools::Tools::get_val(http_headers.at(j).m_value, "urlgen");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "sessionid").empty())
-				m_sessionid = tools::Tools::get_val(http_headers.at(j).m_value, "sessionid");
-
-			if(!tools::Tools::get_val(http_headers.at(j).m_value, "mid").empty())
-				m_mid = tools::Tools::get_val(http_headers.at(j).m_value, "mid");
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user").empty())
+//				m_ds_user = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken").empty())
+//				m_csrftoken = tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbid").empty())
+//				m_shbid = tools::Tools::get_val(http_headers.at(j).m_value, "shbid");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbts").empty())
+//				m_shbts = tools::Tools::get_val(http_headers.at(j).m_value, "shbts");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "rur").empty())
+//				m_rur = tools::Tools::get_val(http_headers.at(j).m_value, "rur");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id").empty())
+//				m_ds_user_id = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "urlgen").empty())
+//				m_urlgen = tools::Tools::get_val(http_headers.at(j).m_value, "urlgen");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "sessionid").empty())
+//				m_sessionid = tools::Tools::get_val(http_headers.at(j).m_value, "sessionid");
+//
+//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "mid").empty())
+//				m_mid = tools::Tools::get_val(http_headers.at(j).m_value, "mid");
 		}
 	}
 
