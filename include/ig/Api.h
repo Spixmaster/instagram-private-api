@@ -159,7 +159,7 @@ namespace ig
 		 * @param mas_id: todo noch keine Ahnung
 		 * @return the server response
 		 */
-		std::string get_media_comments(const std::string &media_id, const std::string &max_id);
+		std::string get_media_comments(const std::string &media_id, const std::string &max_id="");
 	};
 }
 

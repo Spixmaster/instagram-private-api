@@ -486,11 +486,12 @@ namespace ig
 										std::string choices;
 
 										if(step_data.HasMember("phone_number"))
-											choices.append("0 - Phone number");
-										else if(step_data.HasMember("email"))
+											choices.append("0 - Phone number\n");
+										if(step_data.HasMember("email"))
 											choices.append("1 - Email");
 
 										std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
+										std::cout << choices << std::endl;
 										int choice = -1;
 
 										if(step_data.HasMember("phone_number") && step_data.HasMember("email"))
@@ -560,7 +561,7 @@ namespace ig
 												get_cookies_from_headers(http_res.m_headers);
 												save_cookies_in_file();
 												save_whole_cookie();
-												std::cout << "The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+												std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
 
 												return true;
 											}
@@ -580,6 +581,7 @@ namespace ig
 
 	bool Api::login()
 	{
+		//requests that are done before the actual login
 		read_msisdn_header();
 		launcher_sync();
 		qe_sync();
@@ -616,7 +618,7 @@ namespace ig
 				get_cookies_from_headers(http_res.m_headers);
 				save_cookies_in_file();
 				save_whole_cookie();
-				std::cout << "The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+				std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
 
 				return true;
 			}
@@ -658,7 +660,7 @@ namespace ig
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 		http_headers.push_back(tools::HttpHeader("Cookie", m_final_cookies));
 
-		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/", http_headers);
+		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/?", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		return http_res.m_body;
@@ -675,7 +677,7 @@ namespace ig
 			url.append("?max_id=" + max_id);
 
 		tools::HttpClient http_client(url, http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
+		tools::HttpResponse http_res = http_client.send_get_req(true);
 
 		return http_res.m_body;
 	}
