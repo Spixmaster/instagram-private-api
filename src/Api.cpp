@@ -266,6 +266,9 @@ namespace ig
 
 			if(!tools::Tools::get_val(http_headers.at(j).m_value, "sessionid").empty())
 				m_sessionid = tools::Tools::get_val(http_headers.at(j).m_value, "sessionid");
+
+			if(!tools::Tools::get_val(http_headers.at(j).m_value, "mid").empty())
+				m_mid = tools::Tools::get_val(http_headers.at(j).m_value, "mid");
 		}
 	}
 
@@ -568,11 +571,14 @@ namespace ig
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true); //todo
 
 			if(http_res.m_code == 200)
 			{
+				//todo diese Aufrufe alle kontrollieren
 				get_cookies_from_headers(http_res.m_headers);
+				//todo Korrektheit übderprüfen
+
 				save_cookies_in_file();
 				save_whole_cookie();
 				std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
@@ -621,6 +627,8 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		get_cookies_from_headers(http_res.m_headers);
+		save_cookies_in_file();
+		save_whole_cookie();
 
 		return http_res.m_body;
 	}
@@ -636,9 +644,11 @@ namespace ig
 			url.append("?max_id=" + max_id);
 
 		tools::HttpClient http_client(url, http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req(true);
+		tools::HttpResponse http_res = http_client.send_get_req();
 
 		get_cookies_from_headers(http_res.m_headers);
+		save_cookies_in_file();
+		save_whole_cookie();
 
 		return http_res.m_body;
 	}
