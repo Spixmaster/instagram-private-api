@@ -26,7 +26,7 @@ namespace ig
 		{
 			boost::filesystem::create_directories("files");
 		}
-		catch(std::exception &e)
+		catch(const std::exception &e)
 		{
 			std::cerr << e.what() << std::endl;
 		}
@@ -239,36 +239,19 @@ namespace ig
 		}
 	}
 
-	void Api::get_cookies_from_headers(const std::vector<tools::HttpHeader> &http_headers)
+	void Api::update_cookies(const std::vector<tools::HttpCookie> &http_cookies)
 	{
-		for(size_t j = 0; j < http_headers.size(); ++j)
+		//only add yet non-existing cookies in the internal vector and update old cookies (same cookie name)
+
+		for(size_t j = 0; j < http_cookies.size(); ++j)
 		{
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user").empty())
-//				m_ds_user = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken").empty())
-//				m_csrftoken = tools::Tools::get_val(http_headers.at(j).m_value, "csrftoken");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbid").empty())
-//				m_shbid = tools::Tools::get_val(http_headers.at(j).m_value, "shbid");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "shbts").empty())
-//				m_shbts = tools::Tools::get_val(http_headers.at(j).m_value, "shbts");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "rur").empty())
-//				m_rur = tools::Tools::get_val(http_headers.at(j).m_value, "rur");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id").empty())
-//				m_ds_user_id = tools::Tools::get_val(http_headers.at(j).m_value, "ds_user_id");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "urlgen").empty())
-//				m_urlgen = tools::Tools::get_val(http_headers.at(j).m_value, "urlgen");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "sessionid").empty())
-//				m_sessionid = tools::Tools::get_val(http_headers.at(j).m_value, "sessionid");
-//
-//			if(!tools::Tools::get_val(http_headers.at(j).m_value, "mid").empty())
-//				m_mid = tools::Tools::get_val(http_headers.at(j).m_value, "mid");
+			//new cookie
+			bool found = false;
+			for(size_t k = 0; k < m_cookies.size(); ++k)
+			{
+				if(http_cookies.at(j).get_name() == m_cookies.at(k).get_name())
+					found = true;
+			}
 		}
 	}
 
