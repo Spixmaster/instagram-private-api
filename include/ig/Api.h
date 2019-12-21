@@ -10,7 +10,7 @@
 
 /*
  * @brief represents the Instagram Api which interacts with the Instagram servers
- * @brief the cookies need to be updated everytime whenever an endpoint is called as even then cookies are set
+ * @brief the cookies need to be updated every time whenever an endpoint is called as even then cookies are set
  */
 
 namespace ig
@@ -34,21 +34,9 @@ namespace ig
 		std::string m_client_session_id;
 		std::string m_advertising_id;
 		std::string m_device_id;
-			//all the cookies that are required by the Instagram servers
+			//all the cookies which are sent by the Instagram servers
 		std::vector<tools::HttpCookie> m_cookies;
-
-
-
-//		std::string m_ds_user;
-//		std::string m_csrftoken;
-//		std::string m_shbid;
-//		std::string m_shbts;
-//		std::string m_rur;
-//		std::string m_ds_user_id;
-//		std::string m_urlgen;
-//		std::string m_sessionid;
-//		std::string m_mid;
-//		std::string m_final_cookies; //the cookie string for the proper header value
+		std::string m_cookie_str; //all cookies concatenated as key-value-pairs to be used as a header value
 
 	public:
 		//constructors
@@ -58,11 +46,14 @@ namespace ig
 		 */
 		Api(const std::string &username, const std::string &password);
 
+		//destructors
+		~Api();
+
 		//member functions
 	private:
 		/*
 		 * @brief contains all the http headers which each request to the Instagram server should contain
-		 * @return vecor of the headers
+		 * @return vector of the headers
 		 */
 		std::vector<tools::HttpHeader> get_ig_http_headers() const;
 
@@ -74,11 +65,11 @@ namespace ig
 		std::string mk_ig_http_body(const std::vector<tools::HttpArg> &http_args) const;
 
 		/*
-		 * @brief gets all uuids and cookie values from the cookie file
-		 * @brief if it cannot get all necessary values it generates new ones and set m_new_login = true
-		 * @brief also sets m_final_cookies
+		 * @brief gets all uuids and cookie values from files
+		 * @brief if it cannot get all necessary values it generates new ones and sets m_new_login = true
+		 * @brief also sets m_cookie_str
 		 */
-		void get_cookies_uuids_from_file();
+		void setup_cookies_uuids();
 
 		/*
 		 * @brief with the given cookies the function updates the old as member variable saved cookies
@@ -87,16 +78,30 @@ namespace ig
 		void update_cookies(const std::vector<tools::HttpCookie> &http_cookies);
 
 		/*
-		 * @brief saves the cookies in the cookies file
+		 * @brief saves the uuids in the proper file
+		 * @brief saved are all member variables which represent uuids
+		 */
+		void save_uuids_in_file() const;
+
+		/*
+		 * @brief saves the cookies in the proper file
 		 * @brief saved are all member variables which represent cookie values
 		 */
 		void save_cookies_in_file() const;
 
 		/*
 		 * @brief all cookie values are concatenated for the header value for the cookie header
-		 * @brief save in member variable m_final_cookies
+		 * @brief the cookie values are got from the member variable m_cookies
+		 * @brief saved in member variable m_cookie_str
 		 */
-		void save_whole_cookie();
+		void set_cookie_str();
+
+		/*
+		 * @brief gets the value of the cookie
+		 * @param name: the name of the cookie whose value we want
+		 * @return the cookie value
+		 */
+		std::string get_cookie_val(const std::string &cookie_name) const;
 
 		/*
 		 * @brief the request is part of the login process

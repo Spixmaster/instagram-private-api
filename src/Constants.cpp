@@ -65,4 +65,5 @@ namespace ig
 
 	const std::string Constants::files_folder = "files/";
 	const std::string Constants::file_cookies = files_folder + "cookies.dat";
+	const std::string Constants::file_uuids = files_folder + "uuids.dat";
 }

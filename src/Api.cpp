@@ -32,7 +32,13 @@ namespace ig
 		}
 
 		//also determines whether an new login is required
-		get_cookies_uuids_from_file();
+		setup_cookies_uuids();
+	}
+
+	Api::~Api()
+	{
+		save_uuids_in_file();
+		save_cookies_in_file();
 	}
 
 	std::vector<tools::HttpHeader> Api::get_ig_http_headers() const
@@ -103,119 +109,68 @@ namespace ig
 		return http_body;
 	}
 
-	void Api::get_cookies_uuids_from_file()
+	void Api::setup_cookies_uuids()
 	{
-		//load the uuids and cookies if available in the proper file
-		if(tools::Tools::file_exists(Constants::file_cookies))
+		if(tools::Tools::file_exists(Constants::file_uuids))
 		{
-			//uuids
 			//phone id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "phone id"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_phone_id = args.at(args.size() - 1);
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "phone id"));
+				if(!args.empty())
+					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
+						m_phone_id = args.at(args.size() - 1);
 			}
 
 			//uuid
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "uuid"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_uuid = args.at(args.size() - 1);
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "uuid"));
+				if(!args.empty())
+					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
+						m_uuid = args.at(args.size() - 1);
 			}
 
 			//client session id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "client session id"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_client_session_id = args.at(args.size() - 1);
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "client session id"));
+				if(!args.empty())
+					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
+						m_client_session_id = args.at(args.size() - 1);
 			}
 
 			//advertising id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "advertising id"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_advertising_id = args.at(args.size() - 1);
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "advertising id"));
+				if(!args.empty())
+					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
+						m_advertising_id = args.at(args.size() - 1);
 			}
 
 			//device id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "device id"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_device_id = args.at(args.size() - 1);
-			}
-
-			//cookies
-			//ds user
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "ds user"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_ds_user = args.at(args.size() - 1);
-			}
-
-			//csrftoken
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "csrftoken"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_csrftoken = args.at(args.size() - 1);
-			}
-
-			//shbid
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "shbid"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_shbid = args.at(args.size() - 1);
-			}
-
-			//shbts
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "shbts"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_shbts = args.at(args.size() - 1);
-			}
-
-			//rur
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "rur"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_rur = args.at(args.size() - 1);
-			}
-
-			//ds user id
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "ds user id"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_ds_user_id = args.at(args.size() - 1);
-			}
-
-			//urlgen
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "urlgen"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_urlgen = args.at(args.size() - 1);
-			}
-
-			//session id
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "session id"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_sessionid = args.at(args.size() - 1);
-			}
-
-			//mid
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_cookies, "mid"));
-				if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-					m_mid = args.at(args.size() - 1);
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "device id"));
+				if(!args.empty())
+					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
+						m_device_id = args.at(args.size() - 1);
 			}
 		}
 
-		//create all necessary uuids new
-		if(m_phone_id.empty() || m_uuid.empty() || m_client_session_id.empty() || m_advertising_id.empty() || m_device_id.empty() || m_ds_user.empty() ||
-				m_csrftoken.empty() || m_shbid.empty() || m_shbts.empty() || m_rur.empty() || m_ds_user_id.empty() || m_urlgen.empty() || m_sessionid.empty() ||
-				m_mid.empty())
+		if(tools::Tools::file_exists(Constants::file_cookies))
+		{
+			for(int j = 1; j <= tools::Tools::get_amnt_file_lns(Constants::file_cookies); ++j)
+				if(!tools::Tools::get_file_ln(Constants::file_cookies, j).empty())
+					m_cookies.push_back(tools::HttpCookie(tools::Tools::get_file_ln(Constants::file_cookies, j)));
+		}
+
+		/*
+		 * if a uuid is missing
+		 * it is not checked for the cookies very accurate
+		 */
+		if(m_phone_id.empty() || m_uuid.empty() || m_client_session_id.empty() || m_advertising_id.empty() || m_device_id.empty() ||
+				tools::Tools::get_file_cont(Constants::file_cookies).empty())
 		{
 			m_new_login = true;
 
+			//generate new uuids
 			m_phone_id = boost::uuids::to_string(boost::uuids::random_generator()());
 			m_uuid = boost::uuids::to_string(boost::uuids::random_generator()());
 			m_client_session_id = boost::uuids::to_string(boost::uuids::random_generator()());
@@ -232,56 +187,90 @@ namespace ig
 		else
 		{
 			m_new_login = false;
-
-			save_whole_cookie();
-
+			set_cookie_str();
 			std::cout << "Cookies are used from a previous session!" << std::endl;
 		}
 	}
 
 	void Api::update_cookies(const std::vector<tools::HttpCookie> &http_cookies)
 	{
-		//only add yet non-existing cookies in the internal vector and update old cookies (same cookie name)
-
 		for(size_t j = 0; j < http_cookies.size(); ++j)
 		{
-			//new cookie
+			//add a new cookie
 			bool found = false;
+			size_t pos_old_cookie_to_updt;
 			for(size_t k = 0; k < m_cookies.size(); ++k)
 			{
 				if(http_cookies.at(j).get_name() == m_cookies.at(k).get_name())
+				{
 					found = true;
+					pos_old_cookie_to_updt = k;
+					break;
+				}
+			}
+
+			if(found == false)
+				m_cookies.push_back(http_cookies.at(j));
+			//update all old cookies
+			else
+			{
+				m_cookies.erase(m_cookies.begin() + pos_old_cookie_to_updt);
+				m_cookies.push_back(http_cookies.at(j));
 			}
 		}
+
+		set_cookie_str();
 	}
 
-	void Api::save_cookies_in_file() const
+	void Api::save_uuids_in_file() const
 	{
-		std::ofstream outf(Constants::file_cookies);
+		std::ofstream outf(Constants::file_uuids);
 		outf << "All ids:" << std::endl;
 		outf << "phone id: " << m_phone_id << std::endl;
 		outf << "uuid: " << m_uuid << std::endl;
 		outf << "client session id: " << m_client_session_id << std::endl;
 		outf << "advertising id: " << m_advertising_id << std::endl;
 		outf << "device id: " << m_device_id << std::endl;
-		outf << std::endl;
-		outf << "The cookies:" << std::endl;
-		outf << "ds user: " << m_ds_user << std::endl;
-		outf << "csrftoken: " << m_csrftoken << std::endl;
-		outf << "shbid: " << m_shbid << std::endl;
-		outf << "shbts: " << m_shbts << std::endl;
-		outf << "rur: " << m_rur << std::endl;
-		outf << "ds user id: " << m_ds_user_id << std::endl;
-		outf << "urlgen: " << m_urlgen << std::endl;
-		outf << "session id: " << m_sessionid << std::endl;
-		outf << "mid: " << m_mid << std::endl;
 		outf.close();
 	}
 
-	void Api::save_whole_cookie()
+	void Api::save_cookies_in_file() const
 	{
-		m_final_cookies = "csrftoken=" + m_csrftoken + "; ds_user=" + m_ds_user + "; ds_user_id=" + m_ds_user_id + "; mid=" + m_mid + "; rur=" + m_rur +
-				"; sessionid=" + m_sessionid + "; shbid=" + m_shbid + "; shbts=" + m_shbts + "; urlgen=" + m_urlgen;
+		std::ofstream outf(Constants::file_cookies);
+
+		for(size_t j = 0; j < m_cookies.size(); ++j)
+			outf << m_cookies.at(j).to_string() << std::endl;
+
+		outf.close();
+	}
+
+	void Api::set_cookie_str()
+	{
+		std::string temp;
+
+		for(size_t j = 0; j < m_cookies.size(); ++j)
+		{
+			temp.append(m_cookies.at(j).get_name() + "=" + m_cookies.at(j).get_value());
+
+			//semicolon needed?
+			if(j < (m_cookies.size() - 1))
+				temp.append("; ");
+		}
+
+		m_cookie_str = temp;
+	}
+
+	std::string Api::get_cookie_val(const std::string &cookie_name) const
+	{
+		std::string cookie_val;
+		for(size_t j = 0; j < m_cookies.size(); ++j)
+			if(m_cookies.at(j).get_name() == cookie_name)
+			{
+				cookie_val = m_cookies.at(j).get_value();
+				break;
+			}
+
+		return cookie_val;
 	}
 
 	std::string Api::read_msisdn_header()
@@ -294,7 +283,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "accounts/read_msisdn_header/", get_ig_http_headers());
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		get_cookies_from_headers(http_res.m_headers);
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -303,7 +292,7 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
@@ -313,14 +302,14 @@ namespace ig
 		if(m_new_login == false)
 		{
 			http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-			http_args.push_back(tools::HttpArg("_uid", m_ds_user_id));
-			http_args.push_back(tools::HttpArg("_csrftoken", m_csrftoken));
+			http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		}
 
 		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		get_cookies_from_headers(http_res.m_headers);
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -329,7 +318,7 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
@@ -339,14 +328,14 @@ namespace ig
 		if(m_new_login == false)
 		{
 			http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-			http_args.push_back(tools::HttpArg("_uid", m_ds_user_id));
-			http_args.push_back(tools::HttpArg("_csrftoken", m_csrftoken));
+			http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		}
 
 		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		get_cookies_from_headers(http_res.m_headers);
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -355,16 +344,16 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
 		http_args.push_back(tools::HttpArg("adid", m_advertising_id));
 
-		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers); // @suppress("Invalid arguments")
+		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		get_cookies_from_headers(http_res.m_headers);
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -373,19 +362,19 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
 		http_args.push_back(tools::HttpArg("id", m_uuid));
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("_csrftoken", m_csrftoken));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		http_args.push_back(tools::HttpArg("usage", "prefill"));
 
-		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers); // @suppress("Invalid arguments")
+		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		get_cookies_from_headers(http_res.m_headers);
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -411,7 +400,7 @@ namespace ig
 
 							//http headers
 							std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-							http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; mid=" + m_mid + "; rur=" + m_rur));
+							http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 							tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers);
 							tools::HttpResponse http_res = http_client.send_get_req();
@@ -473,7 +462,7 @@ namespace ig
 
 										//http headers
 										std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-										http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+										http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 										//http args
 										std::vector<tools::HttpArg> http_args;
@@ -490,7 +479,7 @@ namespace ig
 										{
 											//http headers
 											std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-											http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+											http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 											//http args
 											std::vector<tools::HttpArg> http_args;
@@ -501,9 +490,7 @@ namespace ig
 
 											if(http_res.m_code == 200)
 											{
-												get_cookies_from_headers(http_res.m_headers);
-												save_cookies_in_file();
-												save_whole_cookie();
+												update_cookies(http_res.m_cookies);
 												std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
 
 												return true;
@@ -541,12 +528,12 @@ namespace ig
 			 */
 			//http headers
 			std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-			http_headers.push_back(tools::HttpHeader("Cookie", "csrftoken=" + m_csrftoken + "; rur=" + m_rur + "; mid=" + m_mid));
+			http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 			//http args
 			std::vector<tools::HttpArg> http_args;
 			http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-			http_args.push_back(tools::HttpArg("_csrftoken", m_csrftoken));
+			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 			http_args.push_back(tools::HttpArg("username", m_username));
 			http_args.push_back(tools::HttpArg("guid", m_uuid));
 			http_args.push_back(tools::HttpArg("device_id", m_device_id));
@@ -554,16 +541,11 @@ namespace ig
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true); //todo
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 			if(http_res.m_code == 200)
 			{
-				//todo diese Aufrufe alle kontrollieren
-				get_cookies_from_headers(http_res.m_headers);
-				//todo Korrektheit übderprüfen
-
-				save_cookies_in_file();
-				save_whole_cookie();
+				update_cookies(http_res.m_cookies);
 				std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
 
 				return true;
@@ -604,14 +586,12 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_final_cookies));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/?", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
-		get_cookies_from_headers(http_res.m_headers);
-		save_cookies_in_file();
-		save_whole_cookie();
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -620,7 +600,7 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_final_cookies));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		std::string url = Constants::ig_url + "media/" + media_id + "/comments/";
 		if(!max_id.empty())
@@ -629,9 +609,7 @@ namespace ig
 		tools::HttpClient http_client(url, http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
-		get_cookies_from_headers(http_res.m_headers);
-		save_cookies_in_file();
-		save_whole_cookie();
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
