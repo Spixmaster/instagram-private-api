@@ -6,6 +6,7 @@
 #include <vector>
 #include "tools/http/HttpHeader.h"
 #include "tools/http/HttpArg.h"
+#include "tools/http/HttpCookie.h"
 
 /*
  * @brief represents the Instagram Api which interacts with the Instagram servers
@@ -34,20 +35,23 @@ namespace ig
 		std::string m_advertising_id;
 		std::string m_device_id;
 			//all the cookies that are required by the Instagram servers
-		std::string m_ds_user;
-		std::string m_csrftoken;
-		std::string m_shbid;
-		std::string m_shbts;
-		std::string m_rur;
-		std::string m_ds_user_id;
-		std::string m_urlgen;
-		std::string m_sessionid;
-		std::string m_mid;
-		std::string m_final_cookies; //the cookie string for the proper header value
+		std::vector<tools::HttpCookie> m_cookies;
+
+
+
+//		std::string m_ds_user;
+//		std::string m_csrftoken;
+//		std::string m_shbid;
+//		std::string m_shbts;
+//		std::string m_rur;
+//		std::string m_ds_user_id;
+//		std::string m_urlgen;
+//		std::string m_sessionid;
+//		std::string m_mid;
+//		std::string m_final_cookies; //the cookie string for the proper header value
 
 	public:
 		//constructors
-
 		/*
 		 * @param username: username for the Instagram login
 		 * @param password: password for the Instagram login
@@ -77,11 +81,10 @@ namespace ig
 		void get_cookies_uuids_from_file();
 
 		/*
-		 * @brief goes through the headers and searches for the necessary cookies
-		 * @brief searches for all cookies like the names of the member variables
-		 * @brief assigns the values to the corresponding member variables
+		 * @brief with the given cookies the function updates the old as member variable saved cookies
+		 * @param http_cookies: cookies with which the as member variable saved cookies shall be updated
 		 */
-		void get_cookies_from_headers(const std::vector<tools::HttpHeader> &http_headers);
+		void update_cookies(const std::vector<tools::HttpCookie> &http_cookies);
 
 		/*
 		 * @brief saves the cookies in the cookies file
