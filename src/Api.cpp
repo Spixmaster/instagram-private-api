@@ -308,18 +308,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "accounts/read_msisdn_header/", get_ig_http_headers());
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		//get the cookies
-		for(size_t j = 0; j < http_res.m_headers.size(); ++j)
-		{
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-				m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
-
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-				m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
-
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "mid").empty())
-				m_mid = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "mid");
-		}
+		get_cookies_from_headers(http_res.m_headers);
 
 		return http_res.m_body;
 	}
@@ -345,15 +334,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		//get the cookies
-		for(size_t j = 0; j < http_res.m_headers.size(); ++j)
-		{
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-				m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
-
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-				m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
-		}
+		get_cookies_from_headers(http_res.m_headers);
 
 		return http_res.m_body;
 	}
@@ -379,15 +360,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		//get the cookies
-		for(size_t j = 0; j < http_res.m_headers.size(); ++j)
-		{
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-				m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
-
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-				m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
-		}
+		get_cookies_from_headers(http_res.m_headers);
 
 		return http_res.m_body;
 	}
@@ -405,15 +378,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers); // @suppress("Invalid arguments")
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		//get the cookies
-		for(size_t j = 0; j < http_res.m_headers.size(); ++j)
-		{
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-				m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
-
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-				m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
-		}
+		get_cookies_from_headers(http_res.m_headers);
 
 		return http_res.m_body;
 	}
@@ -434,15 +399,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers); // @suppress("Invalid arguments")
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		//get the cookies
-		for(size_t j = 0; j < http_res.m_headers.size(); ++j)
-		{
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken").empty())
-				m_csrftoken = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "csrftoken");
-
-			if(!tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur").empty())
-				m_rur = tools::Tools::get_val(http_res.m_headers.at(j).m_value, "rur");
-		}
+		get_cookies_from_headers(http_res.m_headers);
 
 		return http_res.m_body;
 	}
@@ -663,6 +620,8 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/?", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
+		get_cookies_from_headers(http_res.m_headers);
+
 		return http_res.m_body;
 	}
 
@@ -678,6 +637,8 @@ namespace ig
 
 		tools::HttpClient http_client(url, http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req(true);
+
+		get_cookies_from_headers(http_res.m_headers);
 
 		return http_res.m_body;
 	}
