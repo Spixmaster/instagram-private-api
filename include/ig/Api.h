@@ -150,6 +150,12 @@ namespace ig
 		 */
 		bool solve_challenge(const std::string &server_resp);
 
+		/*
+		 * @brief the rank token is assembled out of the user id an the uuid
+		 * @return the rank token
+		 */
+		std::string get_rank_token();
+
 	public:
 		/*
 		 * @brief logs into Instagram
@@ -158,19 +164,57 @@ namespace ig
 		bool login();
 
 		/*
-		 * @brief gets all likers of an Instagram media
+		 * @brief gets all likers of the Instagram media
 		 * @param media_id: the proper media id
 		 * @return the server response
 		 */
 		std::string get_media_likers(const std::string &media_id);
 
 		/*
-		 * @brief gets all comments of an Instagram media
+		 * @brief gets the comments of the Instagram media
+		 * @brief only a part of all comments is shown
+		 * @brief Normally, the function is called without max_id. If there are more possible comments to show ("has_more_comments":true,)
+		 * 		the following attribute will be set:
+		 * 		"next_max_id":"{\"server_cursor\": \"QVFDNHZuUmxaTFJzeHJSQ0UyejVwcGFpXzBOWGVHQXpfeTNhalVOS1lUTUFrRWZuaHBoakFBbXlVWEV1ejE4aWFGLXZPS29TZUI4c3F5dXl1RHZULVZ2Wg==\",
+		 * 		\"is_server_cursor_inverse\": false}",
+		 * 		Use that value for max_id to receive the next "page". The pagination does not work like: 1, 2, 3,...
 		 * @param media_id: the proper media id
-		 * @param mas_id: todo noch keine Ahnung
+		 * @param max_id: for pagination
 		 * @return the server response
 		 */
 		std::string get_media_comments(const std::string &media_id, const std::string &max_id="");
+
+		/*
+		 * @brief gets the comments of the Instagram media
+		 * @brief it requests all comments
+		 * @param media_id: the proper media id
+		 * @param max_id: for pagination
+		 * @return the server response
+		 */
+		std::string get_media_comments_all(const std::string &media_id);
+
+		/*
+		 * @brief gets the available information about the Instagram media
+		 * @param media_id: the proper media id
+		 * @return the server response
+		 */
+		std::string get_media_info(const std::string &media_id);
+
+		/*
+		 * @brief gets the user feed --> the medias the user uploaded
+		 * @param user_id: the proper user id
+		 * @param max_id: //todo
+		 * @param min_timestamp: //todo
+		 * @return the server response
+		 */
+		std::string get_user_feed(const std::string &user_id, const std::string &max_id = "", const std::string &min_timestamp = "");
+
+		/*
+		 * @brief gets the available user info
+		 * @param user_id: the proper user id
+		 * @return the server response
+		 */
+		std::string get_user_info(const std::string &user_id);
 	};
 }
 
