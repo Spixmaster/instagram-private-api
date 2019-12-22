@@ -510,6 +510,11 @@ namespace ig
 		return false;
 	}
 
+	std::string Api::get_rank_token()
+	{
+		return get_cookie_val("ds_user_id") + "_" + m_uuid;
+	}
+
 	bool Api::login()
 	{
 		//requests that are done before the actual login
@@ -590,7 +595,7 @@ namespace ig
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req(true); //todo
+		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_cookies(http_res.m_cookies);
 
@@ -606,6 +611,81 @@ namespace ig
 		std::string url = Constants::ig_url + "media/" + media_id + "/comments/";
 		if(!max_id.empty())
 			url.append("?max_id=" + max_id);
+
+		tools::HttpClient http_client(url, http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_cookies(http_res.m_cookies);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::get_media_comments_all(const std::string &media_id)
+	{
+		std::string response = get_media_comments(media_id);
+
+		while(true)
+		{
+			rapidjson::Document doc;
+			doc.Parse(response.c_str());
+
+			if(doc.IsObject())
+			{
+				//scrape comments
+
+				//perhaps, next page
+				if(doc.HasMember("has_more_comments") && doc.HasMember("next_max_id"))
+				{
+					response = get_media_comments(media_id, doc["next_max_id"].GetString());
+				}
+				else
+					break;
+			}
+		}
+
+		const rapidjson::Value &items = doc["items"];
+	}
+
+	std::string Api::get_media_info(const std::string &media_id)
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+		std::string url = Constants::ig_url + "media/" + media_id + "/info/";
+
+		tools::HttpClient http_client(url, http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_cookies(http_res.m_cookies);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::get_user_feed(const std::string &user_id, const std::string &max_id, const std::string &min_timestamp)
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+		std::string url = Constants::ig_url + "feed/user/" + user_id + "/?max_id=" + max_id + "&min_timestamp=" + min_timestamp +
+	            "&rank_token=" + get_rank_token() + "&ranked_content=true";
+
+		tools::HttpClient http_client(url, http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_cookies(http_res.m_cookies);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::get_user_info(const std::string &user_id)
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+		std::string url = Constants::ig_url + "users/" + user_id + "/info/";
 
 		tools::HttpClient http_client(url, http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
