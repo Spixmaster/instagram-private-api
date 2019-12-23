@@ -24,7 +24,7 @@ namespace ig
 		//create necessary folders
 		try
 		{
-			boost::filesystem::create_directories("files");
+			boost::filesystem::create_directories("files/ig");
 		}
 		catch(const std::exception &e)
 		{
@@ -284,7 +284,20 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "accounts/read_msisdn_header/", get_ig_http_headers());
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		update_cookies(http_res.m_cookies);
+		if(http_res.m_code == 200)
+			update_cookies(http_res.m_cookies);
+		else
+		{
+			try
+			{
+				remove(Constants::file_uuids.c_str());
+				remove(Constants::file_cookies.c_str());
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+		}
 
 		return http_res.m_body;
 	}
@@ -310,7 +323,20 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		update_cookies(http_res.m_cookies);
+		if(http_res.m_code == 200)
+			update_cookies(http_res.m_cookies);
+		else
+		{
+			try
+			{
+				remove(Constants::file_uuids.c_str());
+				remove(Constants::file_cookies.c_str());
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+		}
 
 		return http_res.m_body;
 	}
@@ -336,7 +362,20 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		update_cookies(http_res.m_cookies);
+		if(http_res.m_code == 200)
+			update_cookies(http_res.m_cookies);
+		else
+		{
+			try
+			{
+				remove(Constants::file_uuids.c_str());
+				remove(Constants::file_cookies.c_str());
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+		}
 
 		return http_res.m_body;
 	}
@@ -354,7 +393,20 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		update_cookies(http_res.m_cookies);
+		if(http_res.m_code == 200)
+			update_cookies(http_res.m_cookies);
+		else
+		{
+			try
+			{
+				remove(Constants::file_uuids.c_str());
+				remove(Constants::file_cookies.c_str());
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+		}
 
 		return http_res.m_body;
 	}
@@ -375,7 +427,20 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		update_cookies(http_res.m_cookies);
+		if(http_res.m_code == 200)
+			update_cookies(http_res.m_cookies);
+		else
+		{
+			try
+			{
+				remove(Constants::file_uuids.c_str());
+				remove(Constants::file_cookies.c_str());
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+		}
 
 		return http_res.m_body;
 	}
@@ -623,6 +688,7 @@ namespace ig
 	std::string Api::get_media_comments_all(const std::string &media_id)
 	{
 		std::string response = get_media_comments(media_id);
+		std::string result = "[";
 
 		while(true)
 		{
@@ -632,18 +698,26 @@ namespace ig
 			if(doc.IsObject())
 			{
 				//scrape comments
+				const rapidjson::Value &comments = doc["comments"];
+				for(size_t j = 0; j < comments.Size(); ++j)
+				{
+					result.append(tools::Tools::get_json_as_string(comments[j]));
+					result.append(", ");
+				}
 
 				//perhaps, next page
 				if(doc.HasMember("has_more_comments") && doc.HasMember("next_max_id"))
-				{
 					response = get_media_comments(media_id, doc["next_max_id"].GetString());
-				}
 				else
 					break;
 			}
+			else
+				break;
 		}
+		result.pop_back();
+		result.pop_back();
 
-		const rapidjson::Value &items = doc["items"];
+		return result.append("]");
 	}
 
 	std::string Api::get_media_info(const std::string &media_id)
