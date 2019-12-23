@@ -768,4 +768,177 @@ namespace ig
 
 		return http_res.m_body;
 	}
+
+	std::string Api::get_media_id(const std::string &ig_post)
+	{
+		if(Api::is_ig_post(ig_post))
+		{
+			tools::HttpClient http_client("https://api.instagram.com/oembed/?callback=&url=" + ig_post);
+			tools::HttpResponse http_res = http_client.send_get_req();
+
+			rapidjson::Document doc;
+			doc.Parse(http_res.m_body.c_str());
+
+			if(doc.IsObject())
+			{
+				if(doc.HasMember("media_id"))
+					return doc["media_id"].GetString();
+				else
+					return "Error: There is no field \"media_id\" in the json.";
+			}
+			else
+				return "Error: The string is not a json object.";
+		}
+		else
+			return "Error: This is not an Instagram post.";
+	}
+
+	bool Api::is_ig_post(const std::string &url)
+	{
+		if(url.find("https://www.instagram.com/p/") != std::string::npos)
+		{
+			tools::HttpClient http_client(url);
+			tools::HttpResponse http_response = http_client.send_get_req();
+
+			if(http_response.m_code == 200)
+				return true;
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+
+	bool Api::media_comments_allowed(const std::string &media_id)
+	{
+		//so that if the key is not found in the json the bool is correct
+		bool comments_allowed = true;
+
+		//###comments disabled###
+		{
+			std::string json = get_media_comments(media_id);
+
+			rapidjson::Document doc;
+			doc.Parse(json.c_str());
+
+			/*
+			 * in json file, it would be written:
+			 * {"comments_disabled": true, "status": "ok"}
+			 * therefore, the negation is needed
+			 */
+			if(doc.IsObject())
+				if(doc.HasMember("comments_disabled"))
+					comments_allowed = !(doc["comments_disabled"].GetBool());
+		}
+
+		//###comments restricted###
+		{
+			std::string json = get_media_info(media_id);
+
+			rapidjson::Document doc;
+			doc.Parse(json.c_str());
+
+			/*
+			 * in json file, it would be written:
+			 * "commenting_disabled_for_viewer":true
+			 * therefore, the negation is needed
+			 */
+			if(doc.IsObject())
+			{
+				if(doc.HasMember("items"))
+				{
+					const rapidjson::Value &items = doc["items"];
+
+					if(items.IsArray() && items.GetArray().Size() > 0)
+					{
+						const rapidjson::Value &media_info = items[0];
+
+						if(media_info.HasMember("commenting_disabled_for_viewer"))
+							comments_allowed = !(media_info["commenting_disabled_for_viewer"].GetBool());
+					}
+				}
+			}
+		}
+		return comments_allowed;
+	}
+
+	std::string Api::get_username_from_user_id(const std::string &user_id)
+	{
+		std::string json = get_user_info(user_id);
+
+		rapidjson::Document doc;
+		doc.Parse(json.c_str());
+
+		if(doc.IsObject())
+		{
+			if(doc.HasMember("user"))
+			{
+				const rapidjson::Value &user = doc["user"];
+				if(user.HasMember("username"))
+					return user["username"].GetString();
+				else
+					return "Error: There is no field \"username\" in the json.";
+			}
+			else
+				return "Error: There is no field \"user\" in the json.";
+		}
+		else
+			return "Error: The string is not a json object.";
+	}
+
+	std::string Api::get_username_from_media_id(const std::string &media_id)
+	{
+		std::string json = get_media_info(media_id);
+
+		rapidjson::Document doc;
+		doc.Parse(json.c_str());
+
+		if(doc.IsObject())
+		{
+			if(doc.HasMember("items"))
+			{
+				const rapidjson::Value &items = doc["items"];
+
+				if(items.IsArray() && items.GetArray().Size() > 0)
+				{
+					const rapidjson::Value &media_info = items[0];
+
+					if(media_info.HasMember("user"))
+					{
+						const rapidjson::Value &user = media_info["user"];
+
+						if(user.HasMember("username"))
+							return user["username"].GetString();
+						else
+							return "Error: There is no field \"username\" in the json.";
+					}
+					else
+						return "Error: There is no field \"user\" in the json.";
+				}
+				else
+					return "Error: The field \"items\" is not a json array of size greater than 0.";
+			}
+			else
+				return "Error: There is no field \"items\" in the json.";
+		}
+		else
+			return "Error: The string is not a json object.";
+	}
+
+	int Api::get_amnt_flwrs(const std::string &user_id)
+	{
+		std::string json = get_user_info(user_id);
+
+		rapidjson::Document doc;
+		doc.Parse(json.c_str());
+
+		if(doc.IsObject())
+			if(doc.HasMember("user"))
+			{
+				const rapidjson::Value &user = doc["user"];
+				if(user.HasMember("follower_count"))
+					return user["follower_count"].GetInt();
+			}
+		return 0;
+	}
 }
