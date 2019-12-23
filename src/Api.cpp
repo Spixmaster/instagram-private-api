@@ -284,20 +284,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "accounts/read_msisdn_header/", get_ig_http_headers());
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		if(http_res.m_code == 200)
-			update_cookies(http_res.m_cookies);
-		else
-		{
-			try
-			{
-				remove(Constants::file_uuids.c_str());
-				remove(Constants::file_cookies.c_str());
-			}
-			catch(const std::exception &e)
-			{
-				std::cerr << e.what() << std::endl;
-			}
-		}
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -323,20 +310,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		if(http_res.m_code == 200)
-			update_cookies(http_res.m_cookies);
-		else
-		{
-			try
-			{
-				remove(Constants::file_uuids.c_str());
-				remove(Constants::file_cookies.c_str());
-			}
-			catch(const std::exception &e)
-			{
-				std::cerr << e.what() << std::endl;
-			}
-		}
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -362,20 +336,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		if(http_res.m_code == 200)
-			update_cookies(http_res.m_cookies);
-		else
-		{
-			try
-			{
-				remove(Constants::file_uuids.c_str());
-				remove(Constants::file_cookies.c_str());
-			}
-			catch(const std::exception &e)
-			{
-				std::cerr << e.what() << std::endl;
-			}
-		}
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -393,20 +354,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		if(http_res.m_code == 200)
-			update_cookies(http_res.m_cookies);
-		else
-		{
-			try
-			{
-				remove(Constants::file_uuids.c_str());
-				remove(Constants::file_cookies.c_str());
-			}
-			catch(const std::exception &e)
-			{
-				std::cerr << e.what() << std::endl;
-			}
-		}
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
@@ -427,20 +375,7 @@ namespace ig
 		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		if(http_res.m_code == 200)
-			update_cookies(http_res.m_cookies);
-		else
-		{
-			try
-			{
-				remove(Constants::file_uuids.c_str());
-				remove(Constants::file_cookies.c_str());
-			}
-			catch(const std::exception &e)
-			{
-				std::cerr << e.what() << std::endl;
-			}
-		}
+		update_cookies(http_res.m_cookies);
 
 		return http_res.m_body;
 	}
