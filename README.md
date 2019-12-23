@@ -68,10 +68,10 @@ int main()
 
 	if(api.login())
     {
-        std::string all_comments = api.get_media_comments_all("2198175238655007495_20782778");
-        std::string likers = api.get_media_likers("2204498368496146133_3854894733");
+		std::string all_comments = api.get_media_comments_all("2198175238655007495_20782778");
+		std::string likers = api.get_media_likers("2204498368496146133_3854894733");
     }
-
+	
 	return EXIT_SUCCESS;
 }
 ```
