@@ -210,7 +210,7 @@ namespace ig
 		 * 		Use that value for max_id to receive the next "page". The pagination does not work like: 1, 2, 3,...
 		 * @param user_id: the proper user id
 		 * @param max_id: for pagination
-		 * @param min_timestamp: //todo
+		 * @param min_timestamp: todo no idea
 		 * @return the server response
 		 */
 		std::string get_user_feed(const std::string &user_id, const std::string &max_id = "", const std::string &min_timestamp = "");
@@ -221,6 +221,51 @@ namespace ig
 		 * @return the server response
 		 */
 		std::string get_user_info(const std::string &user_id);
+
+		/*
+		 * @brief gets media id of an Instagram post
+		 * @param ig_post: url to Instagram post
+		 * @return when error "Error:"
+		 * @return media id
+		 */
+		static std::string get_media_id(const std::string &ig_post);
+
+		/*
+		 * @brief checks whether url is a valid Instagram post
+		 * @param url: url to Instagram post
+		 * @return true when valid Instagram link
+		 */
+		static bool is_ig_post(const std::string &url);
+
+		/*
+		 * @brief looks whether comments are allowed for the Instagram post
+		 * @param media_id: states media which we want to check
+		 * @return true when comments are allowed; otherwise false
+		 */
+		bool media_comments_allowed(const std::string &media_id);
+
+		/*
+		 * @brief gets Instgram username of an Instagram profile
+		 * @param user_id: Instagram user id which leads to the Instagram username
+		 * @return on error: "Error:"
+		 * @return Instagram username
+		 */
+		std::string get_username_from_user_id(const std::string &user_id);
+
+		/*
+		 * @brief gets Instgram username from a media
+		 * @param media_id: proper media id
+		 * @return Instagram username
+		 */
+		std::string get_username_from_media_id(const std::string &media_id);
+
+		/*
+		 * @brief gets amount of followers
+		 * @param user_id: from which we want the follower amount
+		 * @return by default, returns 0
+		 * @return amount of followers
+		 */
+		int get_amnt_flwrs(const std::string &user_id);
 	};
 }
 
