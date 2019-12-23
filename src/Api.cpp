@@ -1,3 +1,4 @@
+#include "ig/Api.h"
 #include "tools/http/HttpClient.h"
 #include "tools/http/InputFile.h"
 #include <iostream>
@@ -15,7 +16,6 @@
 #include <rapidjson/document.h>
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include <ig/Api.h>
 
 namespace ig
 {
