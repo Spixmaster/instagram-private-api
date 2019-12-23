@@ -714,8 +714,12 @@ namespace ig
 			else
 				break;
 		}
-		result.pop_back();
-		result.pop_back();
+
+		if(result.size() >= 2)
+		{
+			result.pop_back();
+			result.pop_back();
+		}
 
 		return result.append("]");
 	}
