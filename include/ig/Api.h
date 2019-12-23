@@ -1,5 +1,5 @@
-#ifndef TGBOT_ENDPOINTS_H
-#define TGBOT_ENDPOINTS_H
+#ifndef IG_API_H
+#define IG_API_H
 
 #include <string>
 #include <memory>
