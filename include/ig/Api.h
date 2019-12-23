@@ -186,7 +186,8 @@ namespace ig
 
 		/*
 		 * @brief gets the comments of the Instagram media
-		 * @brief it requests all comments
+		 * @brief it requests all comments by concatenating every page of the comments
+		 * @brief the returned string are several modified server responses
 		 * @param media_id: the proper media id
 		 * @param max_id: for pagination
 		 * @return the server response
@@ -202,8 +203,13 @@ namespace ig
 
 		/*
 		 * @brief gets the user feed --> the medias the user uploaded
+		 * @brief Normally, the function is called without max_id. If there are more possible comments to show ("has_more_comments":true,)
+		 * 		the following attribute will be set:
+		 * 		"next_max_id":"{\"server_cursor\": \"QVFDNHZuUmxaTFJzeHJSQ0UyejVwcGFpXzBOWGVHQXpfeTNhalVOS1lUTUFrRWZuaHBoakFBbXlVWEV1ejE4aWFGLXZPS29TZUI4c3F5dXl1RHZULVZ2Wg==\",
+		 * 		\"is_server_cursor_inverse\": false}",
+		 * 		Use that value for max_id to receive the next "page". The pagination does not work like: 1, 2, 3,...
 		 * @param user_id: the proper user id
-		 * @param max_id: //todo
+		 * @param max_id: for pagination
 		 * @param min_timestamp: //todo
 		 * @return the server response
 		 */
