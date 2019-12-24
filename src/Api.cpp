@@ -590,6 +590,7 @@ namespace ig
 						if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
 						{
 							//todo
+							std::cout << "####################HIER RÜBER STEHT EINE FEHLERMELDUNG, WAS AUCH KORREKT IST#################" << std::endl;
 							std::cout << "soweit sind wir angekommen" << std::endl;
 							if(solve_challenge(http_res.m_body))
 							{
