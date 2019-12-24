@@ -592,13 +592,27 @@ namespace ig
 							//todo
 							std::cout << "soweit sind wir angekommen" << std::endl;
 							if(solve_challenge(http_res.m_body))
+							{
+								//todo
+								int i;
+								std::cin >> i;
+
 								return true;
+							}
 							else
+							{
+								//todo
+								int i;
+								std::cin >> i;
+
 								std::cerr << "Error: The login challenge could not be solved." << std::endl;
+							}
 						}
 					}
 				}
-
+				//todo
+				int i;
+				std::cin >> i;
 				return false;
 			}
 		}
