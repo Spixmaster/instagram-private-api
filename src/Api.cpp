@@ -596,6 +596,7 @@ namespace ig
 							{
 								//todo
 								int i;
+								std::cout << "ENDE" << std::endl;
 								std::cin >> i;
 
 								return true;
@@ -604,6 +605,7 @@ namespace ig
 							{
 								//todo
 								int i;
+								std::cout << "ENDE" << std::endl;
 								std::cin >> i;
 
 								std::cerr << "Error: The login challenge could not be solved." << std::endl;
@@ -613,7 +615,9 @@ namespace ig
 				}
 				//todo
 				int i;
+				std::cout << "ENDE" << std::endl;
 				std::cin >> i;
+
 				return false;
 			}
 		}
