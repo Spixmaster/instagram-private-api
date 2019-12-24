@@ -533,24 +533,11 @@ namespace ig
 	bool Api::login()
 	{
 		//requests that are done before the actual login
-		//todo
-		std::cout << "read_msisdn_header:" << std::endl;
 		read_msisdn_header();
-		//todo
-		std::cout << std::endl <<"launcher_sync:" << std::endl;
 		launcher_sync();
-		//todo
-		std::cout << std::endl <<"qe_sync:" << std::endl;
 		qe_sync();
-		//todo
-		std::cout << std::endl <<"log_attribution:" << std::endl;
 		log_attribution();
-		//todo
-		std::cout << std::endl <<"contact_point_prefill:" << std::endl;
-		std::cout << std::endl <<"vvvvvvvvvvvvvvvv:" << std::endl;
 		contact_point_prefill();
-		//todo
-		std::cout << std::endl <<"^^^^^^^^^^^^^^^^:" << std::endl;
 
 		if(m_new_login == true)
 		{
@@ -602,6 +589,8 @@ namespace ig
 					{
 						if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
 						{
+							//todo
+							std::cout << "soweit sind wir angekommen" << std::endl;
 							if(solve_challenge(http_res.m_body))
 								return true;
 							else
