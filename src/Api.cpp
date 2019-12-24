@@ -547,7 +547,10 @@ namespace ig
 		log_attribution();
 		//todo
 		std::cout << std::endl <<"contact_point_prefill:" << std::endl;
+		std::cout << std::endl <<"vvvvvvvvvvvvvvvv:" << std::endl;
 		contact_point_prefill();
+		//todo
+		std::cout << std::endl <<"^^^^^^^^^^^^^^^^:" << std::endl;
 
 		if(m_new_login == true)
 		{
