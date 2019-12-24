@@ -499,14 +499,29 @@ namespace ig
 										}
 									}
 									else
-										std::cout << "Error: It was received an unknown challenge and thus cannot be handled." << std::endl;
+										std::cerr << "Error: The challenge response's field \"step_name\" does not have the value \"select_verify_method\"." << std::endl;
 								}
+								else
+									std::cerr << "Error: The challenge response does not have a field \"step_name\"." << std::endl;
 							}
+							else
+								std::cerr << "Error: The challenge response is not a json object." << std::endl;
 						}
+						else
+							std::cerr << "Error: Field \"challenge\" does not have field \"api_path\"." << std::endl;
 					}
+					else
+						std::cerr << "Error: There is not field \"challenge\"." << std::endl;
 				}
+				else
+					std::cerr << "Error: Field \"error_type\" does not have the value \"checkpoint_challenge_required\"." << std::endl;
 			}
+			else
+				std::cerr << "Error: There is not field \"error_type\"." << std::endl;
 		}
+		else
+			std::cerr << "Error: The given server response is not a json object." << std::endl;
+
 		return false;
 	}
 
