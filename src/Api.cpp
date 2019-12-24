@@ -403,6 +403,7 @@ namespace ig
 						if(challenge.HasMember("api_path"))
 						{
 							//todo DER FEHLER LIEGT VERMUTLICH BEI DIESER ANFRAGE
+							//todo er sendet nur einen neue challenge zurück
 
 							std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
 
