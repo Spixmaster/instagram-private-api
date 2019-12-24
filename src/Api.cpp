@@ -426,6 +426,8 @@ namespace ig
 										if(step_data.HasMember("email"))
 											choices.append("1 - Email");
 
+										std::cout << "If you do not know your personal data like phone number or email here are some hints:" << std::endl;
+										std::cout << http_res.m_body << std::endl;
 										std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
 										std::cout << choices << std::endl;
 										int choice = -1;
