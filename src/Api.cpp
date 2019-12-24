@@ -383,11 +383,6 @@ namespace ig
 
 	bool Api::solve_challenge(const std::string &server_resp)
 	{
-		//todo
-		std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-		std::cout << server_resp << std::endl;
-		std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-
 		rapidjson::Document doc;
 		doc.Parse(server_resp.c_str());
 
@@ -403,9 +398,6 @@ namespace ig
 
 						if(challenge.HasMember("api_path"))
 						{
-							//todo DER FEHLER LIEGT VERMUTLICH BEI DIESER ANFRAGE
-							//todo er sendet nur einen neue challenge zurück
-
 							std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
 
 							//http headers
@@ -413,7 +405,7 @@ namespace ig
 							http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 							tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers);
-							tools::HttpResponse http_res = http_client.send_get_req(true); //todo
+							tools::HttpResponse http_res = http_client.send_get_req();
 
 							update_cookies(http_res.m_cookies);
 
@@ -424,9 +416,6 @@ namespace ig
 							{
 								if(doc.HasMember("step_name"))
 								{
-									//todo
-									std::cout << "das hier dürfte nicht zu sehen sein" << std::endl;
-
 									if(doc["step_name"].GetString() == std::string("select_verify_method"))
 									{
 										const rapidjson::Value &step_data = doc["step_data"];
@@ -607,29 +596,13 @@ namespace ig
 					{
 						if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
 						{
-							//todo
-							std::cout << "####################HIER RÜBER STEHT EINE FEHLERMELDUNG, WAS AUCH KORREKT IST#################" << std::endl;
-							std::cout << "soweit sind wir angekommen" << std::endl << std::endl;
 							if(solve_challenge(http_res.m_body))
-							{
-								//todo
-								std::cout << "ENDE" << std::endl;
-
 								return true;
-							}
 							else
-							{
-								//todo
-								std::cout << "ENDE" << std::endl;
-
 								std::cerr << "Error: The login challenge could not be solved." << std::endl;
-							}
 						}
 					}
 				}
-				//todo
-				std::cout << "ENDE" << std::endl;
-
 				return false;
 			}
 		}
