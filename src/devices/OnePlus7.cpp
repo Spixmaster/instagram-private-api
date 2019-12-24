@@ -2,7 +2,7 @@
 
 namespace ig
 {
-	const std::string OnePlus7::ig_version = "122.0.0.29.238";
+	const std::string OnePlus7::ig_version = "105.0.0.18.119";
 	const std::string OnePlus7::android_version = "28";
 	const std::string OnePlus7::android_release = "9.0";
 	const std::string OnePlus7::dpi = "420dpi";
