@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <Poco/URI.h>
 #include "ig/devices/OnePlus7.h"
+#include "ig/devices/SamsungGalaxyS7.h"
 #include <cstdlib>
 #include <rapidjson/document.h>
 #include <fstream>
@@ -63,7 +64,7 @@ namespace ig
 		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
 		http_headers.push_back(tools::HttpHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8"));
 		http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
-		http_headers.push_back(tools::HttpHeader("User-Agent", OnePlus7::user_agent));
+		http_headers.push_back(tools::HttpHeader("User-Agent", SamsungGalaxyS7::user_agent));
 		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", std::to_string(rand() % 3000 + 7000)));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string(rand() % 400000 + 500000)));
