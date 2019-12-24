@@ -382,6 +382,11 @@ namespace ig
 
 	bool Api::solve_challenge(const std::string &server_resp)
 	{
+		//todo
+		std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
+		std::cout << server_resp << std::endl;
+		std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+
 		rapidjson::Document doc;
 		doc.Parse(server_resp.c_str());
 
@@ -397,6 +402,8 @@ namespace ig
 
 						if(challenge.HasMember("api_path"))
 						{
+							//todo DER FEHLER LIEGT VERMUTLICH BEI DIESER ANFRAGE
+
 							std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
 
 							//http headers
@@ -404,18 +411,15 @@ namespace ig
 							http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 							tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers);
-							tools::HttpResponse http_res = http_client.send_get_req();
+							tools::HttpResponse http_res = http_client.send_get_req(true); //todo
+
+							update_cookies(http_res.m_cookies);
 
 							rapidjson::Document doc;
 							doc.Parse(http_res.m_body.c_str());
 
 							if(doc.IsObject())
 							{
-								//todo
-								std::cout << "wir sind doch schon recht weit" << std::endl;
-								std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-								std::cout << http_res.m_body << std::endl;
-								std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 								if(doc.HasMember("step_name"))
 								{
 									//todo
@@ -480,6 +484,8 @@ namespace ig
 										tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
 										tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
+										update_cookies(http_res.m_cookies);
+
 										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
 										std::string security_code;
 										std::cout << "Enter your verification code: ";
@@ -497,9 +503,10 @@ namespace ig
 											tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
 											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
+											update_cookies(http_res.m_cookies);
+
 											if(http_res.m_code == 200)
 											{
-												update_cookies(http_res.m_cookies);
 												std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
 
 												return true;
@@ -572,9 +579,10 @@ namespace ig
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
 			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
+			update_cookies(http_res.m_cookies);
+
 			if(http_res.m_code == 200)
 			{
-				update_cookies(http_res.m_cookies);
 				std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
 
 				return true;
