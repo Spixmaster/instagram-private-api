@@ -411,8 +411,16 @@ namespace ig
 
 							if(doc.IsObject())
 							{
+								//todo
+								std::cout << "wir sind doch schon recht weit" << std::endl;
+								std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
+								std::cout << http_res.m_body << std::endl;
+								std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 								if(doc.HasMember("step_name"))
 								{
+									//todo
+									std::cout << "das hier dürfte nicht zu sehen sein" << std::endl;
+
 									if(doc["step_name"].GetString() == std::string("select_verify_method"))
 									{
 										const rapidjson::Value &step_data = doc["step_data"];
@@ -591,7 +599,7 @@ namespace ig
 						{
 							//todo
 							std::cout << "####################HIER RÜBER STEHT EINE FEHLERMELDUNG, WAS AUCH KORREKT IST#################" << std::endl;
-							std::cout << "soweit sind wir angekommen" << std::endl;
+							std::cout << "soweit sind wir angekommen" << std::endl << std::endl;
 							if(solve_challenge(http_res.m_body))
 							{
 								//todo
