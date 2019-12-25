@@ -201,11 +201,13 @@ namespace ig
 		if(get_cookie_val("csrftoken").empty())
 			std::cerr << "Error: The cookie \"csrftoken\" is missing." << std::endl;
 
-		if(get_cookie_val("shbid").empty())
-			std::cerr << "Error: The cookie \"shbid\" is missing." << std::endl;
+		//it seems that this cookie is not necessary
+//		if(get_cookie_val("shbid").empty())
+//			std::cerr << "Error: The cookie \"shbid\" is missing." << std::endl;
 
-		if(get_cookie_val("shbts").empty())
-			std::cerr << "Error: The cookie \"shbts\" is missing." << std::endl;
+		//it seems that this cookie is not necessary
+//		if(get_cookie_val("shbts").empty())
+//			std::cerr << "Error: The cookie \"shbts\" is missing." << std::endl;
 
 		if(get_cookie_val("rur").empty())
 			std::cerr << "Error: The cookie \"rur\" is missing." << std::endl;
@@ -227,9 +229,8 @@ namespace ig
 		 * if a cookie is missing (I already know the names of those which are needed)
 		 */
 		if(m_phone_id.empty() || m_uuid.empty() || m_client_session_id.empty() || m_advertising_id.empty() || m_device_id.empty() ||
-				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("shbid").empty() || get_cookie_val("shbts").empty() ||
-				get_cookie_val("rur").empty() || get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() ||
-				get_cookie_val("mid").empty())
+				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("rur").empty() ||
+				get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() || get_cookie_val("mid").empty())
 		{
 			m_new_login = true;
 
