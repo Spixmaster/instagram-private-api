@@ -17,6 +17,7 @@
 #include <rapidjson/document.h>
 #include <fstream>
 #include <boost/filesystem.hpp>
+#include "tools/Constants.h"
 
 namespace ig
 {
@@ -110,6 +111,7 @@ namespace ig
 		return http_body;
 	}
 
+	//todo hier klappt irgendetwas nicht
 	void Api::setup_cookies_uuids()
 	{
 		if(tools::Tools::file_exists(Constants::file_uuids))
@@ -118,42 +120,64 @@ namespace ig
 			{
 				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "phone id"));
 				if(!args.empty())
+				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_phone_id = args.at(args.size() - 1);
+				}
+				else
+					std::cerr << "Error: \"phone id\" could not be found in " << Constants::file_uuids << "." << std::endl;
 			}
 
 			//uuid
 			{
 				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "uuid"));
 				if(!args.empty())
+				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_uuid = args.at(args.size() - 1);
+				}
+				else
+					std::cerr << "Error: \"uuid\" could not be found in " << Constants::file_uuids << "." << std::endl;
 			}
 
 			//client session id
 			{
 				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "client session id"));
 				if(!args.empty())
+				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_client_session_id = args.at(args.size() - 1);
+				}
+				else
+					std::cerr << "Error: \"client session id\" could not be found in " << Constants::file_uuids << "." << std::endl;
 			}
 
 			//advertising id
 			{
 				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "advertising id"));
 				if(!args.empty())
+				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_advertising_id = args.at(args.size() - 1);
+				}
+				else
+					std::cerr << "Error: \"advertising id\" could not be found in " << Constants::file_uuids << "." << std::endl;
 			}
 
 			//device id
 			{
 				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "device id"));
 				if(!args.empty())
+				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_device_id = args.at(args.size() - 1);
+				}
+				else
+					std::cerr << "Error: \"device id\" could not be found in " << Constants::file_uuids << "." << std::endl;
 			}
 		}
+		else
+			tools::Constants::file_non_existent(Constants::file_uuids);
 
 		if(tools::Tools::file_exists(Constants::file_cookies))
 		{
@@ -161,6 +185,36 @@ namespace ig
 				if(!tools::Tools::get_file_ln(Constants::file_cookies, j).empty())
 					m_cookies.push_back(tools::HttpCookie(tools::Tools::get_file_ln(Constants::file_cookies, j)));
 		}
+		else
+			tools::Constants::file_non_existent(Constants::file_cookies);
+
+		//just for orientation about the cookies
+		if(get_cookie_val("ds_user").empty())
+			std::cerr << "Error: The cookie \"ds_user\" is missing." << std::endl;
+
+		if(get_cookie_val("csrftoken").empty())
+			std::cerr << "Error: The cookie \"csrftoken\" is missing." << std::endl;
+
+		if(get_cookie_val("shbid").empty())
+			std::cerr << "Error: The cookie \"shbid\" is missing." << std::endl;
+
+		if(get_cookie_val("shbts").empty())
+			std::cerr << "Error: The cookie \"shbts\" is missing." << std::endl;
+
+		if(get_cookie_val("rur").empty())
+			std::cerr << "Error: The cookie \"rur\" is missing." << std::endl;
+
+		if(get_cookie_val("ds_user_id").empty())
+			std::cerr << "Error: The cookie \"ds_user_id\" is missing." << std::endl;
+
+		if(get_cookie_val("urlgen").empty())
+			std::cerr << "Error: The cookie \"urlgen\" is missing." << std::endl;
+
+		if(get_cookie_val("sessionid").empty())
+			std::cerr << "Error: The cookie \"sessionid\" is missing." << std::endl;
+
+		if(get_cookie_val("mid").empty())
+			std::cerr << "Error: The cookie \"mid\" is missing." << std::endl;
 
 		/*
 		 * if a uuid is missing
@@ -168,7 +222,8 @@ namespace ig
 		 */
 		if(m_phone_id.empty() || m_uuid.empty() || m_client_session_id.empty() || m_advertising_id.empty() || m_device_id.empty() ||
 				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("shbid").empty() || get_cookie_val("shbts").empty() ||
-				get_cookie_val("rur").empty() || get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty())
+				get_cookie_val("rur").empty() || get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() ||
+				get_cookie_val("mid").empty())
 		{
 			m_new_login = true;
 
@@ -220,7 +275,6 @@ namespace ig
 				m_cookies.push_back(http_cookies.at(j));
 			}
 		}
-
 		set_cookie_str();
 	}
 
@@ -409,6 +463,18 @@ namespace ig
 
 							update_cookies(http_res.m_cookies);
 
+							//todo
+							std::cout << "vvvvvvvvvvvhttp response - 1. in solve challengevvvvvvvvvvvvvvv" << std::endl;
+							for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
+								std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
+							std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+
+							//todo
+							std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
+							for(size_t j = 0; j < m_cookies.size(); ++j)
+								std::cout << m_cookies.at(j).to_string() << std::endl;
+							std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+
 							rapidjson::Document doc;
 							doc.Parse(http_res.m_body.c_str());
 
@@ -479,6 +545,18 @@ namespace ig
 
 										update_cookies(http_res.m_cookies);
 
+										//todo
+										std::cout << "vvvvvvvvvvvhttp response 2. choice gesendetvvvvvvvvvvvvvvv" << std::endl;
+										for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
+											std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
+										std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+
+										//todo
+										std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
+										for(size_t j = 0; j < m_cookies.size(); ++j)
+											std::cout << m_cookies.at(j).to_string() << std::endl;
+										std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+
 										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
 										std::string security_code;
 										std::cout << "Enter your verification code: ";
@@ -497,6 +575,18 @@ namespace ig
 											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 											update_cookies(http_res.m_cookies);
+
+											//todo
+											std::cout << "vvvvvvvvvvvhttp response security code gesendetvvvvvvvvvvvvvvv" << std::endl;
+											for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
+												std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
+											std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+
+											//todo
+											std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
+											for(size_t j = 0; j < m_cookies.size(); ++j)
+												std::cout << m_cookies.at(j).to_string() << std::endl;
+											std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 
 											if(http_res.m_code == 200)
 											{
@@ -570,9 +660,21 @@ namespace ig
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args)); //todo
 
 			update_cookies(http_res.m_cookies);
+
+			//todo
+			std::cout << "vvvvvvvvvvvhttp responsevvvvvvvvvvvvvvv" << std::endl;
+			for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
+				std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
+			std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+
+			//todo
+			std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
+			for(size_t j = 0; j < m_cookies.size(); ++j)
+				std::cout << m_cookies.at(j).to_string() << std::endl;
+			std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 
 			if(http_res.m_code == 200)
 			{
