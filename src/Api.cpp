@@ -35,6 +35,13 @@ namespace ig
 
 		//also determines whether an new login is required
 		setup_cookies_uuids();
+
+		//login
+		if(login())
+		{
+			save_uuids_in_file();
+			save_cookies_in_file();
+		}
 	}
 
 	Api::~Api()
@@ -458,7 +465,7 @@ namespace ig
 							http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 							tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers);
-							tools::HttpResponse http_res = http_client.send_get_req();
+							tools::HttpResponse http_res = http_client.send_get_req(true); //todo
 
 							update_cookies(http_res.m_cookies);
 
@@ -528,7 +535,7 @@ namespace ig
 										http_args.push_back(tools::HttpArg("choice", choice));
 
 										tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
-										tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+										tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true); //todo
 
 										update_cookies(http_res.m_cookies);
 
@@ -547,7 +554,7 @@ namespace ig
 											http_args.push_back(tools::HttpArg("security_code", security_code));
 
 											tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
-											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true); //todo
 
 											update_cookies(http_res.m_cookies);
 
@@ -623,7 +630,7 @@ namespace ig
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true); //todo
 
 			update_cookies(http_res.m_cookies);
 
