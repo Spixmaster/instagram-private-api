@@ -226,10 +226,13 @@ namespace ig
 		 * if a uuid is missing
 		 * if a cookie is missing (I already know the names of those which are needed)
 		 */
-		if(m_phone_id.empty() || m_uuid.empty() || m_client_session_id.empty() || m_advertising_id.empty() || m_device_id.empty() ||
-				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("shbid").empty() || get_cookie_val("shbts").empty() ||
-				get_cookie_val("rur").empty() || get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() ||
-				get_cookie_val("mid").empty())
+		if(m_phone_id.empty() || m_uuid.empty() || m_client_session_id.empty() || m_advertising_id.empty() || m_device_id.empty()
+//				||
+//				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("shbid").empty() || get_cookie_val("shbts").empty() ||
+//				get_cookie_val("rur").empty() || get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() ||
+//				get_cookie_val("mid").empty()
+				)
+			//todo
 		{
 			m_new_login = true;
 
@@ -787,7 +790,7 @@ namespace ig
 		std::string url = Constants::ig_url + "users/" + user_id + "/info/";
 
 		tools::HttpClient http_client(url, http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
+		tools::HttpResponse http_res = http_client.send_get_req(true); //todo
 
 		update_cookies(http_res.m_cookies);
 
