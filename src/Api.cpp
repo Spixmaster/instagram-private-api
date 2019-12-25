@@ -441,8 +441,14 @@ namespace ig
 		return http_res.m_body;
 	}
 
+	//todo
 	bool Api::solve_challenge(const std::string &server_resp)
 	{
+		/*
+		 * *1 get the challenge content
+		 * *2 send the choice concerning the verification method
+		 * *3 send the verification code
+		 */
 		rapidjson::Document doc;
 		doc.Parse(server_resp.c_str());
 
@@ -461,16 +467,16 @@ namespace ig
 							std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
 
 							//http headers
-							std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-							http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+							std::vector<tools::HttpHeader> http_headers1 = get_ig_http_headers();
+							http_headers1.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
-							tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers);
-							tools::HttpResponse http_res = http_client.send_get_req(true); //todo
+							tools::HttpClient http_client1(Constants::ig_url + challenge_path, http_headers1);
+							tools::HttpResponse http_res1 = http_client1.send_get_req();
 
-							update_cookies(http_res.m_cookies);
+							update_cookies(http_res1.m_cookies);
 
 							rapidjson::Document doc;
-							doc.Parse(http_res.m_body.c_str());
+							doc.Parse(http_res1.m_body.c_str());
 
 							if(doc.IsObject())
 							{
@@ -487,7 +493,7 @@ namespace ig
 											choices.append("1 - Email");
 
 										std::cout << "If you do not know your personal data like phone number or email here are some hints:" << std::endl;
-										std::cout << http_res.m_body << std::endl;
+										std::cout << http_res1.m_body << std::endl;
 										std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
 										std::cout << choices << std::endl;
 										int choice = -1;
@@ -527,43 +533,41 @@ namespace ig
 										}
 
 										//http headers
-										std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-										http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+										std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
+										http_headers2.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 										//http args
-										std::vector<tools::HttpArg> http_args;
-										http_args.push_back(tools::HttpArg("choice", choice));
+										std::vector<tools::HttpArg> http_args2;
+										http_args2.push_back(tools::HttpArg("choice", choice));
 
-										tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
-										tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true); //todo
+										tools::HttpClient http_client2(Constants::ig_url + challenge_path, http_headers2, http_args2);
+										tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
 
-										update_cookies(http_res.m_cookies);
+										update_cookies(http_res2.m_cookies);
 
 										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
 										std::string security_code;
 										std::cout << "Enter your verification code: ";
 										std::cin >> security_code;
 
+										//http headers
+										std::vector<tools::HttpHeader> http_headers3 = get_ig_http_headers();
+										http_headers3.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+										//http args
+										std::vector<tools::HttpArg> http_args3;
+										http_args3.push_back(tools::HttpArg("security_code", security_code));
+
+										tools::HttpClient http_client3(Constants::ig_url + challenge_path, http_headers3, http_args3);
+										tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
+
+										update_cookies(http_res3.m_cookies);
+
+										if(http_res3.m_code == 200)
 										{
-											//http headers
-											std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-											http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+											std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
 
-											//http args
-											std::vector<tools::HttpArg> http_args;
-											http_args.push_back(tools::HttpArg("security_code", security_code));
-
-											tools::HttpClient http_client(Constants::ig_url + challenge_path, http_headers, http_args);
-											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args), true); //todo
-
-											update_cookies(http_res.m_cookies);
-
-											if(http_res.m_code == 200)
-											{
-												std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
-
-												return true;
-											}
+											return true;
 										}
 									}
 									else
