@@ -156,13 +156,14 @@ namespace ig
 		 */
 		std::string get_rank_token();
 
-	public:
+
 		/*
 		 * @brief logs into Instagram
 		 * @return true on success; otherwise false
 		 */
 		bool login();
 
+	public:
 		/*
 		 * @brief gets all likers of the Instagram media
 		 * @param media_id: the proper media id
