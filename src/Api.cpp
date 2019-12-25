@@ -441,7 +441,6 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	//todo
 	bool Api::solve_challenge(const std::string &server_resp)
 	{
 		/*
