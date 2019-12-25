@@ -111,7 +111,6 @@ namespace ig
 		return http_body;
 	}
 
-	//todo hier klappt irgendetwas nicht
 	void Api::setup_cookies_uuids()
 	{
 		if(tools::Tools::file_exists(Constants::file_uuids))
@@ -463,18 +462,6 @@ namespace ig
 
 							update_cookies(http_res.m_cookies);
 
-							//todo
-							std::cout << "vvvvvvvvvvvhttp response - 1. in solve challengevvvvvvvvvvvvvvv" << std::endl;
-							for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
-								std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
-							std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-
-							//todo
-							std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
-							for(size_t j = 0; j < m_cookies.size(); ++j)
-								std::cout << m_cookies.at(j).to_string() << std::endl;
-							std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-
 							rapidjson::Document doc;
 							doc.Parse(http_res.m_body.c_str());
 
@@ -545,18 +532,6 @@ namespace ig
 
 										update_cookies(http_res.m_cookies);
 
-										//todo
-										std::cout << "vvvvvvvvvvvhttp response 2. choice gesendetvvvvvvvvvvvvvvv" << std::endl;
-										for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
-											std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
-										std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-
-										//todo
-										std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
-										for(size_t j = 0; j < m_cookies.size(); ++j)
-											std::cout << m_cookies.at(j).to_string() << std::endl;
-										std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-
 										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
 										std::string security_code;
 										std::cout << "Enter your verification code: ";
@@ -575,18 +550,6 @@ namespace ig
 											tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 											update_cookies(http_res.m_cookies);
-
-											//todo
-											std::cout << "vvvvvvvvvvvhttp response security code gesendetvvvvvvvvvvvvvvv" << std::endl;
-											for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
-												std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
-											std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-
-											//todo
-											std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
-											for(size_t j = 0; j < m_cookies.size(); ++j)
-												std::cout << m_cookies.at(j).to_string() << std::endl;
-											std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 
 											if(http_res.m_code == 200)
 											{
@@ -660,21 +623,9 @@ namespace ig
 			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
 			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args)); //todo
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 			update_cookies(http_res.m_cookies);
-
-			//todo
-			std::cout << "vvvvvvvvvvvhttp responsevvvvvvvvvvvvvvv" << std::endl;
-			for(size_t j = 0; j < http_res.m_cookies.size(); ++j)
-				std::cout << http_res.m_cookies.at(j).to_string() << std::endl;
-			std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-
-			//todo
-			std::cout << "vvvvvvvvvvvvmember variablevvvvvvvvvvvvvv" << std::endl;
-			for(size_t j = 0; j < m_cookies.size(); ++j)
-				std::cout << m_cookies.at(j).to_string() << std::endl;
-			std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 
 			if(http_res.m_code == 200)
 			{
