@@ -720,16 +720,21 @@ namespace ig
 			if(doc.IsObject())
 			{
 				//scrape comments
-				const rapidjson::Value &comments = doc["comments"];
-				for(size_t j = 0; j < comments.Size(); ++j)
+				if(doc.HasMember("comments"))
 				{
-					result.append(tools::Tools::get_json_as_string(comments[j]));
-					result.append(", ");
-				}
+					const rapidjson::Value &comments = doc["comments"];
+					for(size_t j = 0; j < comments.Size(); ++j)
+					{
+						result.append(tools::Tools::get_json_as_string(comments[j]));
+						result.append(", ");
+					}
 
-				//perhaps, next page
-				if(doc.HasMember("has_more_comments") && doc.HasMember("next_max_id"))
-					response = get_media_comments(media_id, doc["next_max_id"].GetString());
+					//perhaps, next page
+					if(doc.HasMember("has_more_comments") && doc.HasMember("next_max_id"))
+						response = get_media_comments(media_id, doc["next_max_id"].GetString());
+					else
+						break;
+				}
 				else
 					break;
 			}
