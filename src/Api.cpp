@@ -570,8 +570,71 @@ namespace ig
 											return true;
 										}
 									}
+									else if(doc["step_name"].GetString() == std::string("delta_login_review"))
+									{
+										const rapidjson::Value &step_data = doc["step_data"];
+										std::string choices;
+
+										choices.append("0 - It was me\n");
+										choices.append("1 - It wasn't me");
+
+										std::cout << "Here you have the last server response:" << std::endl;
+										std::cout << http_res1.m_body << std::endl;
+										std::cout << "You need to verify your login. Choose on whether the last login was you." << std::endl;
+										std::cout << choices << std::endl;
+										int choice = -1;
+
+										while(!(choice == 0 || choice == 1))
+										{
+											std::cout << "Your choice: ";
+											std::cin >> choice;
+
+											if(!(choice == 0 || choice == 1))
+												std::cout << "Error: Wrong choice. Try again!" << std::endl;
+										}
+
+										//http headers
+										std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
+										http_headers2.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+										//http args
+										std::vector<tools::HttpArg> http_args2;
+										http_args2.push_back(tools::HttpArg("choice", choice));
+
+										tools::HttpClient http_client2(Constants::ig_url + challenge_path, http_headers2, http_args2);
+										tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
+
+										update_cookies(http_res2.m_cookies);
+
+										//todo Is the code below even necessary? I cannot reproduce the problem.
+										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
+										std::string security_code;
+										std::cout << "Enter your verification code: ";
+										std::cin >> security_code;
+
+										//http headers
+										std::vector<tools::HttpHeader> http_headers3 = get_ig_http_headers();
+										http_headers3.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+										//http args
+										std::vector<tools::HttpArg> http_args3;
+										http_args3.push_back(tools::HttpArg("security_code", security_code));
+
+										tools::HttpClient http_client3(Constants::ig_url + challenge_path, http_headers3, http_args3);
+										tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
+
+										update_cookies(http_res3.m_cookies);
+
+										if(http_res3.m_code == 200)
+										{
+											std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+
+											return true;
+										}
+									}
 									else
-										std::cerr << "Error: The challenge response's field \"step_name\" does not have the value \"select_verify_method\"." << std::endl;
+										std::cerr << "Error: The challenge response's field \"step_name\" does not have the value " +
+										"\"select_verify_method\" or \"delta_login_review\"." << std::endl;
 								}
 								else
 									std::cerr << "Error: The challenge response does not have a field \"step_name\"." << std::endl;
