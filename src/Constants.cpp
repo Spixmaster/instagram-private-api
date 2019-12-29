@@ -4,8 +4,8 @@
 
 namespace ig
 {
-	const std::string Constants::version = "0.16";
-	const std::string Constants::release = "27.Dec.2019";
+	const std::string Constants::version = "0.18";
+	const std::string Constants::release = "29.Dec.2019";
 
 	const std::string Constants::ig_url = "https://i.instagram.com/api/v1/";
 	const std::string Constants::ig_sig_key_version = "4";
@@ -64,6 +64,4 @@ namespace ig
 		    "verse,ig_android_prefill_full_name_from_fb,ig_android_access_flow_prefill";
 
 	const std::string Constants::files_folder = "files/ig/";
-	const std::string Constants::file_cookies = files_folder + "cookies.dat";
-	const std::string Constants::file_uuids = files_folder + "uuids.dat";
 }
