@@ -93,7 +93,7 @@ Everything you read here in this section is not required but I would recommend y
 An [MITM attack](https://www.youtube.com/watch?v=rub_uNFwTF8) on a mobile device is needed to get all Instagram's endpoints. As Instagram has some additional security measures it is needed to [break certificate pinning](https://www.youtube.com/watch?v=yJRlMmJjrhY).
 
 ## Thanks to
-As I could not root my phone due to is unpopularity as there are mainly roots available for popular phones I was reliant on other people's work. These repos helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my code for this project.
+As I could not root my phone due to is unpopularity as there are mainly roots available for popular phones I was reliant on other people's work as only rooted phones can break certificate pinning. These repos helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my code for this project.
 * https://github.com/mgp25/Instagram-API
 * https://github.com/instagrambot/instabot
 * https://github.com/ping/instagram_private_api
