@@ -85,8 +85,9 @@ int main()
 
 ## Safe usage
 Everything you read here in this section is not required but I would recommend you follow suit these advices.
-* Do not keep to many open sessions which happens if you only log in to Instagram with your account but do not logout and instead just delete the cookies and uuids. Thus call the logout member function if you no longer want to use that specific session. This will delete the proper files from your machine for you. It is a security risk and should make Instagram suspicous if there are to many open session for your account. Go to [this page](https://www.instagram.com/session/login_activity/) when logged in in your browser and manage your open sessions if your forgot to logou and just deleted your cookies.
+* Do not keep too many open sessions which happens if you only log in to Instagram with your account but do not log out and instead just delete the cookies and uuids. Thus, call the logout member function if you no longer want to use that specific session. This will also delete the proper files from your machine for you. It is a security risk and should make Instagram suspicous if there are to many open sessions for one account. Go to [this page](https://www.instagram.com/session/login_activity/) when logged in in your browser and manage your open sessions if your forgot to log out and just deleted your cookies.
 * After the login go to [this page](https://www.instagram.com/session/login_activity/) in your browser again and approve your login. You will encouter the information that a device logged in. Just tell Instagram that that was you by clicking the proper button.
+* Go [here](https://www.instagram.com/session/login_activity/) regularly to check your sessions.
 
 ## Technical
 An [MITM attack](https://www.youtube.com/watch?v=rub_uNFwTF8) on a mobile device is needed to get all Instagram's endpoints. As Instagram has some additional security measures it is needed to [break certificate pinning](https://www.youtube.com/watch?v=yJRlMmJjrhY).
