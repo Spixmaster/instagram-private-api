@@ -23,9 +23,18 @@ namespace ig
 
 	private:
 		//member variables
-			//Instagram's login credentials
+			//Instagram's login credentials and cookie file
 		std::string m_username;
 		std::string m_password;
+			//session values(cookies, uuids)
+		std::string m_file_uuids;
+		std::string m_file_cookies;
+			/*
+			 * whether cookies and uuids file are deleted when destructor is called
+			 * this is necessary as when these files are deleted the destructor will undo the deletion because it saved the
+			 * 		files again
+			 */
+		bool m_del_cookies_uuids;
 			//bool on which some actions depend
 		bool m_new_login;
 			//uuids which are needed for Instagram
@@ -156,6 +165,11 @@ namespace ig
 		 */
 		std::string get_rank_token();
 
+		/*
+		 * @brief on every request Instagram can respond with error messages --> this function catches and handles them
+		 * @param server_resp: the server response
+		 */
+		void post_req_check(const std::string &server_resp);
 
 		/*
 		 * @brief logs into Instagram
@@ -267,6 +281,12 @@ namespace ig
 		 * @return amount of followers
 		 */
 		int get_amnt_flwrs(const std::string &user_id);
+
+		/*
+		 * @brief logs out which means that the session with its corresponding cookies will not longer be usable
+		 * @return the server response
+		 */
+		std::string logout();
 	};
 }
 

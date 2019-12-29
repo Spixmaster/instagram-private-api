@@ -27,8 +27,6 @@ namespace ig
 		static const std::string login_experiments;
 			//files
 		static const std::string files_folder;
-		static const std::string file_cookies;
-		static const std::string file_uuids;
 	};
 }
 

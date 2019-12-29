@@ -21,7 +21,8 @@
 
 namespace ig
 {
-	Api::Api(const std::string &username, const std::string &password) : m_username(username), m_password(password)
+	Api::Api(const std::string &username, const std::string &password) : m_username(username), m_password(password),
+			m_file_uuids(Constants::files_folder + username + "_uuids.dat"), m_file_cookies(Constants::files_folder + username + "_cookies.dat"), m_del_cookies_uuids(false)
 	{
 		//create necessary folders
 		try
@@ -46,8 +47,19 @@ namespace ig
 
 	Api::~Api()
 	{
-		save_uuids_in_file();
-		save_cookies_in_file();
+		if(!m_del_cookies_uuids)
+		{
+			save_uuids_in_file();
+			save_cookies_in_file();
+		}
+		else
+		{
+			if(remove(m_file_uuids.c_str()) != 0)
+				std::cerr << "Error: " << m_file_uuids << " - " << strerror(errno) << std::endl;
+
+			if(remove(m_file_cookies.c_str()) != 0)
+				std::cerr << "Error: " << m_file_cookies << " - " << strerror(errno) << std::endl;
+		}
 	}
 
 	std::vector<tools::HttpHeader> Api::get_ig_http_headers() const
@@ -120,79 +132,79 @@ namespace ig
 
 	void Api::setup_cookies_uuids()
 	{
-		if(tools::Tools::file_exists(Constants::file_uuids))
+		if(tools::Tools::file_exists(m_file_uuids))
 		{
 			//phone id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "phone id"));
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_uuids, "phone id"));
 				if(!args.empty())
 				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_phone_id = args.at(args.size() - 1);
 				}
 				else
-					std::cerr << "Error: \"phone id\" could not be found in " << Constants::file_uuids << "." << std::endl;
+					std::cerr << "Error: \"phone id\" could not be found in " << m_file_uuids << "." << std::endl;
 			}
 
 			//uuid
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "uuid"));
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_uuids, "uuid"));
 				if(!args.empty())
 				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_uuid = args.at(args.size() - 1);
 				}
 				else
-					std::cerr << "Error: \"uuid\" could not be found in " << Constants::file_uuids << "." << std::endl;
+					std::cerr << "Error: \"uuid\" could not be found in " << m_file_uuids << "." << std::endl;
 			}
 
 			//client session id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "client session id"));
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_uuids, "client session id"));
 				if(!args.empty())
 				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_client_session_id = args.at(args.size() - 1);
 				}
 				else
-					std::cerr << "Error: \"client session id\" could not be found in " << Constants::file_uuids << "." << std::endl;
+					std::cerr << "Error: \"client session id\" could not be found in " << m_file_uuids << "." << std::endl;
 			}
 
 			//advertising id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "advertising id"));
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_uuids, "advertising id"));
 				if(!args.empty())
 				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_advertising_id = args.at(args.size() - 1);
 				}
 				else
-					std::cerr << "Error: \"advertising id\" could not be found in " << Constants::file_uuids << "." << std::endl;
+					std::cerr << "Error: \"advertising id\" could not be found in " << m_file_uuids << "." << std::endl;
 			}
 
 			//device id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(Constants::file_uuids, "device id"));
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_uuids, "device id"));
 				if(!args.empty())
 				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_device_id = args.at(args.size() - 1);
 				}
 				else
-					std::cerr << "Error: \"device id\" could not be found in " << Constants::file_uuids << "." << std::endl;
+					std::cerr << "Error: \"device id\" could not be found in " << m_file_uuids << "." << std::endl;
 			}
 		}
 		else
-			tools::Constants::file_non_existent(Constants::file_uuids);
+			tools::Constants::file_non_existent(m_file_uuids);
 
-		if(tools::Tools::file_exists(Constants::file_cookies))
+		if(tools::Tools::file_exists(m_file_cookies))
 		{
-			for(int j = 1; j <= tools::Tools::get_amnt_file_lns(Constants::file_cookies); ++j)
-				if(!tools::Tools::get_file_ln(Constants::file_cookies, j).empty())
-					m_cookies.push_back(tools::HttpCookie(tools::Tools::get_file_ln(Constants::file_cookies, j)));
+			for(int j = 1; j <= tools::Tools::get_amnt_file_lns(m_file_cookies); ++j)
+				if(!tools::Tools::get_file_ln(m_file_cookies, j).empty())
+					m_cookies.push_back(tools::HttpCookie(tools::Tools::get_file_ln(m_file_cookies, j)));
 		}
 		else
-			tools::Constants::file_non_existent(Constants::file_cookies);
+			tools::Constants::file_non_existent(m_file_cookies);
 
 		//just for orientation about the cookies
 		if(get_cookie_val("ds_user").empty())
@@ -287,7 +299,7 @@ namespace ig
 
 	void Api::save_uuids_in_file() const
 	{
-		std::ofstream outf(Constants::file_uuids);
+		std::ofstream outf(m_file_uuids);
 		outf << "All ids:" << std::endl;
 		outf << "phone id: " << m_phone_id << std::endl;
 		outf << "uuid: " << m_uuid << std::endl;
@@ -299,7 +311,7 @@ namespace ig
 
 	void Api::save_cookies_in_file() const
 	{
-		std::ofstream outf(Constants::file_cookies);
+		std::ofstream outf(m_file_cookies);
 
 		for(size_t j = 0; j < m_cookies.size(); ++j)
 			outf << m_cookies.at(j).to_string() << std::endl;
@@ -347,6 +359,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -373,6 +386,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -399,6 +413,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -417,6 +432,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -438,6 +454,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -565,14 +582,13 @@ namespace ig
 
 										if(http_res3.m_code == 200)
 										{
-											std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+											std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
 
 											return true;
 										}
 									}
 									else if(doc["step_name"].GetString() == std::string("delta_login_review"))
 									{
-										const rapidjson::Value &step_data = doc["step_data"];
 										std::string choices;
 
 										choices.append("0 - It was me\n");
@@ -606,34 +622,15 @@ namespace ig
 
 										update_cookies(http_res2.m_cookies);
 
-										//todo Is the code below even necessary? I cannot reproduce the problem.
-										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
-										std::string security_code;
-										std::cout << "Enter your verification code: ";
-										std::cin >> security_code;
-
-										//http headers
-										std::vector<tools::HttpHeader> http_headers3 = get_ig_http_headers();
-										http_headers3.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-										//http args
-										std::vector<tools::HttpArg> http_args3;
-										http_args3.push_back(tools::HttpArg("security_code", security_code));
-
-										tools::HttpClient http_client3(Constants::ig_url + challenge_path, http_headers3, http_args3);
-										tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
-
-										update_cookies(http_res3.m_cookies);
-
-										if(http_res3.m_code == 200)
+										if(http_res2.m_code == 200)
 										{
-											std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+											std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
 
 											return true;
 										}
 									}
 									else
-										std::cerr << "Error: The challenge response's field \"step_name\" does not have the value " +
+										std::cerr << std::string("Error: The challenge response's field \"step_name\" does not have the value ") +
 										"\"select_verify_method\" or \"delta_login_review\"." << std::endl;
 								}
 								else
@@ -663,6 +660,68 @@ namespace ig
 	std::string Api::get_rank_token()
 	{
 		return get_cookie_val("ds_user_id") + "_" + m_uuid;
+	}
+
+	void Api::post_req_check(const std::string &server_resp)
+	{
+		rapidjson::Document doc;
+		doc.Parse(server_resp.c_str());
+
+		if(doc.IsObject())
+		{
+			/*
+			 * {
+			 * 		"message":"challenge_required",
+			 * 		"challenge":
+			 * 		{
+			 * 			"url":"https://i.instagram.com/challenge/?next=/api/v1/launcher/sync/",
+			 * 			"api_path":"/challenge/",
+			 * 			"hide_webview_header":true,
+			 * 			"lock":true,
+			 * 			"logout":false,
+			 * 			"native_flow":true
+			 * 		},
+			 * 		"status":"fail"
+			 * }
+			 */
+			if(doc.HasMember("message"))
+			{
+				if(doc["message"].GetString() == std::string("challenge_required"))
+				{
+					std::cerr << "######################" << std::endl;
+					std::cerr << "Warning!" << std::endl;
+					std::cerr << "It seems that it is needed to solve a challenge manually. Log into your Instagram account in your browser " <<
+							"and you should be requested to verify your identity. Additionally, check the open sessions (https://www.instagram.com/session/login_activity/) " <<
+							"and approve or deny that your opened these sessions." << std::endl;
+					std::cerr << "######################" << std::endl;
+				}
+			}
+
+			/*
+			 * a response like the following is sent back for example if the wrong cookies are sent and you are logged out as a consequence
+			 * you will also get the response below if the session is revoked on https://www.instagram.com/session/login_activity/
+			 *
+			 * {
+			 * 		"message":"login_required",
+			 * 		"error_title":"You've Been Logged Out",
+			 * 		"error_body":"Please log back in.",
+			 * 		"logout_reason":2,
+			 * 		"status":"fail"
+			 * }
+			 */
+			if(doc.HasMember("message"))
+			{
+				if(doc["message"].GetString() == std::string("login_required"))
+				{
+					m_del_cookies_uuids = true;
+
+					std::cerr << "######################" << std::endl;
+					std::cerr << "Warning!" << std::endl;
+					std::cerr << "A new login is required as you have been logged out." << std::endl;
+					std::cerr << "######################" << std::endl;
+				}
+			}
+		}
 	}
 
 	bool Api::login()
@@ -703,7 +762,7 @@ namespace ig
 
 			if(http_res.m_code == 200)
 			{
-				std::cout << "Successful login! The cookies are saved to " << Constants::file_cookies << "!" << std::endl;
+				std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
 
 				return true;
 			}
@@ -748,6 +807,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -766,6 +826,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -826,6 +887,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -843,6 +905,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -859,6 +922,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
 
 		return http_res.m_body;
 	}
@@ -1034,5 +1098,25 @@ namespace ig
 					return user["follower_count"].GetInt();
 			}
 		return 0;
+	}
+
+	std::string Api::logout()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+
+		tools::HttpClient http_client(Constants::ig_url + "accounts/logout/", http_headers, http_args);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
+
+		m_del_cookies_uuids = true;
+
+		return http_res.m_body;
 	}
 }
