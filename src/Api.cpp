@@ -459,6 +459,56 @@ namespace ig
 		return http_res.m_body;
 	}
 
+	std::string Api::sync_launcher(const bool &additional_data)
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("id", m_uuid));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
+		http_args.push_back(tools::HttpArg("experiments", Constants::launcher_configs));
+		if(additional_data)
+		{
+			http_args.push_back(tools::HttpArg("_uuid", m_uuid));
+			http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		}
+
+		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::sync_user_features()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("_uuid", m_uuid));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("id", m_uuid));
+		http_args.push_back(tools::HttpArg("experiments", Constants::experiments));
+
+		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_cookies(http_res.m_cookies);
+		post_req_check(http_res.m_body);
+
+		return http_res.m_body;
+	}
+
 	bool Api::solve_challenge(const std::string &server_resp)
 	{
 		/*
@@ -941,13 +991,22 @@ namespace ig
 				if(doc.HasMember("media_id"))
 					return doc["media_id"].GetString();
 				else
-					return "Error: There is no field \"media_id\" in the json.";
+				{
+					std::cerr << "Error: There is no field \"media_id\" in the json." << std::endl;
+					return "";
+				}
 			}
 			else
-				return "Error: The string is not a json object.";
+			{
+				std::cerr << "Error: The string is not a json object." << std::endl;
+				return "";
+			}
 		}
 		else
-			return "Error: This is not an Instagram post.";
+		{
+			std::cerr << "Error: This is not an Instagram post." << std::endl;
+			return "";
+		}
 	}
 
 	bool Api::is_ig_post(const std::string &url)
@@ -1034,13 +1093,22 @@ namespace ig
 				if(user.HasMember("username"))
 					return user["username"].GetString();
 				else
-					return "Error: There is no field \"username\" in the json.";
+				{
+					std::cerr << "Error: There is no field \"username\" in the json." << std::endl;
+					return "";
+				}
 			}
 			else
-				return "Error: There is no field \"user\" in the json.";
+			{
+				std::cerr <<  "Error: There is no field \"user\" in the json." << std::endl;
+				return "";
+			}
 		}
 		else
-			return "Error: The string is not a json object.";
+		{
+			std::cerr << "Error: The string is not a json object." << std::endl;
+			return "";
+		}
 	}
 
 	std::string Api::get_username_from_media_id(const std::string &media_id)
