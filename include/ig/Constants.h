@@ -25,6 +25,7 @@ namespace ig
 		static const std::string ig_sig_key;
 		static const std::string launcher_configs;
 		static const std::string login_experiments;
+		static const std::string experiments;
 			//files
 		static const std::string files_folder;
 	};

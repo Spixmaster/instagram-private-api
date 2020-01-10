@@ -112,45 +112,49 @@ namespace ig
 		 */
 		std::string get_cookie_val(const std::string &cookie_name) const;
 
+		//pre login request
 		/*
 		 * @brief the request is part of the login process
-		 * @brief Cookie: /
-		 * @brief Set-Cookie: csrftoken, rur, mid
 		 * @return server response
 		 */
 		std::string read_msisdn_header();
 
 		/*
 		 * @brief the request is part of the login process
-		 * @brief Cookie: csrftoken, rur, mid
-		 * @brief Set-Cookie: csrftoken, rur (same as before)
 		 * @return server response
 		 */
 		std::string launcher_sync();
 
 		/*
 		 * @brief the request is part of the login process
-		 * @brief Cookie: csrftoken, rur, mid
-		 * @brief Set-Cookie: csrftoken, rur (same as before)
 		 * @return server response
 		 */
 		std::string qe_sync();
 
 		/*
 		 * @brief the request is part of the login process
-		 * @brief Cookie: csrftoken, rur, mid
-		 * @brief Set-Cookie: csrftoken, rur (same as before)
 		 * @return server response
 		 */
 		std::string log_attribution();
 
 		/*
 		 * @brief the request is part of the login process
-		 * @brief Cookie: csrftoken, rur, mid
-		 * @brief Set-Cookie: csrftoken, rur (same as before)
 		 * @return server response
 		 */
 		std::string contact_point_prefill();
+
+		//post login requests
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string sync_launcher(const bool &additional_data);
+
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string sync_user_features();
 
 		/*
 		 * @brief on Instagram login it can occur that a challenge is required for fulfillment
