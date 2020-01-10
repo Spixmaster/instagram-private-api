@@ -1135,19 +1135,34 @@ namespace ig
 						if(user.HasMember("username"))
 							return user["username"].GetString();
 						else
-							return "Error: There is no field \"username\" in the json.";
+						{
+							std::cerr << "Error: There is no field \"username\" in the json." << std::endl;
+							return "";
+						}
 					}
 					else
-						return "Error: There is no field \"user\" in the json.";
+					{
+						std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
+						return "";
+					}
 				}
 				else
-					return "Error: The field \"items\" is not a json array of size greater than 0.";
+				{
+					std::cerr << "Error: The field \"items\" is not a json array of size greater than 0." << std::endl;
+					return "";
+				}
 			}
 			else
-				return "Error: There is no field \"items\" in the json.";
+			{
+				std::cerr << "Error: There is no field \"items\" in the json." << std::endl;
+				return "";
+			}
 		}
 		else
-			return "Error: The string is not a json object.";
+		{
+			std::cerr << "Error: The string is not a json object." << std::endl;
+			return "";
+		}
 	}
 
 	int Api::get_amnt_flwrs(const std::string &user_id)
