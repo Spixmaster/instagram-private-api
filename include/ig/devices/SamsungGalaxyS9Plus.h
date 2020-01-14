@@ -1,5 +1,5 @@
-#ifndef IG_DEVICES_SAMSUNG_GALAXY_S7_H
-#define IG_DEVICES_SAMSUNG_GALAXY_S7_H
+#ifndef IG_DEVICES_SAMSUNG_GALAXY_S9_PLUS_H
+#define IG_DEVICES_SAMSUNG_GALAXY_S9_PLUS_H
 
 #include <string>
 #include <memory>
@@ -12,11 +12,11 @@
 
 namespace ig
 {
-	class SamsungGalaxyS7: public Device
+	class SamsungGalaxyS9Plus: public Device
 	{
 	public:
 		//pointer of itself
-		typedef std::shared_ptr<SamsungGalaxyS7> ptr;
+		typedef std::shared_ptr<SamsungGalaxyS9Plus> ptr;
 
 	private:
 		//member variables
@@ -33,10 +33,10 @@ namespace ig
 
 	public:
 		//constructors
-		SamsungGalaxyS7();
+		SamsungGalaxyS9Plus();
 
 		//destructors
-		virtual ~SamsungGalaxyS7();
+		virtual ~SamsungGalaxyS9Plus();
 
 		//member functions
 		/*

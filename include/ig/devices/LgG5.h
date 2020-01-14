@@ -1,5 +1,5 @@
-#ifndef IG_DEVICES_SAMSUNG_GALAXY_S7_H
-#define IG_DEVICES_SAMSUNG_GALAXY_S7_H
+#ifndef IG_DEVICES_LG_G5_h
+#define IG_DEVICES_LG_G5_h
 
 #include <string>
 #include <memory>
@@ -12,11 +12,11 @@
 
 namespace ig
 {
-	class SamsungGalaxyS7: public Device
+	class LgG5: public Device
 	{
 	public:
 		//pointer of itself
-		typedef std::shared_ptr<SamsungGalaxyS7> ptr;
+		typedef std::shared_ptr<LgG5> ptr;
 
 	private:
 		//member variables
@@ -33,10 +33,10 @@ namespace ig
 
 	public:
 		//constructors
-		SamsungGalaxyS7();
+		LgG5();
 
 		//destructors
-		virtual ~SamsungGalaxyS7();
+		virtual ~LgG5();
 
 		//member functions
 		/*
@@ -95,7 +95,7 @@ namespace ig
 
 		/*
 		 * @brief getter for m_useragent
-		 * @return m_useragent
+		 * @return m_cpu
 		 */
 		std::string get_useragent() const;
 	};
