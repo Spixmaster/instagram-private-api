@@ -7,6 +7,8 @@
 #include "tools/http/HttpHeader.h"
 #include "tools/http/HttpArg.h"
 #include "tools/http/HttpCookie.h"
+#include "ig/devices/Device.h"
+#include "Constants.h"
 
 /*
  * @brief represents the Instagram Api which interacts with the Instagram servers
@@ -23,26 +25,31 @@ namespace ig
 
 	private:
 		//member variables
-			//Instagram's login credentials and cookie file
+			//Instagram's login credentials
 		std::string m_username;
 		std::string m_password;
-			//session values(cookies, uuids)
-		std::string m_file_uuids;
+			//devices
+		Device::ptr m_device;
+			//session values(cookies, app info)
+		std::string m_file_app_info;
 		std::string m_file_cookies;
 			/*
-			 * whether cookies and uuids file are deleted when destructor is called
-			 * this is necessary as when these files are deleted the destructor will undo the deletion because it saved the
-			 * 		files again
+			 * whether cookies and app info file are deleted when destructor is called
+			 * this is necessary as when these files are deleted immediately the functions save_app_info_in_file() and save_cookies_in_file()
+			 * will undo the deletion because they save the files again
 			 */
 		bool m_del_cookies_uuids;
 			//bool on which some actions depend
 		bool m_new_login;
-			//uuids which are needed for Instagram
+			//app info
 		std::string m_phone_id;
 		std::string m_uuid;
 		std::string m_client_session_id;
 		std::string m_advertising_id;
 		std::string m_device_id;
+		long long m_last_login = 0;
+		long long m_last_experiments = 0;
+		std::string m_useragent;
 			//all the cookies which are sent by the Instagram servers
 		std::vector<tools::HttpCookie> m_cookies;
 		std::string m_cookie_str; //all cookies concatenated as key-value-pairs to be used as a header value
@@ -52,8 +59,9 @@ namespace ig
 		/*
 		 * @param username: username for the Instagram login
 		 * @param password: password for the Instagram login
+		 * @param files_path: folder where the files shall be saved; with trailing "/"
 		 */
-		Api(const std::string &username, const std::string &password);
+		Api(const std::string &username, const std::string &password, const std::string &files_path);
 
 		//destructors
 		~Api();
@@ -74,23 +82,21 @@ namespace ig
 		std::string mk_ig_http_body(const std::vector<tools::HttpArg> &http_args) const;
 
 		/*
-		 * @brief gets all uuids and cookie values from files
+		 * @brief gets all app info and cookie values from files
 		 * @brief if it cannot get all necessary values it generates new ones and sets m_new_login = true
 		 * @brief also sets m_cookie_str
 		 */
-		void setup_cookies_uuids();
+		void setup_cookies_app_info();
 
 		/*
 		 * @brief with the given cookies the function updates the old as member variable saved cookies
+		 * @brief it also updates m_cookie_str and the two files (cookie and app info file)
 		 * @param http_cookies: cookies with which the as member variable saved cookies shall be updated
 		 */
-		void update_cookies(const std::vector<tools::HttpCookie> &http_cookies);
+		void update_data(const std::vector<tools::HttpCookie> &http_cookies);
 
-		/*
-		 * @brief saves the uuids in the proper file
-		 * @brief saved are all member variables which represent uuids
-		 */
-		void save_uuids_in_file() const;
+		//@brief saves the proper member variables in the proper file
+		void save_app_info_in_file() const;
 
 		/*
 		 * @brief saves the cookies in the proper file
@@ -112,24 +118,27 @@ namespace ig
 		 */
 		std::string get_cookie_val(const std::string &cookie_name) const;
 
-		//pre login request
+		//##############################pre login request##############################
 		/*
 		 * @brief the request is part of the login process
+		 * @param usage: defines part of the http body
 		 * @return server response
 		 */
-		std::string read_msisdn_header();
+		std::string read_msisdn_header(const std::string &usage);
 
 		/*
 		 * @brief the request is part of the login process
+		 * @param login: the http body depends on it
 		 * @return server response
 		 */
-		std::string launcher_sync();
+		std::string launcher_sync(const bool &login);
 
 		/*
 		 * @brief the request is part of the login process
+		 * @param login: the http body depends on it
 		 * @return server response
 		 */
-		std::string qe_sync();
+		std::string sync_device_features(const bool &login);
 
 		/*
 		 * @brief the request is part of the login process
@@ -139,22 +148,109 @@ namespace ig
 
 		/*
 		 * @brief the request is part of the login process
+		 * @param usage: defines part of the http body
 		 * @return server response
 		 */
-		std::string contact_point_prefill();
+		std::string contact_point_prefill(const std::string &usage);
 
-		//post login requests
+		//@brief makes all http requests which are necessary before the actual login
+		void pre_login_requests();
+
+		//##############################post login requests##############################
 		/*
 		 * @brief the request is part of the login process
+		 * @param login: adds some data to the http body
 		 * @return server response
 		 */
-		std::string sync_launcher(const bool &additional_data);
+		std::string sync_launcher(const bool &login);
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
 		std::string sync_user_features();
+
+		/*
+		 * @brief the request is part of the login process
+		 * @param is_pull_to_refresh: would be part of the http body
+		 * @param push_disabled: would be part of the http body
+		 * @param recovered_from_crash: would be part of the http body
+		 * @return server response
+		 */
+		std::string get_timeline_feed(const bool &is_pull_to_refresh, const bool &push_disabled, const bool &recovered_from_crash);
+
+		/*
+		 * @brief the request is part of the login process
+		 * @param reason: possible values are "cold_start" and "pull_to_refresh"
+		 * @return server response
+		 */
+		std::string get_reels_tray_feed(const std::string &reason);
+
+		/*
+		 * @brief the request is part of the login process
+		 * @param type: search term
+		 * @return server response
+		 */
+		std::string get_suggested_searches(const std::string &type);
+
+		/*
+		 * @brief the request is part of the login process
+		 * @param mode: part of the http body, possible "reshare", "save"
+		 * @param show_threads: part of the http body
+		 * @param query: part of the http body
+		 * @return server response
+		 */
+		std::string get_ranked_recipients(const std::string &mode, const bool &show_threads, const std::string &query = "");
+
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string get_inbox_v2();
+
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string get_presence();
+
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string get_recent_activity();
+
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string get_loom_fetch_config();
+
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string get_profile_notice();
+
+		/*
+		 * @brief the request is part of the login process
+		 * @return server response
+		 */
+		std::string batch_fetch();
+
+		/*
+		 * @brief the request is part of the login process
+		 * @param is_prefetch: part of the http body
+		 * @return server response
+		 */
+		std::string explore(const bool &is_prefetch);
+
+		/*
+		 * @brief makes all http requests which are necessary after the actual login
+		 * @brief simulates that the app is opened
+		 */
+		void open_app(const bool &recent_login);
+		//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 		/*
 		 * @brief on Instagram login it can occur that a challenge is required for fulfillment

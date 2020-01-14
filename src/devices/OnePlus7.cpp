@@ -1,18 +1,75 @@
 #include "ig/devices/OnePlus7.h"
+#include "ig/Constants.h"
 
 namespace ig
 {
-	const std::string OnePlus7::ig_version = "105.0.0.18.119";
-	const std::string OnePlus7::android_version = "28";
-	const std::string OnePlus7::android_release = "9.0";
-	const std::string OnePlus7::dpi = "420dpi";
-	const std::string OnePlus7::resolution = "1080x2260";
-	const std::string OnePlus7::manufacturer = "OnePlus";
-	const std::string OnePlus7::device = "GM1903";
-	const std::string OnePlus7::model = "OnePlus7";
-	const std::string OnePlus7::cpu = "qcom";
-	const std::string OnePlus7::user_agent = "Instagram " + OnePlus7::ig_version + " Android (" +
-			OnePlus7::android_version + "/" + OnePlus7::android_release + "; " + OnePlus7::dpi + "; " +
-			OnePlus7::resolution + "; " + OnePlus7::manufacturer + "; " + OnePlus7::device +
-			"; " + OnePlus7::model + "; " + OnePlus7::cpu + "; en_US)";
+	OnePlus7::OnePlus7()
+	{
+		m_ig_version = Constants::ig_version;
+		m_android_version = "28";
+		m_android_release = "9.0";
+		m_dpi = "420dpi";
+		m_resolution = "1080x2260";
+		m_manufacturer = "OnePlus";
+		m_device = "GM1903";
+		m_model = "OnePlus7";
+		m_cpu = "qcom";
+		m_useragent = "Instagram " + m_ig_version + " Android (" +
+				m_android_version + "/" + m_android_release + "; " + m_dpi + "; " +
+				m_resolution + "; " + m_manufacturer + "; " + m_device +
+				"; " + m_model + "; " + m_cpu + "; en_US)";
+	}
+
+	OnePlus7::~OnePlus7()
+	{}
+
+	std::string OnePlus7::get_ig_version() const
+	{
+		return m_ig_version;
+	}
+
+	std::string OnePlus7::get_android_version() const
+	{
+		return m_android_version;
+	}
+
+	std::string OnePlus7::get_android_release() const
+	{
+		return m_android_release;
+	}
+
+	std::string OnePlus7::get_dpi() const
+	{
+		return m_dpi;
+	}
+
+	std::string OnePlus7::get_resolution() const
+	{
+		return m_resolution;
+	}
+
+	std::string OnePlus7::get_manufacturer() const
+	{
+		return m_manufacturer;
+	}
+
+	std::string OnePlus7::get_device() const
+	{
+		return m_device;
+	}
+
+	std::string OnePlus7::get_model() const
+	{
+		return m_model;
+	}
+
+	std::string OnePlus7::get_cpu() const
+	{
+		return m_cpu;
+	}
+
+	std::string OnePlus7::get_useragent() const
+	{
+		return m_useragent;
+	}
 }

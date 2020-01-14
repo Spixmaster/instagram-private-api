@@ -1,5 +1,5 @@
-#ifndef IG_DEVICES_SAMSUNG_GALAXY_S7_H
-#define IG_DEVICES_SAMSUNG_GALAXY_S7_H
+#ifndef IG_DEVICES_HUAWEI_MATE_9_PRO_H
+#define IG_DEVICES_HUAWEI_MATE_9_PRO_H
 
 #include <string>
 #include <memory>
@@ -12,11 +12,11 @@
 
 namespace ig
 {
-	class SamsungGalaxyS7: public Device
+	class HuaweiMate9Pro: public Device
 	{
 	public:
 		//pointer of itself
-		typedef std::shared_ptr<SamsungGalaxyS7> ptr;
+		typedef std::shared_ptr<HuaweiMate9Pro> ptr;
 
 	private:
 		//member variables
@@ -33,10 +33,10 @@ namespace ig
 
 	public:
 		//constructors
-		SamsungGalaxyS7();
+		HuaweiMate9Pro();
 
 		//destructors
-		virtual ~SamsungGalaxyS7();
+		virtual ~HuaweiMate9Pro();
 
 		//member functions
 		/*
