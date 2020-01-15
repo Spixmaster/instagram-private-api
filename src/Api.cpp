@@ -29,7 +29,7 @@
 namespace ig
 {
 	Api::Api(const std::string &username, const std::string &password, const std::string &files_path) : m_username(username), m_password(password),
-			m_file_app_info(files_path + username + "_uuids.dat"), m_file_cookies(files_path + username + "_cookies.dat"), m_del_cookies_uuids(false)
+			m_file_app_info(files_path + username + "_app_info.dat"), m_file_cookies(files_path + username + "_cookies.dat"), m_del_cookies_uuids(false)
 	{
 		//create necessary folders
 		try
@@ -73,7 +73,7 @@ namespace ig
 		//seed for rand
 		srand(raw_time);
 
-		std::vector<tools::HttpHeader> http_headers;
+		std::vector<tools::HttpHeader> http_headers = std::vector<tools::HttpHeader>();
 		http_headers.push_back(tools::HttpHeader("Connection", "Keep-Alive"));
 		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", "IT7nCQ=="));
 		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", "567067343352427"));
@@ -86,11 +86,12 @@ namespace ig
 		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
 		http_headers.push_back(tools::HttpHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8"));
 		http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
-		http_headers.push_back(tools::HttpHeader("User-Agent", m_device->get_useragent()));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
 		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", std::to_string(rand() % 3001 + 7000)));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string(rand() % 400001 + 500000)));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", std::to_string(rand() % 101 + 50)));
+
 
 		return http_headers;
 	}
@@ -230,7 +231,13 @@ namespace ig
 				{
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						for(size_t j = 1; j < args.size(); ++j)
+						{
 							m_useragent.append(args.at(j));
+
+							//insert whitespace correctly
+							if(j < (args.size() - 1))
+								m_useragent.append(" ");
+						}
 					else
 						std::cerr << "Error: \"useragent\" has no value in " << m_file_app_info << "." << std::endl;
 				}
@@ -366,7 +373,6 @@ namespace ig
 	void Api::save_app_info_in_file() const
 	{
 		std::ofstream outf(m_file_app_info);
-		outf << "All ids:" << std::endl;
 		outf << "phone id: " << m_phone_id << std::endl;
 		outf << "uuid: " << m_uuid << std::endl;
 		outf << "client session id: " << m_client_session_id << std::endl;
@@ -649,7 +655,7 @@ namespace ig
 			http_args.push_back(tools::HttpArg("recovered_from_crash", "1"));
 
 		tools::HttpClient http_client(Constants::ig_url + "feed/timeline/", http_headers, http_args);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(true); //todo Ist es richtig, dass hier keine Signature gemacht wird?
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(); //todo just normal http body, it seems to be correct
 
 		update_data(http_res.m_cookies);
 		post_req_check(http_res.m_body);
@@ -762,7 +768,7 @@ namespace ig
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
-		tools::HttpClient http_client(Constants::ig_url + "news/inbox", http_headers);
+		tools::HttpClient http_client(Constants::ig_url + "news/inbox/?limited_activity=true&show_su=true", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -870,6 +876,7 @@ namespace ig
 	{
 		if(recent_login)
 		{
+			//todo there is an error in this compound statement but I do not want to login too often
 			//sync
 			sync_launcher(false);
 			sync_user_features();
@@ -916,7 +923,11 @@ namespace ig
 				get_ranked_recipients("save", true);
 				get_inbox_v2();
 				get_presence();
+				//todo
+				std::cout << "aslkdjflaskdöjf 1" << std::endl;
 				get_recent_activity();
+				//todo
+				std::cout << "22222222" << std::endl;
 				get_profile_notice();
 				explore(false);
 			}
