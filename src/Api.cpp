@@ -25,6 +25,8 @@
 #include "ig/devices/SamsungGalaxyS7Edge.h"
 #include "ig/devices/SamsungGalaxyS9Plus.h"
 #include "ig/devices/ZteAxon7.h"
+#include <boost/algorithm/string.hpp>
+#include <unistd.h>
 
 namespace ig
 {
@@ -88,9 +90,9 @@ namespace ig
 		http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
 		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
 		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
-		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", std::to_string(rand() % 3001 + 7000)));
-		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string(rand() % 400001 + 500000)));
-		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", std::to_string(rand() % 101 + 50)));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", std::to_string((rand() % 3001) + 7000)));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string((rand() % 400001) + 500000)));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", std::to_string((rand() % 101) + 50)));
 
 
 		return http_headers;
@@ -323,10 +325,9 @@ namespace ig
 			m_advertising_id = boost::uuids::to_string(boost::uuids::random_generator()());
 				//device id has to be uuid with length 16 and hex in format android-...
 			std::string device_id_temp = boost::uuids::to_string(boost::uuids::random_generator()());
+			device_id_temp.erase(std::remove(device_id_temp.begin(), device_id_temp.end(), '-'), device_id_temp.end());
 			device_id_temp.resize(16);
-			std::stringstream sstream;
-			sstream << std::hex << device_id_temp;
-			m_device_id = "android-" + sstream.str();
+			m_device_id = "android-" + device_id_temp;
 			m_useragent = m_device->get_useragent();
 
 			std::cout << "No cookies from a previous session were found. Thus a new login is required whose cookies will be stored for the next logins." << std::endl;
@@ -438,7 +439,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -465,7 +466,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -493,7 +494,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -512,7 +513,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -534,7 +535,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -570,7 +571,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -600,7 +601,7 @@ namespace ig
 		m_last_experiments = raw_time;
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -634,7 +635,7 @@ namespace ig
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 		http_args.push_back(tools::HttpArg("device_id", m_uuid));
 		http_args.push_back(tools::HttpArg("client_session_id", m_client_session_id));
-		http_args.push_back(tools::HttpArg("battery_level", std::to_string(rand() % 23 + 70)));
+		http_args.push_back(tools::HttpArg("battery_level", std::to_string((rand() % 23) + 70)));
 		http_args.push_back(tools::HttpArg("is_charging", rand() % 2 ? "1" : "0"));
 		http_args.push_back(tools::HttpArg("will_sound_on", rand() % 2 ? "1" : "0"));
 		http_args.push_back(tools::HttpArg("is_on_screen", "1"));
@@ -658,7 +659,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(); //todo just normal http body, it seems to be correct
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -680,7 +681,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -699,7 +700,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -722,7 +723,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -742,7 +743,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -757,7 +758,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -772,7 +773,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -787,7 +788,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -802,11 +803,16 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
 
+	/*
+	 * todo this request returns
+	 * 400
+	 * {"message": "INVALID_REQUEST", "status": "fail"}
+	 */
 	std::string Api::batch_fetch()
 	{
 		//http headers
@@ -829,7 +835,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -867,7 +873,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -876,7 +882,6 @@ namespace ig
 	{
 		if(recent_login)
 		{
-			//todo there is an error in this compound statement but I do not want to login too often
 			//sync
 			sync_launcher(false);
 			sync_user_features();
@@ -923,11 +928,7 @@ namespace ig
 				get_ranked_recipients("save", true);
 				get_inbox_v2();
 				get_presence();
-				//todo
-				std::cout << "aslkdjflaskdöjf 1" << std::endl;
 				get_recent_activity();
-				//todo
-				std::cout << "22222222" << std::endl;
 				get_profile_notice();
 				explore(false);
 			}
@@ -1144,10 +1145,10 @@ namespace ig
 		return get_cookie_val("ds_user_id") + "_" + m_uuid;
 	}
 
-	void Api::post_req_check(const std::string &server_resp)
+	void Api::post_req_check(const tools::HttpResponse &server_resp)
 	{
 		rapidjson::Document doc;
-		doc.Parse(server_resp.c_str());
+		doc.Parse(server_resp.m_body.c_str());
 
 		if(doc.IsObject())
 		{
@@ -1202,6 +1203,38 @@ namespace ig
 					std::cerr << "######################" << std::endl;
 				}
 			}
+		}
+
+		//Oops, an error occured.
+		if(boost::iequals(server_resp.m_body, "Oops, an error occured."))
+		{
+			std::cerr << "######################" << std::endl;
+			std::cerr << "Use a different account!" << std::endl;
+			std::cerr << "This response is similar to a soft ban from my experience when I encountered this problem. I could not even login in from the official" <<
+					" Android app. For me, my account was set free again after a few hours but it depends." << std::endl;
+			std::cerr << "######################" << std::endl;
+		}
+
+		//too many requests
+		if(server_resp.m_code == 429)
+		{
+			//get time
+			time_t raw_time;
+			time(&raw_time);
+
+			srand(raw_time);
+			/*
+			 * something between 123 seconds and 674
+			 * 674 - 123 = 551
+			 */
+			int interruption_time = (rand() % 552) + 123;
+
+			std::cerr << "######################" << std::endl;
+			std::cerr << "Warning!" << std::endl;
+			std::cerr << "Instagram blocked your request due to too many of them. Thus, this software interrupts for " << interruption_time << "seconds." << std::endl;
+			std::cerr << "######################" << std::endl;
+
+			sleep(interruption_time);
 		}
 	}
 
@@ -1298,7 +1331,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -1317,7 +1350,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -1378,7 +1411,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -1396,7 +1429,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -1413,7 +1446,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		return http_res.m_body;
 	}
@@ -1637,7 +1670,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res.m_body);
+		post_req_check(http_res);
 
 		m_del_cookies_uuids = true;
 
