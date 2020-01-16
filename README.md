@@ -64,11 +64,11 @@ git submodule update
 
 int main()
 {
-	ig::Api api("the_username", "the_password");
-	
-	std::string all_comments = api.get_media_comments_all(ig::Api::get_media_id("https://www.instagram.com/p/B6WuipPF2H-/"));
-	std::string likers = api.get_media_likers(ig::Api::get_media_id("https://www.instagram.com/p/B6bV0_ygLQe/"));
-	
+	ig::Api::ptr api = std::make_shared<ig::Api>("the_username", "the_password");
+
+	std::string all_comments = api->get_media_comments_all(ig::Api::get_media_id("https://www.instagram.com/p/B6WuipPF2H-/"));
+	std::string likers = api->get_media_likers(ig::Api::get_media_id("https://www.instagram.com/p/B6bV0_ygLQe/"));
+
 	return EXIT_SUCCESS;
 }
 ```
