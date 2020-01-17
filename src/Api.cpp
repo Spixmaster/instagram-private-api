@@ -974,6 +974,7 @@ namespace ig
 							tools::HttpResponse http_res1 = http_client1.send_get_req();
 
 							update_data(http_res1.m_cookies);
+							post_req_check(http_res1);
 
 							rapidjson::Document doc;
 							doc.Parse(http_res1.m_body.c_str());
@@ -1044,6 +1045,7 @@ namespace ig
 										tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
 
 										update_data(http_res2.m_cookies);
+										post_req_check(http_res2);
 
 										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
 										std::string security_code;
@@ -1062,6 +1064,7 @@ namespace ig
 										tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
 
 										update_data(http_res3.m_cookies);
+										post_req_check(http_res3);
 
 										if(http_res3.m_code == 200)
 										{
@@ -1104,6 +1107,7 @@ namespace ig
 										tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
 
 										update_data(http_res2.m_cookies);
+										post_req_check(http_res2);
 
 										if(http_res2.m_code == 200)
 										{
@@ -1113,7 +1117,7 @@ namespace ig
 										}
 									}
 									else
-										std::cerr << std::string("Error: The challenge response's field \"step_name\" does not have the value ") +
+										std::cerr << std::string("Error: The challenge response's field \"step_name\" does not have the value ") <<
 										"\"select_verify_method\" or \"delta_login_review\"." << std::endl;
 								}
 								else
@@ -1268,6 +1272,7 @@ namespace ig
 			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 			update_data(http_res.m_cookies);
+			post_req_check(http_res);
 
 			//get time
 			time_t raw_time;
