@@ -1177,9 +1177,8 @@ namespace ig
 				{
 					std::cerr << "######################" << std::endl;
 					std::cerr << "Warning!" << std::endl;
-					std::cerr << "If this is not the login process you need to solve a challenge manually. Otherwise, just ignore this message. " <<
-							"Log in into your Instagram account in your browser " <<
-							"and you should be requested to verify your identity." << std::endl;
+					std::cerr << "If this is not the login process you need to solve a challenge manually. Otherwise, just ignore this message but if this is the "
+							"login process log in into your Instagram account in your browser and you should be requested to verify your identity. Do so." << std::endl;
 					std::cerr << "######################" << std::endl;
 				}
 			}
