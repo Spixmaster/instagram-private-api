@@ -1177,8 +1177,8 @@ namespace ig
 				{
 					std::cerr << "######################" << std::endl;
 					std::cerr << "Warning!" << std::endl;
-					std::cerr << "If this is not the login process you need to solve a challenge manually. Otherwise, just ignore this message but if this is the "
-							"login process log in into your Instagram account in your browser and you should be requested to verify your identity. Do so." << std::endl;
+					std::cerr << "If this is not the login process it may be that you need to solve a challenge manually. Log in into your Instagram account " <<
+							"in your browser and you should be requested to verify your identity. Do so." << std::endl;
 					std::cerr << "######################" << std::endl;
 				}
 			}
@@ -1235,7 +1235,7 @@ namespace ig
 
 			std::cerr << "######################" << std::endl;
 			std::cerr << "Warning!" << std::endl;
-			std::cerr << "Instagram blocked your request due to too many of them. Thus, this software interrupts for " << interruption_time << "seconds." << std::endl;
+			std::cerr << "Instagram blocked your request due to too many of them. Thus, this software interrupts for " << interruption_time << " seconds." << std::endl;
 			std::cerr << "######################" << std::endl;
 
 			sleep(interruption_time);
