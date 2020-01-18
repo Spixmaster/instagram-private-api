@@ -56,6 +56,8 @@ git submodule update
 * PocoNetSSL
 * PocoNet
 * PocoCrypto
+* boost_system
+* boost_filesystem
 * boost_iostreams
 
 ### Example
