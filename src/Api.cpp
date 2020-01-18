@@ -34,13 +34,16 @@ namespace ig
 			m_file_app_info(files_path + username + "_app_info.dat"), m_file_cookies(files_path + username + "_cookies.dat"), m_del_cookies_uuids(false)
 	{
 		//create necessary folders
-		try
+		if(!tools::Tools::file_exists(files_path))
 		{
-			boost::filesystem::create_directories(files_path);
-		}
-		catch(const std::exception &e)
-		{
-			std::cerr << e.what() << std::endl;
+			try
+			{
+				boost::filesystem::create_directories(files_path);
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
 		}
 
 		//also determines whether a new login is required
