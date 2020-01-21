@@ -1496,7 +1496,7 @@ namespace ig
 	{
 		if(url.find("https://www.instagram.com/p/") != std::string::npos)
 		{
-			tools::HttpClient http_client(url);
+			tools::HttpClient http_client(url, false);
 			tools::HttpResponse http_response = http_client.send_get_req();
 
 			if(http_response.m_code == 200)
