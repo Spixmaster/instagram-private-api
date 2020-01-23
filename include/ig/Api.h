@@ -384,6 +384,13 @@ namespace ig
 		int get_amnt_flwrs(const std::string &user_id);
 
 		/*
+		 * @brief get the user id from a media
+		 * @param media: proper media id
+		 * @return user id
+		 */
+		std::string get_user_id_from_media_id(const std::string &media_id);
+
+		/*
 		 * @brief logs out which means that the session with its corresponding cookies will not longer be usable
 		 * @return the server response
 		 */

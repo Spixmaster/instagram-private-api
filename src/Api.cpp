@@ -417,6 +417,7 @@ namespace ig
 	std::string Api::get_cookie_val(const std::string &cookie_name) const
 	{
 		std::string cookie_val;
+
 		for(size_t j = 0; j < m_cookies.size(); ++j)
 			if(m_cookies.at(j).get_name() == cookie_name)
 			{
@@ -959,184 +960,199 @@ namespace ig
 		{
 			if(doc.HasMember("error_type"))
 			{
-				if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
+				if(doc["error_type"].IsString())
 				{
-					if(doc.HasMember("challenge"))
+					if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
 					{
-						const rapidjson::Value &challenge = doc["challenge"];
-
-						if(challenge.HasMember("api_path"))
+						if(doc.HasMember("challenge"))
 						{
-							std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
+							const rapidjson::Value &challenge = doc["challenge"];
 
-							//http headers
-							std::vector<tools::HttpHeader> http_headers1 = get_ig_http_headers();
-							http_headers1.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-							tools::HttpClient http_client1(Constants::ig_url + challenge_path, http_headers1);
-							tools::HttpResponse http_res1 = http_client1.send_get_req();
-
-							update_data(http_res1.m_cookies);
-							post_req_check(http_res1);
-
-							rapidjson::Document doc;
-							doc.Parse(http_res1.m_body.c_str());
-
-							if(doc.IsObject())
+							if(challenge.HasMember("api_path"))
 							{
-								if(doc.HasMember("step_name"))
+								if(challenge["api_path"].IsString())
 								{
-									if(doc["step_name"].GetString() == std::string("select_verify_method"))
+									std::string challenge_path = tools::Tools::cut_off_first_char(challenge["api_path"].GetString());
+
+									//http headers
+									std::vector<tools::HttpHeader> http_headers1 = get_ig_http_headers();
+									http_headers1.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+									tools::HttpClient http_client1(Constants::ig_url + challenge_path, http_headers1);
+									tools::HttpResponse http_res1 = http_client1.send_get_req();
+
+									update_data(http_res1.m_cookies);
+									post_req_check(http_res1);
+
+									rapidjson::Document doc;
+									doc.Parse(http_res1.m_body.c_str());
+
+									if(doc.IsObject())
 									{
-										const rapidjson::Value &step_data = doc["step_data"];
-										std::string choices;
-
-										if(step_data.HasMember("phone_number"))
-											choices.append("0 - Phone number\n");
-										if(step_data.HasMember("email"))
-											choices.append("1 - Email");
-
-										std::cout << "If you do not know your personal data like phone number or email here are some hints:" << std::endl;
-										std::cout << http_res1.m_body << std::endl;
-										std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
-										std::cout << choices << std::endl;
-										int choice = -1;
-
-										if(step_data.HasMember("phone_number") && step_data.HasMember("email"))
+										if(doc.HasMember("step_name"))
 										{
-											while(!(choice == 0 || choice == 1))
+											if(doc["step_name"].IsString())
 											{
-												std::cout << "Your choice: ";
-												std::cin >> choice;
+												if(doc["step_name"].GetString() == std::string("select_verify_method"))
+												{
+													const rapidjson::Value &step_data = doc["step_data"];
+													std::string choices;
 
-												if(!(choice == 0 || choice == 1))
-													std::cout << "Error: Wrong choice. Try again!" << std::endl;
+													if(step_data.HasMember("phone_number"))
+														choices.append("0 - Phone number\n");
+													if(step_data.HasMember("email"))
+														choices.append("1 - Email");
+
+													std::cout << "If you do not know your personal data like phone number or email here are some hints:" << std::endl;
+													std::cout << http_res1.m_body << std::endl;
+													std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
+													std::cout << choices << std::endl;
+													int choice = -1;
+
+													if(step_data.HasMember("phone_number") && step_data.HasMember("email"))
+													{
+														while(!(choice == 0 || choice == 1))
+														{
+															std::cout << "Your choice: ";
+															std::cin >> choice;
+
+															if(!(choice == 0 || choice == 1))
+																std::cout << "Error: Wrong choice. Try again!" << std::endl;
+														}
+													}
+													else if(step_data.HasMember("phone_number"))
+													{
+														while(choice != 0)
+														{
+															std::cout << "Your choice: ";
+															std::cin >> choice;
+
+															if(choice != 0)
+																std::cout << "Error: Wrong choice. Try again!" << std::endl;
+														}
+													}
+													else if(step_data.HasMember("email"))
+													{
+														while(choice != 1)
+														{
+															std::cout << "Your choice: ";
+															std::cin >> choice;
+
+															if(choice != 1)
+																std::cout << "Error: Wrong choice. Try again!" << std::endl;
+														}
+													}
+
+													//http headers
+													std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
+													http_headers2.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+													//http args
+													std::vector<tools::HttpArg> http_args2;
+													http_args2.push_back(tools::HttpArg("choice", choice));
+
+													tools::HttpClient http_client2(Constants::ig_url + challenge_path, http_headers2, http_args2);
+													tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
+
+													update_data(http_res2.m_cookies);
+													post_req_check(http_res2);
+
+													std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
+													std::string security_code;
+													std::cout << "Enter your verification code: ";
+													std::cin >> security_code;
+
+													//http headers
+													std::vector<tools::HttpHeader> http_headers3 = get_ig_http_headers();
+													http_headers3.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+													//http args
+													std::vector<tools::HttpArg> http_args3;
+													http_args3.push_back(tools::HttpArg("security_code", security_code));
+
+													tools::HttpClient http_client3(Constants::ig_url + challenge_path, http_headers3, http_args3);
+													tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
+
+													update_data(http_res3.m_cookies);
+													post_req_check(http_res3);
+
+													if(http_res3.m_code == 200)
+													{
+														std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
+
+														return true;
+													}
+												}
+												else if(doc["step_name"].GetString() == std::string("delta_login_review"))
+												{
+													std::string choices;
+
+													choices.append("0 - It was me\n");
+													choices.append("1 - It wasn't me");
+
+													std::cout << "Here you have the last server response:" << std::endl;
+													std::cout << http_res1.m_body << std::endl;
+													std::cout << "You need to verify your login. Choose on whether the last login was you." << std::endl;
+													std::cout << choices << std::endl;
+													int choice = -1;
+
+													while(!(choice == 0 || choice == 1))
+													{
+														std::cout << "Your choice: ";
+														std::cin >> choice;
+
+														if(!(choice == 0 || choice == 1))
+															std::cout << "Error: Wrong choice. Try again!" << std::endl;
+													}
+
+													//http headers
+													std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
+													http_headers2.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+													//http args
+													std::vector<tools::HttpArg> http_args2;
+													http_args2.push_back(tools::HttpArg("choice", choice));
+
+													tools::HttpClient http_client2(Constants::ig_url + challenge_path, http_headers2, http_args2);
+													tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
+
+													update_data(http_res2.m_cookies);
+													post_req_check(http_res2);
+
+													if(http_res2.m_code == 200)
+													{
+														std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
+
+														return true;
+													}
+												}
+												else
+													std::cerr << std::string("Error: The challenge response's field \"step_name\" does not have the value ") <<
+													"\"select_verify_method\" or \"delta_login_review\"." << std::endl;
 											}
+											else
+											    std::cerr << "Error: Field \"step_name\" does not contain a string." << std::endl;
 										}
-										else if(step_data.HasMember("phone_number"))
-										{
-											while(choice != 0)
-											{
-												std::cout << "Your choice: ";
-												std::cin >> choice;
-
-												if(choice != 0)
-													std::cout << "Error: Wrong choice. Try again!" << std::endl;
-											}
-										}
-										else if(step_data.HasMember("email"))
-										{
-											while(choice != 1)
-											{
-												std::cout << "Your choice: ";
-												std::cin >> choice;
-
-												if(choice != 1)
-													std::cout << "Error: Wrong choice. Try again!" << std::endl;
-											}
-										}
-
-										//http headers
-										std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
-										http_headers2.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-										//http args
-										std::vector<tools::HttpArg> http_args2;
-										http_args2.push_back(tools::HttpArg("choice", choice));
-
-										tools::HttpClient http_client2(Constants::ig_url + challenge_path, http_headers2, http_args2);
-										tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
-
-										update_data(http_res2.m_cookies);
-										post_req_check(http_res2);
-
-										std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
-										std::string security_code;
-										std::cout << "Enter your verification code: ";
-										std::cin >> security_code;
-
-										//http headers
-										std::vector<tools::HttpHeader> http_headers3 = get_ig_http_headers();
-										http_headers3.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-										//http args
-										std::vector<tools::HttpArg> http_args3;
-										http_args3.push_back(tools::HttpArg("security_code", security_code));
-
-										tools::HttpClient http_client3(Constants::ig_url + challenge_path, http_headers3, http_args3);
-										tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
-
-										update_data(http_res3.m_cookies);
-										post_req_check(http_res3);
-
-										if(http_res3.m_code == 200)
-										{
-											std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
-
-											return true;
-										}
-									}
-									else if(doc["step_name"].GetString() == std::string("delta_login_review"))
-									{
-										std::string choices;
-
-										choices.append("0 - It was me\n");
-										choices.append("1 - It wasn't me");
-
-										std::cout << "Here you have the last server response:" << std::endl;
-										std::cout << http_res1.m_body << std::endl;
-										std::cout << "You need to verify your login. Choose on whether the last login was you." << std::endl;
-										std::cout << choices << std::endl;
-										int choice = -1;
-
-										while(!(choice == 0 || choice == 1))
-										{
-											std::cout << "Your choice: ";
-											std::cin >> choice;
-
-											if(!(choice == 0 || choice == 1))
-												std::cout << "Error: Wrong choice. Try again!" << std::endl;
-										}
-
-										//http headers
-										std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
-										http_headers2.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-										//http args
-										std::vector<tools::HttpArg> http_args2;
-										http_args2.push_back(tools::HttpArg("choice", choice));
-
-										tools::HttpClient http_client2(Constants::ig_url + challenge_path, http_headers2, http_args2);
-										tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
-
-										update_data(http_res2.m_cookies);
-										post_req_check(http_res2);
-
-										if(http_res2.m_code == 200)
-										{
-											std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
-
-											return true;
-										}
+										else
+											std::cerr << "Error: The challenge response does not have a field \"step_name\"." << std::endl;
 									}
 									else
-										std::cerr << std::string("Error: The challenge response's field \"step_name\" does not have the value ") <<
-										"\"select_verify_method\" or \"delta_login_review\"." << std::endl;
+										std::cerr << "Error: The challenge response is not a json object." << std::endl;
 								}
 								else
-									std::cerr << "Error: The challenge response does not have a field \"step_name\"." << std::endl;
+								    std::cerr << "Error: Field \"api_path\" does not contain a string." << std::endl;
 							}
 							else
-								std::cerr << "Error: The challenge response is not a json object." << std::endl;
+								std::cerr << "Error: Field \"challenge\" does not have field \"api_path\"." << std::endl;
 						}
 						else
-							std::cerr << "Error: Field \"challenge\" does not have field \"api_path\"." << std::endl;
+							std::cerr << "Error: There is not field \"challenge\"." << std::endl;
 					}
 					else
-						std::cerr << "Error: There is not field \"challenge\"." << std::endl;
+						std::cerr << "Error: Field \"error_type\" does not have the value \"checkpoint_challenge_required\"." << std::endl;
 				}
 				else
-					std::cerr << "Error: Field \"error_type\" does not have the value \"checkpoint_challenge_required\"." << std::endl;
+					std::cerr << "Error: Field \"error_type\" does not contain a string." << std::endl;
 			}
 			else
 				std::cerr << "Error: There is not field \"error_type\"." << std::endl;
@@ -1176,14 +1192,19 @@ namespace ig
 			 */
 			if(doc.HasMember("message"))
 			{
-				if(doc["message"].GetString() == std::string("challenge_required"))
+				if(doc["message"].IsString())
 				{
-					std::cerr << "######################" << std::endl;
-					std::cerr << "Warning!" << std::endl;
-					std::cerr << "If this is not the login process it may be that you need to solve a challenge manually. Log in into your Instagram account " <<
-							"in your browser and you should be requested to verify your identity. Do so." << std::endl;
-					std::cerr << "######################" << std::endl;
+					if(doc["message"].GetString() == std::string("challenge_required"))
+					{
+						std::cerr << "######################" << std::endl;
+						std::cerr << "Warning!" << std::endl;
+						std::cerr << "If this is not the login process it may be that you need to solve a challenge manually. Log in into your Instagram account " <<
+								"in your browser and you should be requested to verify your identity. Do so." << std::endl;
+						std::cerr << "######################" << std::endl;
+					}
 				}
+				else
+					std::cerr << "Error: Field \"message\" does not contain a string." << std::endl;
 			}
 
 			/*
@@ -1200,15 +1221,20 @@ namespace ig
 			 */
 			if(doc.HasMember("message"))
 			{
-				if(doc["message"].GetString() == std::string("login_required"))
+				if(doc["message"].IsString())
 				{
-					m_del_cookies_uuids = true;
+					if(doc["message"].GetString() == std::string("login_required"))
+					{
+						m_del_cookies_uuids = true;
 
-					std::cerr << "######################" << std::endl;
-					std::cerr << "Warning!" << std::endl;
-					std::cerr << "A new login is required as you have been logged out." << std::endl;
-					std::cerr << "######################" << std::endl;
+						std::cerr << "######################" << std::endl;
+						std::cerr << "Warning!" << std::endl;
+						std::cerr << "A new login is required as you have been logged out." << std::endl;
+						std::cerr << "######################" << std::endl;
+					}
 				}
+				else
+					std::cerr << "Error: Field \"message\" does not contain a string." << std::endl;
 			}
 		}
 
@@ -1304,20 +1330,32 @@ namespace ig
 				{
 					if(doc.HasMember("error_type"))
 					{
-						if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
+						if(doc["error_type"].IsString())
 						{
-							if(solve_challenge(http_res.m_body))
+							if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
 							{
-								open_app(true);
-								m_last_login = raw_time;
+								if(solve_challenge(http_res.m_body))
+								{
+									open_app(true);
+									m_last_login = raw_time;
 
-								return true;
+									return true;
+								}
+								else
+									std::cerr << "Error: The login challenge could not be solved." << std::endl;
 							}
 							else
-								std::cerr << "Error: The login challenge could not be solved." << std::endl;
+								std::cerr << "Error: Field \"error_type\" does not contain the value \"checkpoint_challenge_required\"." << std::endl;
 						}
+						else
+							std::cerr << "Error: Field \"error_type\" does not contain a string." << std::endl;
 					}
+					else
+						std::cerr << "Error: There is no field \"error_type\" in the json." << std::endl;
 				}
+				else
+					std::cerr << "Error: The given server response is not a json object." << std::endl;
+
 				return false;
 			}
 		}
@@ -1379,23 +1417,41 @@ namespace ig
 				if(doc.HasMember("comments"))
 				{
 					const rapidjson::Value &comments = doc["comments"];
-					for(size_t j = 0; j < comments.Size(); ++j)
+
+					if(comments.IsArray())
 					{
-						result.append(tools::Tools::get_json_as_string(comments[j]));
-						result.append(", ");
+						for(size_t j = 0; j < comments.GetArray().Size(); ++j)
+						{
+							result.append(tools::Tools::get_json_as_string(comments[j]));
+							result.append(", ");
+						}
 					}
+					else
+					    std::cerr << "Error: Field \"comments\" does not contain a json array." << std::endl;
 
 					//perhaps, next page
 					if(doc.HasMember("has_more_comments") && doc.HasMember("next_max_id"))
-						response = get_media_comments(media_id, doc["next_max_id"].GetString());
+						if(doc["next_max_id"].IsString())
+							response = get_media_comments(media_id, doc["next_max_id"].GetString());
+						else
+						{
+							std::cerr << "Error: Field \"next_max_id\" does not contain a string." << std::endl;
+							break;
+						}
 					else
 						break;
 				}
 				else
+				{
+					std::cerr << "Error: There is no field \"comments\" in the json." << std::endl;
 					break;
+				}
 			}
 			else
+			{
+				std::cerr << "Error: The given server response is not a json object." << std::endl;
 				break;
+			}
 		}
 
 		if(result.size() >= 2)
@@ -1472,7 +1528,15 @@ namespace ig
 			if(doc.IsObject())
 			{
 				if(doc.HasMember("media_id"))
-					return doc["media_id"].GetString();
+				{
+					if(doc["media_id"].IsString())
+						return doc["media_id"].GetString();
+					else
+					{
+					    std::cerr << "Error: Field \"media_id\" does not contain a string." << std::endl;
+					    return "";
+					}
+				}
 				else
 				{
 					std::cerr << "Error: There is no field \"media_id\" in the json." << std::endl;
@@ -1526,8 +1590,17 @@ namespace ig
 			 * therefore, the negation is needed
 			 */
 			if(doc.IsObject())
+			{
 				if(doc.HasMember("comments_disabled"))
-					comments_allowed = !(doc["comments_disabled"].GetBool());
+				{
+					if(doc["comments_disabled"].IsBool())
+						comments_allowed = !(doc["comments_disabled"].GetBool());
+					else
+					    std::cerr << "Error: Field \"comments_disabled\" does not contain a bool." << std::endl;
+				}
+			}
+			else
+				std::cerr << "Error: The string is not a json object." << std::endl;
 		}
 
 		//###comments restricted###
@@ -1548,15 +1621,31 @@ namespace ig
 				{
 					const rapidjson::Value &items = doc["items"];
 
-					if(items.IsArray() && items.GetArray().Size() > 0)
+					if(items.IsArray())
 					{
-						const rapidjson::Value &media_info = items[0];
+						if(items.GetArray().Size() > 0)
+						{
+							const rapidjson::Value &media_info = items[0];
 
-						if(media_info.HasMember("commenting_disabled_for_viewer"))
-							comments_allowed = !(media_info["commenting_disabled_for_viewer"].GetBool());
+							if(media_info.HasMember("commenting_disabled_for_viewer"))
+							{
+								if(media_info["commenting_disabled_for_viewer"].IsBool())
+									comments_allowed = !(media_info["commenting_disabled_for_viewer"].GetBool());
+								else
+									std::cerr << "Error: Field \"commenting_disabled_for_viewer\" does not contain a bool." << std::endl;
+							}
+						}
+						else
+							std::cerr << "Error: Field \"items\" does not contain a json array with size greater than 0." << std::endl;
 					}
+					else
+					    std::cerr << "Error: Field \"items\" does not contain a json array." << std::endl;
 				}
+				else
+					std::cerr << "Error: There is no field \"items\" in the json." << std::endl;
 			}
+			else
+				std::cerr << "Error: The string is not a json object." << std::endl;
 		}
 		return comments_allowed;
 	}
@@ -1573,8 +1662,15 @@ namespace ig
 			if(doc.HasMember("user"))
 			{
 				const rapidjson::Value &user = doc["user"];
+
 				if(user.HasMember("username"))
-					return user["username"].GetString();
+					if(user["username"].IsString())
+						return user["username"].GetString();
+					else
+					{
+					    std::cerr << "Error: Field \"username\" does not contain a string." << std::endl;
+					    return "";
+					}
 				else
 				{
 					std::cerr << "Error: There is no field \"username\" in the json." << std::endl;
@@ -1607,31 +1703,45 @@ namespace ig
 			{
 				const rapidjson::Value &items = doc["items"];
 
-				if(items.IsArray() && items.GetArray().Size() > 0)
+				if(items.IsArray())
 				{
-					const rapidjson::Value &media_info = items[0];
-
-					if(media_info.HasMember("user"))
+					if(items.GetArray().Size() > 0)
 					{
-						const rapidjson::Value &user = media_info["user"];
+						const rapidjson::Value &media_info = items[0];
 
-						if(user.HasMember("username"))
-							return user["username"].GetString();
+						if(media_info.HasMember("user"))
+						{
+							const rapidjson::Value &user = media_info["user"];
+
+							if(user.HasMember("username"))
+								if(user["username"].IsString())
+									return user["username"].GetString();
+								else
+								{
+									std::cerr << "Error: Field \"username\" does not contain a string." << std::endl;
+									return "";
+								}
+							else
+							{
+								std::cerr << "Error: There is no field \"username\" in the json." << std::endl;
+								return "";
+							}
+						}
 						else
 						{
-							std::cerr << "Error: There is no field \"username\" in the json." << std::endl;
+							std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
 							return "";
 						}
 					}
 					else
 					{
-						std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
+						std::cerr << "Error: Field \"items\" does not contain a json array with size greater than 0." << std::endl;
 						return "";
 					}
 				}
 				else
 				{
-					std::cerr << "Error: The field \"items\" is not a json array of size greater than 0." << std::endl;
+					std::cerr << "Error: Field \"error_type\" does not contain a json array." << std::endl;
 					return "";
 				}
 			}
@@ -1656,13 +1766,96 @@ namespace ig
 		doc.Parse(json.c_str());
 
 		if(doc.IsObject())
+		{
 			if(doc.HasMember("user"))
 			{
 				const rapidjson::Value &user = doc["user"];
+
 				if(user.HasMember("follower_count"))
-					return user["follower_count"].GetInt();
+				{
+					if(user["follower_count"].IsInt())
+						return user["follower_count"].GetInt();
+					else
+						std::cerr << "Error: Field \"follower_count\" does not contain an int." << std::endl;
+				}
+				else
+					std::cerr << "Error: There is no field \"follower_count\" in the \"user\" field." << std::endl;
 			}
+			else
+				std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
+		}
+		else
+			std::cerr << "Error: The given server response is not a json object." << std::endl;
+
 		return 0;
+	}
+
+	std::string Api::get_user_id_from_media_id(const std::string &media_id)
+	{
+		std::string json = get_media_info(media_id);
+
+		rapidjson::Document doc;
+		doc.Parse(json.c_str());
+
+		if(doc.IsObject())
+		{
+			if(doc.HasMember("items"))
+			{
+				const rapidjson::Value &items = doc["items"];
+
+				if(items.IsArray())
+				{
+					if(items.GetArray().Size() > 0)
+					{
+						const rapidjson::Value &media_info = items[0];
+
+						if(media_info.HasMember("user"))
+						{
+							const rapidjson::Value &user = media_info["user"];
+
+							if(user.HasMember("pk"))
+								if(user["pk"].IsInt())
+									return std::to_string(user["pk"].GetInt());
+								else
+								{
+								    std::cerr << "Error: Field \"pk\" does not contain an int." << std::endl;
+								    return "";
+								}
+							else
+							{
+								std::cerr << "Error: There is no field \"pk\" in the json." << std::endl;
+								return "";
+							}
+						}
+						else
+						{
+							std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
+							return "";
+						}
+					}
+					else
+					{
+						std::cerr << "Error: Field \"items\" does not contain a json array with size greater than 0." << std::endl;
+						return "";
+					}
+				}
+				else
+				{
+					std::cerr << "Error: Field \"items\" does not contain a json array." << std::endl;
+					return "";
+				}
+			}
+			else
+			{
+				std::cerr << "Error: There is no field \"items\" in the json." << std::endl;
+				return "";
+			}
+		}
+		else
+		{
+			std::cerr << "Error: The string is not a json object." << std::endl;
+			return "";
+		}
 	}
 
 	std::string Api::logout()
