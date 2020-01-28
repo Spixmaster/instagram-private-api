@@ -215,7 +215,7 @@ namespace ig
 			{
 				std::string entry = tools::Tools::get_file_ln_w_srch(m_file_app_info, "last login");
 				if(!entry.empty())
-						m_last_login = tools::Tools::get_int_ln_end(entry);
+						m_last_login = tools::Tools::get_num_ln_end(entry);
 				else
 					std::cerr << "Error: \"last login\" could not be found in " << m_file_app_info << "." << std::endl;
 			}
@@ -224,7 +224,7 @@ namespace ig
 			{
 				std::string entry = tools::Tools::get_file_ln_w_srch(m_file_app_info, "last experiments");
 				if(!entry.empty())
-						m_last_experiments = tools::Tools::get_int_ln_end(entry);
+						m_last_experiments = tools::Tools::get_num_ln_end(entry);
 				else
 					std::cerr << "Error: \"last experiments\" could not be found in " << m_file_app_info << "." << std::endl;
 			}
