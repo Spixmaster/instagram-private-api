@@ -38,6 +38,7 @@ namespace ig
 		{
 			try
 			{
+				boost::filesystem::create_directories(Constants::files_folder);
 				boost::filesystem::create_directories(files_path);
 			}
 			catch(const std::exception &e)
