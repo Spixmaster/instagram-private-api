@@ -443,7 +443,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -470,7 +470,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -498,7 +498,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -517,7 +517,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -539,7 +539,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -575,7 +575,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -605,7 +605,7 @@ namespace ig
 		m_last_experiments = raw_time;
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -663,7 +663,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(); //todo just normal http body, it seems to be correct
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -685,7 +685,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -704,7 +704,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -727,7 +727,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -747,7 +747,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -762,7 +762,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -777,7 +777,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -792,7 +792,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -807,7 +807,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -839,7 +839,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -877,7 +877,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -982,7 +982,7 @@ namespace ig
 									tools::HttpResponse http_res1 = http_client1.send_get_req();
 
 									update_data(http_res1.m_cookies);
-									post_req_check(http_res1);
+									post_req_check(http_client1, http_res1);
 
 									rapidjson::Document doc;
 									doc.Parse(http_res1.m_body.c_str());
@@ -1055,7 +1055,7 @@ namespace ig
 													tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
 
 													update_data(http_res2.m_cookies);
-													post_req_check(http_res2);
+													post_req_check(http_client2, http_res2);
 
 													std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
 													std::string security_code;
@@ -1074,7 +1074,7 @@ namespace ig
 													tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
 
 													update_data(http_res3.m_cookies);
-													post_req_check(http_res3);
+													post_req_check(http_client3, http_res3);
 
 													if(http_res3.m_code == 200)
 													{
@@ -1117,7 +1117,7 @@ namespace ig
 													tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
 
 													update_data(http_res2.m_cookies);
-													post_req_check(http_res2);
+													post_req_check(http_client2, http_res2);
 
 													if(http_res2.m_code == 200)
 													{
@@ -1168,8 +1168,33 @@ namespace ig
 		return get_cookie_val("ds_user_id") + "_" + m_uuid;
 	}
 
-	void Api::post_req_check(const tools::HttpResponse &server_resp)
+	void Api::post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp)
 	{
+		//###log###
+		//get time
+		time_t raw_time;
+		time(&raw_time);
+		struct tm *time_info;
+		time_info = localtime(&raw_time);
+
+		//file length is under Constants::log_lns --> just append
+		if(tools::Tools::get_amnt_file_lns(Constants::file_log) < Constants::log_lns)
+		{
+			std::ofstream outf(Constants::file_log, std::ios::app);
+			outf << asctime(time_info) << "--> " << http_client.get_url() << std::endl;
+			outf.close();
+		}
+		else
+		{
+			//get the last Constants::log_lns lines of the file
+			std::string file_cont = tools::Tools::get_last_lns_file(Constants::file_log, tools::Tools::get_amnt_file_lns(Constants::file_log) - Constants::log_lns);
+			std::ofstream outf(Constants::file_log);
+			outf << file_cont;
+			outf << asctime(time_info) << "--> " << http_client.get_url() << std::endl;
+			outf.close();
+		}
+
+		//###server response check###
 		rapidjson::Document doc;
 		doc.Parse(server_resp.m_body.c_str());
 
@@ -1301,7 +1326,7 @@ namespace ig
 			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 			update_data(http_res.m_cookies);
-			post_req_check(http_res);
+			post_req_check(http_client, http_res);
 
 			//get time
 			time_t raw_time;
@@ -1377,7 +1402,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -1396,7 +1421,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -1475,7 +1500,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -1493,7 +1518,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -1510,7 +1535,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		return http_res.m_body;
 	}
@@ -1871,7 +1896,7 @@ namespace ig
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_res);
+		post_req_check(http_client, http_res);
 
 		m_del_cookies_uuids = true;
 

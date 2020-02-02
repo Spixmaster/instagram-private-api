@@ -31,8 +31,10 @@ namespace ig
 		static const std::string batch_fetch_surfaces_to_queries;
 		static const int app_refresh_interval;
 		static const int app_experiments_interval;
+		static const int log_lns;
 			//files
 		static const std::string files_folder;
+		static const std::string file_log;
 	};
 }
 
