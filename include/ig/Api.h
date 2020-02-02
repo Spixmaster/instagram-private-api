@@ -10,6 +10,7 @@
 #include "ig/devices/Device.h"
 #include "Constants.h"
 #include "tools/http/HttpResponse.h"
+#include "tools/http/HttpClient.h"
 
 /*
  * @brief represents the Instagram Api which interacts with the Instagram servers
@@ -268,9 +269,11 @@ namespace ig
 
 		/*
 		 * @brief on every request Instagram can respond with error messages --> this function catches and handles them
+		 * @brief manages a log with a certain number of the last requests
+		 * @param http_client: needed for the log functionality
 		 * @param server_resp: the server response
 		 */
-		void post_req_check(const tools::HttpResponse &server_resp);
+		void post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp);
 
 		/*
 		 * @brief logs into Instagram
