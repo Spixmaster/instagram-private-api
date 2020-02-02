@@ -34,11 +34,21 @@ namespace ig
 			m_file_app_info(files_path + username + "_app_info.dat"), m_file_cookies(files_path + username + "_cookies.dat"), m_del_cookies_uuids(false)
 	{
 		//create necessary folders
-		if(!tools::Tools::file_exists(Constants::files_folder) || !tools::Tools::file_exists(files_path))
+		if(!tools::Tools::file_exists(Constants::files_folder))
 		{
 			try
 			{
 				boost::filesystem::create_directories(Constants::files_folder);
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+		}
+		if(!tools::Tools::file_exists(files_path))
+		{
+			try
+			{
 				boost::filesystem::create_directories(files_path);
 			}
 			catch(const std::exception &e)
@@ -1182,7 +1192,10 @@ namespace ig
 		if(tools::Tools::get_amnt_file_lns(Constants::file_log) < Constants::log_lns)
 		{
 			std::ofstream outf(Constants::file_log, std::ios::app);
-			outf << asctime(time_info) << "--> " << http_client.get_url() << std::endl;
+			//pop_back() as asctime() ends with \n
+			std::string time = std::string(asctime(time_info));
+			time.pop_back();
+			outf << time << "--> " << http_client.get_url() << std::endl;
 			outf.close();
 		}
 		else
