@@ -34,7 +34,7 @@ namespace ig
 			m_file_app_info(files_path + username + "_app_info.dat"), m_file_cookies(files_path + username + "_cookies.dat"), m_del_cookies_uuids(false)
 	{
 		//create necessary folders
-		if(!tools::Tools::file_exists(files_path))
+		if(!tools::Tools::file_exists(Constants::files_folder) || !tools::Tools::file_exists(files_path))
 		{
 			try
 			{
