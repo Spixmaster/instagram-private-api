@@ -32,8 +32,9 @@ namespace ig
 		static const int app_refresh_interval;
 		static const int app_experiments_interval;
 		static const int log_lns;
+			//folders
+		static const std::string folder;
 			//files
-		static const std::string files_folder;
 		static const std::string file_log;
 	};
 }
