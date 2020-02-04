@@ -34,11 +34,11 @@ namespace ig
 			m_file_app_info(files_path + username + "_app_info.dat"), m_file_cookies(files_path + username + "_cookies.dat"), m_del_cookies_uuids(false)
 	{
 		//create necessary folders
-		if(!tools::Tools::file_exists(Constants::files_folder))
+		if(!tools::Tools::file_exists(Constants::folder))
 		{
 			try
 			{
-				boost::filesystem::create_directories(Constants::files_folder);
+				boost::filesystem::create_directories(Constants::folder);
 			}
 			catch(const std::exception &e)
 			{
