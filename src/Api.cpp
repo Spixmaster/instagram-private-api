@@ -27,6 +27,7 @@
 #include "ig/devices/ZteAxon7.h"
 #include <boost/algorithm/string.hpp>
 #include <unistd.h>
+#include "ig/TooManyRequestsException.h"
 
 namespace ig
 {
@@ -1289,25 +1290,7 @@ namespace ig
 
 		//too many requests
 		if(server_resp.m_code == 429)
-		{
-			//get time
-			time_t raw_time;
-			time(&raw_time);
-
-			srand(raw_time);
-			/*
-			 * something between 123 seconds and 674
-			 * 674 - 123 = 551
-			 */
-			int interruption_time = (rand() % 552) + 123;
-
-			std::cerr << "######################" << std::endl;
-			std::cerr << "Warning!" << std::endl;
-			std::cerr << "Instagram blocked your request due to too many of them. Thus, this software interrupts for " << interruption_time << " seconds." << std::endl;
-			std::cerr << "######################" << std::endl;
-
-			sleep(interruption_time);
-		}
+			throw TooManyRequestsException();
 	}
 
 	bool Api::login()
