@@ -23,52 +23,52 @@ namespace ig
 	OnePlus3T::~OnePlus3T()
 	{}
 
-	std::string OnePlus3T::get_ig_version() const
+	std::string OnePlus3T::get_ig_version() const noexcept
 	{
 		return m_ig_version;
 	}
 
-	std::string OnePlus3T::get_android_version() const
+	std::string OnePlus3T::get_android_version() const noexcept
 	{
 		return m_android_version;
 	}
 
-	std::string OnePlus3T::get_android_release() const
+	std::string OnePlus3T::get_android_release() const noexcept
 	{
 		return m_android_release;
 	}
 
-	std::string OnePlus3T::get_dpi() const
+	std::string OnePlus3T::get_dpi() const noexcept
 	{
 		return m_dpi;
 	}
 
-	std::string OnePlus3T::get_resolution() const
+	std::string OnePlus3T::get_resolution() const noexcept
 	{
 		return m_resolution;
 	}
 
-	std::string OnePlus3T::get_manufacturer() const
+	std::string OnePlus3T::get_manufacturer() const noexcept
 	{
 		return m_manufacturer;
 	}
 
-	std::string OnePlus3T::get_device() const
+	std::string OnePlus3T::get_device() const noexcept
 	{
 		return m_device;
 	}
 
-	std::string OnePlus3T::get_model() const
+	std::string OnePlus3T::get_model() const noexcept
 	{
 		return m_model;
 	}
 
-	std::string OnePlus3T::get_cpu() const
+	std::string OnePlus3T::get_cpu() const noexcept
 	{
 		return m_cpu;
 	}
 
-	std::string OnePlus3T::get_useragent() const
+	std::string OnePlus3T::get_useragent() const noexcept
 	{
 		return m_useragent;
 	}

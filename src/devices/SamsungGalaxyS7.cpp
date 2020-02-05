@@ -23,52 +23,52 @@ namespace ig
 	SamsungGalaxyS7::~SamsungGalaxyS7()
 	{}
 
-	std::string SamsungGalaxyS7::get_ig_version() const
+	std::string SamsungGalaxyS7::get_ig_version() const noexcept
 	{
 		return m_ig_version;
 	}
 
-	std::string SamsungGalaxyS7::get_android_version() const
+	std::string SamsungGalaxyS7::get_android_version() const noexcept
 	{
 		return m_android_version;
 	}
 
-	std::string SamsungGalaxyS7::get_android_release() const
+	std::string SamsungGalaxyS7::get_android_release() const noexcept
 	{
 		return m_android_release;
 	}
 
-	std::string SamsungGalaxyS7::get_dpi() const
+	std::string SamsungGalaxyS7::get_dpi() const noexcept
 	{
 		return m_dpi;
 	}
 
-	std::string SamsungGalaxyS7::get_resolution() const
+	std::string SamsungGalaxyS7::get_resolution() const noexcept
 	{
 		return m_resolution;
 	}
 
-	std::string SamsungGalaxyS7::get_manufacturer() const
+	std::string SamsungGalaxyS7::get_manufacturer() const noexcept
 	{
 		return m_manufacturer;
 	}
 
-	std::string SamsungGalaxyS7::get_device() const
+	std::string SamsungGalaxyS7::get_device() const noexcept
 	{
 		return m_device;
 	}
 
-	std::string SamsungGalaxyS7::get_model() const
+	std::string SamsungGalaxyS7::get_model() const noexcept
 	{
 		return m_model;
 	}
 
-	std::string SamsungGalaxyS7::get_cpu() const
+	std::string SamsungGalaxyS7::get_cpu() const noexcept
 	{
 		return m_cpu;
 	}
 
-	std::string SamsungGalaxyS7::get_useragent() const
+	std::string SamsungGalaxyS7::get_useragent() const noexcept
 	{
 		return m_useragent;
 	}
