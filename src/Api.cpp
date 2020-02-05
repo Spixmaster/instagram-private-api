@@ -1196,7 +1196,7 @@ namespace ig
 			//pop_back() as asctime() ends with \n
 			std::string time = std::string(asctime(time_info));
 			time.pop_back();
-			outf << time << " --> " << http_client.get_url() << std::endl;
+			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
 			outf.close();
 		}
 		else
