@@ -38,61 +38,61 @@ namespace ig
 		 * @brief getter for m_ig_version
 		 * @return m_ig_version
 		 */
-		virtual std::string get_ig_version() const;
+		virtual std::string get_ig_version() const noexcept;
 
 		/*
 		 * @brief getter for m_android_version
 		 * @return m_android_version
 		 */
-		virtual std::string get_android_version() const;
+		virtual std::string get_android_version() const noexcept;
 
 		/*
 		 * @brief getter for m_android_release
 		 * @return m_android_release
 		 */
-		virtual std::string get_android_release() const;
+		virtual std::string get_android_release() const noexcept;
 
 		/*
 		 * @brief getter for m_dpi
 		 * @return m_dpi
 		 */
-		virtual std::string get_dpi() const;
+		virtual std::string get_dpi() const noexcept;
 
 		/*
 		 * @brief getter for m_resolution
 		 * @return m_resolution
 		 */
-		virtual std::string get_resolution() const;
+		virtual std::string get_resolution() const noexcept;
 
 		/*
 		 * @brief getter for m_manufacturer
 		 * @return m_manufacturer
 		 */
-		virtual std::string get_manufacturer() const;
+		virtual std::string get_manufacturer() const noexcept;
 
 		/*
 		 * @brief getter for m_device
 		 * @return m_device
 		 */
-		virtual std::string get_device() const;
+		virtual std::string get_device() const noexcept;
 
 		/*
 		 * @brief getter for m_model
 		 * @return m_model
 		 */
-		virtual std::string get_model() const;
+		virtual std::string get_model() const noexcept;
 
 		/*
 		 * @brief getter for m_cpu
 		 * @return m_cpu
 		 */
-		virtual std::string get_cpu() const;
+		virtual std::string get_cpu() const noexcept;
 
 		/*
 		 * @brief getter for m_useragent
 		 * @return m_useragent
 		 */
-		virtual std::string get_useragent() const;
+		virtual std::string get_useragent() const noexcept;
 	};
 }
 

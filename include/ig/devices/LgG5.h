@@ -43,61 +43,61 @@ namespace ig
 		 * @brief getter for m_ig_version
 		 * @return m_ig_version
 		 */
-		std::string get_ig_version() const;
+		std::string get_ig_version() const noexcept;
 
 		/*
 		 * @brief getter for m_android_version
 		 * @return m_android_version
 		 */
-		std::string get_android_version() const;
+		std::string get_android_version() const noexcept;
 
 		/*
 		 * @brief getter for m_android_release
 		 * @return m_android_release
 		 */
-		std::string get_android_release() const;
+		std::string get_android_release() const noexcept;
 
 		/*
 		 * @brief getter for m_dpi
 		 * @return m_dpi
 		 */
-		std::string get_dpi() const;
+		std::string get_dpi() const noexcept;
 
 		/*
 		 * @brief getter for m_resolution
 		 * @return m_resolution
 		 */
-		std::string get_resolution() const;
+		std::string get_resolution() const noexcept;
 
 		/*
 		 * @brief getter for m_manufacturer
 		 * @return m_manufacturer
 		 */
-		std::string get_manufacturer() const;
+		std::string get_manufacturer() const noexcept;
 
 		/*
 		 * @brief getter for m_device
 		 * @return m_device
 		 */
-		std::string get_device() const;
+		std::string get_device() const noexcept;
 
 		/*
 		 * @brief getter for m_model
 		 * @return m_model
 		 */
-		std::string get_model() const;
+		std::string get_model() const noexcept;
 
 		/*
 		 * @brief getter for m_cpu
 		 * @return m_cpu
 		 */
-		std::string get_cpu() const;
+		std::string get_cpu() const noexcept;
 
 		/*
 		 * @brief getter for m_useragent
 		 * @return m_cpu
 		 */
-		std::string get_useragent() const;
+		std::string get_useragent() const noexcept;
 	};
 }
 

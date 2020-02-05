@@ -23,52 +23,52 @@ namespace ig
 	ZteAxon7::~ZteAxon7()
 	{}
 
-	std::string ZteAxon7::get_ig_version() const
+	std::string ZteAxon7::get_ig_version() const noexcept
 	{
 		return m_ig_version;
 	}
 
-	std::string ZteAxon7::get_android_version() const
+	std::string ZteAxon7::get_android_version() const noexcept
 	{
 		return m_android_version;
 	}
 
-	std::string ZteAxon7::get_android_release() const
+	std::string ZteAxon7::get_android_release() const noexcept
 	{
 		return m_android_release;
 	}
 
-	std::string ZteAxon7::get_dpi() const
+	std::string ZteAxon7::get_dpi() const noexcept
 	{
 		return m_dpi;
 	}
 
-	std::string ZteAxon7::get_resolution() const
+	std::string ZteAxon7::get_resolution() const noexcept
 	{
 		return m_resolution;
 	}
 
-	std::string ZteAxon7::get_manufacturer() const
+	std::string ZteAxon7::get_manufacturer() const noexcept
 	{
 		return m_manufacturer;
 	}
 
-	std::string ZteAxon7::get_device() const
+	std::string ZteAxon7::get_device() const noexcept
 	{
 		return m_device;
 	}
 
-	std::string ZteAxon7::get_model() const
+	std::string ZteAxon7::get_model() const noexcept
 	{
 		return m_model;
 	}
 
-	std::string ZteAxon7::get_cpu() const
+	std::string ZteAxon7::get_cpu() const noexcept
 	{
 		return m_cpu;
 	}
 
-	std::string ZteAxon7::get_useragent() const
+	std::string ZteAxon7::get_useragent() const noexcept
 	{
 		return m_useragent;
 	}
