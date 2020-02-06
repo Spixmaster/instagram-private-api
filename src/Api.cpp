@@ -1205,7 +1205,11 @@ namespace ig
 			std::string file_cont = tools::Tools::get_last_lns_file(Constants::file_log, tools::Tools::get_amnt_file_lns(Constants::file_log) - Constants::log_lns);
 			std::ofstream outf(Constants::file_log);
 			outf << file_cont;
-			outf << asctime(time_info) << "--> " << http_client.get_url() << std::endl;
+
+			//pop_back() as asctime() ends with \n
+			std::string time = std::string(asctime(time_info));
+			time.pop_back();
+			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
 			outf.close();
 		}
 
