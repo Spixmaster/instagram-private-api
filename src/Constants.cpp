@@ -4,8 +4,8 @@
 
 namespace ig
 {
-	const std::string Constants::version = "0.30.4";
-	const std::string Constants::release = "05.Feb.2020";
+	const std::string Constants::version = "0.30.5";
+	const std::string Constants::release = "07.Feb.2020";
 
 	const std::string Constants::ig_url = "https://i.instagram.com/api/v1/";
 	const std::string Constants::ig_version = "105.0.0.18.119";
