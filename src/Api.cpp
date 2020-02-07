@@ -1195,7 +1195,8 @@ namespace ig
 			std::ofstream outf(Constants::file_log, std::ios::app);
 			//pop_back() as asctime() ends with \n
 			std::string time = std::string(asctime(time_info));
-			time.pop_back();
+			if(!time.empty())
+				time.pop_back();
 			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
 			outf.close();
 		}
@@ -1208,7 +1209,8 @@ namespace ig
 
 			//pop_back() as asctime() ends with \n
 			std::string time = std::string(asctime(time_info));
-			time.pop_back();
+			if(!time.empty())
+				time.pop_back();
 			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
 			outf.close();
 		}
