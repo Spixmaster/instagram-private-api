@@ -27,7 +27,6 @@
 #include "ig/devices/ZteAxon7.h"
 #include <boost/algorithm/string.hpp>
 #include <unistd.h>
-#include "ig/TooManyRequestsException.h"
 
 namespace ig
 {
@@ -1296,7 +1295,7 @@ namespace ig
 
 		//too many requests
 		if(server_resp.m_code == 429)
-			throw TooManyRequestsException();
+			throw std::runtime_error("Error. The Instagram servers refused the request as they are too many.");
 	}
 
 	bool Api::login() noexcept
