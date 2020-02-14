@@ -439,7 +439,7 @@ namespace ig
 		return cookie_val;
 	}
 
-	std::string Api::read_msisdn_header(const std::string &usage) noexcept
+	std::string Api::read_msisdn_header(const std::string &usage)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -459,7 +459,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::launcher_sync(const bool &login) noexcept
+	std::string Api::launcher_sync(const bool &login)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -486,7 +486,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::sync_device_features(const bool &login) noexcept
+	std::string Api::sync_device_features(const bool &login)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -514,7 +514,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::log_attribution() noexcept
+	std::string Api::log_attribution()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -533,7 +533,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::contact_point_prefill(const std::string &usage) noexcept
+	std::string Api::contact_point_prefill(const std::string &usage)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -555,7 +555,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	void Api::pre_login_requests() noexcept
+	void Api::pre_login_requests()
 	{
 		read_msisdn_header("default");
 		launcher_sync(true);
@@ -564,7 +564,7 @@ namespace ig
 		contact_point_prefill("prefill");
 	}
 
-	std::string Api::sync_launcher(const bool &login) noexcept
+	std::string Api::sync_launcher(const bool &login)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -591,7 +591,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::sync_user_features() noexcept
+	std::string Api::sync_user_features()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -621,7 +621,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_timeline_feed(const bool &is_pull_to_refresh, const bool &push_disabled, const bool &recovered_from_crash) noexcept
+	std::string Api::get_timeline_feed(const bool &is_pull_to_refresh, const bool &push_disabled, const bool &recovered_from_crash)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -679,7 +679,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_reels_tray_feed(const std::string &reason) noexcept
+	std::string Api::get_reels_tray_feed(const std::string &reason)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -701,7 +701,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_suggested_searches(const std::string &type) noexcept
+	std::string Api::get_suggested_searches(const std::string &type)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -720,7 +720,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_ranked_recipients(const std::string &mode, const bool &show_threads, const std::string &query) noexcept
+	std::string Api::get_ranked_recipients(const std::string &mode, const bool &show_threads, const std::string &query)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -743,7 +743,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_inbox_v2() noexcept
+	std::string Api::get_inbox_v2()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -763,7 +763,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_presence() noexcept
+	std::string Api::get_presence()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -778,7 +778,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_recent_activity() noexcept
+	std::string Api::get_recent_activity()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -793,7 +793,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_loom_fetch_config() noexcept
+	std::string Api::get_loom_fetch_config()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -808,7 +808,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_profile_notice() noexcept
+	std::string Api::get_profile_notice()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -828,7 +828,7 @@ namespace ig
 	 * 400
 	 * {"message": "INVALID_REQUEST", "status": "fail"}
 	 */
-	std::string Api::batch_fetch() noexcept
+	std::string Api::batch_fetch()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -855,7 +855,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::explore(const bool &is_prefetch) noexcept
+	std::string Api::explore(const bool &is_prefetch)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -893,7 +893,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	void Api::open_app(const bool &recent_login) noexcept
+	void Api::open_app(const bool &recent_login)
 	{
 		if(recent_login)
 		{
@@ -957,7 +957,7 @@ namespace ig
 		}
 	}
 
-	bool Api::solve_challenge(const std::string &server_resp) noexcept
+	bool Api::solve_challenge(const std::string &server_resp)
 	{
 		/*
 		 * *1 get the challenge content
@@ -1298,7 +1298,7 @@ namespace ig
 			throw std::runtime_error("Error. The Instagram servers refused the request as they are too many.");
 	}
 
-	bool Api::login() noexcept
+	bool Api::login()
 	{
 		if(m_new_login == true)
 		{
@@ -1394,7 +1394,7 @@ namespace ig
 		}
 	}
 
-	std::string Api::get_media_likers(const std::string &media_id) noexcept
+	std::string Api::get_media_likers(const std::string &media_id)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -1409,7 +1409,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_media_comments(const std::string &media_id, const std::string &max_id) noexcept
+	std::string Api::get_media_comments(const std::string &media_id, const std::string &max_id)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -1428,7 +1428,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_media_comments_all(const std::string &media_id) noexcept
+	std::string Api::get_media_comments_all(const std::string &media_id)
 	{
 		std::string response = get_media_comments(media_id);
 		std::string result = "[";
@@ -1490,7 +1490,7 @@ namespace ig
 		return result.append("]");
 	}
 
-	std::string Api::get_media_info(const std::string &media_id) noexcept
+	std::string Api::get_media_info(const std::string &media_id)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -1507,7 +1507,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_user_feed(const std::string &user_id, const std::string &max_id, const std::string &min_timestamp) noexcept
+	std::string Api::get_user_feed(const std::string &user_id, const std::string &max_id, const std::string &min_timestamp)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -1525,7 +1525,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::get_user_info(const std::string &user_id) noexcept
+	std::string Api::get_user_info(const std::string &user_id)
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
@@ -1599,7 +1599,7 @@ namespace ig
 			return false;
 	}
 
-	bool Api::media_comments_allowed(const std::string &media_id) noexcept
+	bool Api::media_comments_allowed(const std::string &media_id)
 	{
 		//so that if the key is not found in the json the bool is correct
 		bool comments_allowed = true;
@@ -1677,7 +1677,7 @@ namespace ig
 		return comments_allowed;
 	}
 
-	std::string Api::get_username_from_user_id(const std::string &user_id) noexcept
+	std::string Api::get_username_from_user_id(const std::string &user_id)
 	{
 		std::string json = get_user_info(user_id);
 
@@ -1717,7 +1717,7 @@ namespace ig
 		}
 	}
 
-	std::string Api::get_username_from_media_id(const std::string &media_id) noexcept
+	std::string Api::get_username_from_media_id(const std::string &media_id)
 	{
 		std::string json = get_media_info(media_id);
 
@@ -1785,7 +1785,7 @@ namespace ig
 		}
 	}
 
-	int Api::get_amnt_flwrs(const std::string &user_id) noexcept
+	int Api::get_amnt_flwrs(const std::string &user_id)
 	{
 		std::string json = get_user_info(user_id);
 
@@ -1817,7 +1817,7 @@ namespace ig
 		return 0;
 	}
 
-	std::string Api::get_user_id_from_media_id(const std::string &media_id) noexcept
+	std::string Api::get_user_id_from_media_id(const std::string &media_id)
 	{
 		std::string json = get_media_info(media_id);
 
@@ -1885,7 +1885,7 @@ namespace ig
 		}
 	}
 
-	std::string Api::logout() noexcept
+	std::string Api::logout()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();

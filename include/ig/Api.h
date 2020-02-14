@@ -15,6 +15,7 @@
 /*
  * @brief represents the Instagram Api which interacts with the Instagram servers
  * @brief the cookies need to be updated every time whenever an endpoint is called as even then cookies are set
+ * @brief EVERY FUNCTION THAT CALLS post_req_check CANNOT BE NOEXCEPT
  */
 
 namespace ig
@@ -126,37 +127,37 @@ namespace ig
 		 * @param usage: defines part of the http body
 		 * @return server response
 		 */
-		std::string read_msisdn_header(const std::string &usage) noexcept;
+		std::string read_msisdn_header(const std::string &usage);
 
 		/*
 		 * @brief the request is part of the login process
 		 * @param login: the http body depends on it
 		 * @return server response
 		 */
-		std::string launcher_sync(const bool &login) noexcept;
+		std::string launcher_sync(const bool &login);
 
 		/*
 		 * @brief the request is part of the login process
 		 * @param login: the http body depends on it
 		 * @return server response
 		 */
-		std::string sync_device_features(const bool &login) noexcept;
+		std::string sync_device_features(const bool &login);
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string log_attribution() noexcept;
+		std::string log_attribution();
 
 		/*
 		 * @brief the request is part of the login process
 		 * @param usage: defines part of the http body
 		 * @return server response
 		 */
-		std::string contact_point_prefill(const std::string &usage) noexcept;
+		std::string contact_point_prefill(const std::string &usage);
 
 		//@brief makes all http requests which are necessary before the actual login
-		void pre_login_requests() noexcept;
+		void pre_login_requests();
 
 		//##############################post login requests##############################
 		/*
@@ -164,13 +165,13 @@ namespace ig
 		 * @param login: adds some data to the http body
 		 * @return server response
 		 */
-		std::string sync_launcher(const bool &login) noexcept;
+		std::string sync_launcher(const bool &login);
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string sync_user_features() noexcept;
+		std::string sync_user_features();
 
 		/*
 		 * @brief the request is part of the login process
@@ -179,21 +180,21 @@ namespace ig
 		 * @param recovered_from_crash: would be part of the http body
 		 * @return server response
 		 */
-		std::string get_timeline_feed(const bool &is_pull_to_refresh, const bool &push_disabled, const bool &recovered_from_crash) noexcept;
+		std::string get_timeline_feed(const bool &is_pull_to_refresh, const bool &push_disabled, const bool &recovered_from_crash);
 
 		/*
 		 * @brief the request is part of the login process
 		 * @param reason: possible values are "cold_start" and "pull_to_refresh"
 		 * @return server response
 		 */
-		std::string get_reels_tray_feed(const std::string &reason) noexcept;
+		std::string get_reels_tray_feed(const std::string &reason);
 
 		/*
 		 * @brief the request is part of the login process
 		 * @param type: search term
 		 * @return server response
 		 */
-		std::string get_suggested_searches(const std::string &type) noexcept;
+		std::string get_suggested_searches(const std::string &type);
 
 		/*
 		 * @brief the request is part of the login process
@@ -202,56 +203,56 @@ namespace ig
 		 * @param query: part of the http body
 		 * @return server response
 		 */
-		std::string get_ranked_recipients(const std::string &mode, const bool &show_threads, const std::string &query = "") noexcept;
+		std::string get_ranked_recipients(const std::string &mode, const bool &show_threads, const std::string &query = "");
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string get_inbox_v2() noexcept;
+		std::string get_inbox_v2();
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string get_presence() noexcept;
+		std::string get_presence();
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string get_recent_activity() noexcept;
+		std::string get_recent_activity();
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string get_loom_fetch_config() noexcept;
+		std::string get_loom_fetch_config();
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string get_profile_notice() noexcept;
+		std::string get_profile_notice();
 
 		/*
 		 * @brief the request is part of the login process
 		 * @return server response
 		 */
-		std::string batch_fetch() noexcept;
+		std::string batch_fetch();
 
 		/*
 		 * @brief the request is part of the login process
 		 * @param is_prefetch: part of the http body
 		 * @return server response
 		 */
-		std::string explore(const bool &is_prefetch) noexcept;
+		std::string explore(const bool &is_prefetch);
 
 		/*
 		 * @brief makes all http requests which are necessary after the actual login
 		 * @brief simulates that the app is opened
 		 */
-		void open_app(const bool &recent_login) noexcept;
+		void open_app(const bool &recent_login);
 		//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 		/*
@@ -259,7 +260,7 @@ namespace ig
 		 * @param server_resp: the server response which contains the challenge
 		 * @return true on success; otherwise false
 		 */
-		bool solve_challenge(const std::string &server_resp) noexcept;
+		bool solve_challenge(const std::string &server_resp);
 
 		/*
 		 * @brief the rank token is assembled out of the user id an the uuid
@@ -279,7 +280,7 @@ namespace ig
 		 * @brief logs into Instagram
 		 * @return true on success; otherwise false
 		 */
-		bool login() noexcept;
+		bool login();
 
 	public:
 		/*
@@ -287,7 +288,7 @@ namespace ig
 		 * @param media_id: the proper media id
 		 * @return the server response
 		 */
-		std::string get_media_likers(const std::string &media_id) noexcept;
+		std::string get_media_likers(const std::string &media_id);
 
 		/*
 		 * @brief gets the comments of the Instagram media
@@ -301,7 +302,7 @@ namespace ig
 		 * @param max_id: for pagination
 		 * @return the server response
 		 */
-		std::string get_media_comments(const std::string &media_id, const std::string &max_id = "") noexcept;
+		std::string get_media_comments(const std::string &media_id, const std::string &max_id = "");
 
 		/*
 		 * @brief gets the comments of the Instagram media
@@ -311,14 +312,14 @@ namespace ig
 		 * @param max_id: for pagination
 		 * @return the server response
 		 */
-		std::string get_media_comments_all(const std::string &media_id) noexcept;
+		std::string get_media_comments_all(const std::string &media_id);
 
 		/*
 		 * @brief gets the available information about the Instagram media
 		 * @param media_id: the proper media id
 		 * @return the server response
 		 */
-		std::string get_media_info(const std::string &media_id) noexcept;
+		std::string get_media_info(const std::string &media_id);
 
 		/*
 		 * @brief gets the user feed --> the medias the user uploaded
@@ -332,14 +333,14 @@ namespace ig
 		 * @param min_timestamp: todo no idea
 		 * @return the server response
 		 */
-		std::string get_user_feed(const std::string &user_id, const std::string &max_id = "", const std::string &min_timestamp = "") noexcept;
+		std::string get_user_feed(const std::string &user_id, const std::string &max_id = "", const std::string &min_timestamp = "");
 
 		/*
 		 * @brief gets the available user info
 		 * @param user_id: the proper user id
 		 * @return the server response
 		 */
-		std::string get_user_info(const std::string &user_id) noexcept;
+		std::string get_user_info(const std::string &user_id);
 
 		/*
 		 * @brief gets media id of an Instagram post
@@ -361,7 +362,7 @@ namespace ig
 		 * @param media_id: states media which we want to check
 		 * @return true when comments are allowed; otherwise false
 		 */
-		bool media_comments_allowed(const std::string &media_id) noexcept;
+		bool media_comments_allowed(const std::string &media_id);
 
 		/*
 		 * @brief gets Instgram username of an Instagram profile
@@ -369,14 +370,14 @@ namespace ig
 		 * @return on error: "Error:"
 		 * @return Instagram username
 		 */
-		std::string get_username_from_user_id(const std::string &user_id) noexcept;
+		std::string get_username_from_user_id(const std::string &user_id);
 
 		/*
 		 * @brief gets Instgram username from a media
 		 * @param media_id: proper media id
 		 * @return Instagram username
 		 */
-		std::string get_username_from_media_id(const std::string &media_id) noexcept;
+		std::string get_username_from_media_id(const std::string &media_id);
 
 		/*
 		 * @brief gets amount of followers
@@ -384,20 +385,20 @@ namespace ig
 		 * @return by default, returns 0
 		 * @return amount of followers
 		 */
-		int get_amnt_flwrs(const std::string &user_id) noexcept;
+		int get_amnt_flwrs(const std::string &user_id);
 
 		/*
 		 * @brief get the user id from a media
 		 * @param media: proper media id
 		 * @return user id
 		 */
-		std::string get_user_id_from_media_id(const std::string &media_id) noexcept;
+		std::string get_user_id_from_media_id(const std::string &media_id);
 
 		/*
 		 * @brief logs out which means that the session with its corresponding cookies will not longer be usable
 		 * @return the server response
 		 */
-		std::string logout() noexcept;
+		std::string logout();
 	};
 }
 
