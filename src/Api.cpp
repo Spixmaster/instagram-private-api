@@ -7,7 +7,6 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "tools/http/HttpHeader.h"
-#include "ig/Constants.h"
 #include <boost/uuid/detail/md5.hpp>
 #include <iomanip>
 #include <Poco/URI.h>
@@ -17,7 +16,6 @@
 #include <rapidjson/document.h>
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include "tools/Constants.h"
 #include <cstdlib>
 #include "ig/devices/HuaweiMate9Pro.h"
 #include "ig/devices/LgG5.h"
@@ -26,7 +24,10 @@
 #include "ig/devices/SamsungGalaxyS9Plus.h"
 #include "ig/devices/ZteAxon7.h"
 #include <boost/algorithm/string.hpp>
+#include "ig/constants/Constants.h"
 #include <unistd.h>
+#include "ig/constants/Messages.h"
+#include "tools/constants/Messages.h"
 
 namespace ig
 {
@@ -108,7 +109,6 @@ namespace ig
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string((rand() % 400001) + 500000)));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", std::to_string((rand() % 101) + 50)));
 
-
 		return http_headers;
 	}
 
@@ -160,10 +160,10 @@ namespace ig
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_phone_id = args.at(args.size() - 1);
 					else
-						std::cerr << "Error: \"phone id\" has no value in " << m_file_app_info << "." << std::endl;
+						std::cerr << Messages::field_no_value_in_file("phone id", m_file_app_info) << std::endl;
 				}
 				else
-					std::cerr << "Error: \"phone id\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("phone id", m_file_app_info) << std::endl;
 			}
 
 			//uuid
@@ -174,10 +174,10 @@ namespace ig
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_uuid = args.at(args.size() - 1);
 					else
-						std::cerr << "Error: \"uuid\" has no value in " << m_file_app_info << "." << std::endl;
+						std::cerr << Messages::field_no_value_in_file("uuid", m_file_app_info) << std::endl;
 				}
 				else
-					std::cerr << "Error: \"uuid\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("uuid", m_file_app_info) << std::endl;
 			}
 
 			//client session id
@@ -188,10 +188,10 @@ namespace ig
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_client_session_id = args.at(args.size() - 1);
 					else
-						std::cerr << "Error: \"client session id\" has no value in " << m_file_app_info << "." << std::endl;
+						std::cerr << Messages::field_no_value_in_file("client session id", m_file_app_info) << std::endl;
 				}
 				else
-					std::cerr << "Error: \"client session id\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("client session id", m_file_app_info) << std::endl;
 			}
 
 			//advertising id
@@ -202,10 +202,10 @@ namespace ig
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_advertising_id = args.at(args.size() - 1);
 					else
-						std::cerr << "Error: \"advertising id\" has no value in " << m_file_app_info << "." << std::endl;
+						std::cerr << Messages::field_no_value_in_file("advertising id", m_file_app_info) << std::endl;
 				}
 				else
-					std::cerr << "Error: \"advertising id\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("advertising id", m_file_app_info) << std::endl;
 			}
 
 			//device id
@@ -216,10 +216,10 @@ namespace ig
 					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
 						m_device_id = args.at(args.size() - 1);
 					else
-						std::cerr << "Error: \"device id\" has no value in " << m_file_app_info << "." << std::endl;
+						std::cerr << Messages::field_no_value_in_file("device id", m_file_app_info) << std::endl;
 				}
 				else
-					std::cerr << "Error: \"device id\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("device id", m_file_app_info) << std::endl;
 			}
 
 			//last login
@@ -228,7 +228,7 @@ namespace ig
 				if(!entry.empty())
 						m_last_login = tools::Tools::get_num_ln_end(entry);
 				else
-					std::cerr << "Error: \"last login\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("last login", m_file_app_info) << std::endl;
 			}
 
 			//last experiments
@@ -237,7 +237,7 @@ namespace ig
 				if(!entry.empty())
 						m_last_experiments = tools::Tools::get_num_ln_end(entry);
 				else
-					std::cerr << "Error: \"last experiments\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("last experiments", m_file_app_info) << std::endl;
 			}
 
 			//useragent
@@ -255,14 +255,14 @@ namespace ig
 								m_useragent.append(" ");
 						}
 					else
-						std::cerr << "Error: \"useragent\" has no value in " << m_file_app_info << "." << std::endl;
+						std::cerr << Messages::field_no_value_in_file("useragent", m_file_app_info) << std::endl;
 				}
 				else
-					std::cerr << "Error: \"useragent\" could not be found in " << m_file_app_info << "." << std::endl;
+					std::cerr << Messages::field_not_found_in_file("useragent", m_file_app_info) << std::endl;
 			}
 		}
 		else
-			tools::Constants::file_non_existent(m_file_app_info);
+			tools::Messages::file_non_existent(m_file_app_info);
 
 		if(tools::Tools::file_exists(m_file_cookies))
 		{
@@ -271,37 +271,37 @@ namespace ig
 					m_cookies.push_back(tools::HttpCookie(tools::Tools::get_file_ln(m_file_cookies, j)));
 		}
 		else
-			tools::Constants::file_non_existent(m_file_cookies);
+			tools::Messages::file_non_existent(m_file_cookies);
 
 		//just for orientation about the cookies
 		if(get_cookie_val("ds_user").empty())
-			std::cerr << "Error: The cookie \"ds_user\" is missing." << std::endl;
+			std::cerr << Messages::cookie_missing("ds_user") << std::endl;
 
 		if(get_cookie_val("csrftoken").empty())
-			std::cerr << "Error: The cookie \"csrftoken\" is missing." << std::endl;
+			std::cerr << Messages::cookie_missing("csrftoken") << std::endl;
 
 		//it seems that this cookie is not necessary
 //		if(get_cookie_val("shbid").empty())
-//			std::cerr << "Error: The cookie \"shbid\" is missing." << std::endl;
+//			std::cerr << Messages::cookie_missing("shbid") << std::endl;
 
 		//it seems that this cookie is not necessary
 //		if(get_cookie_val("shbts").empty())
-//			std::cerr << "Error: The cookie \"shbts\" is missing." << std::endl;
+//			std::cerr << Messages::cookie_missing("shbts") << std::endl;
 
 		if(get_cookie_val("rur").empty())
-			std::cerr << "Error: The cookie \"rur\" is missing." << std::endl;
+			std::cerr << Messages::cookie_missing("rur") << std::endl;
 
 		if(get_cookie_val("ds_user_id").empty())
-			std::cerr << "Error: The cookie \"ds_user_id\" is missing." << std::endl;
+			std::cerr << Messages::cookie_missing("ds_user_id") << std::endl;
 
 		if(get_cookie_val("urlgen").empty())
-			std::cerr << "Error: The cookie \"urlgen\" is missing." << std::endl;
+			std::cerr << Messages::cookie_missing("urlgen") << std::endl;
 
 		if(get_cookie_val("sessionid").empty())
-			std::cerr << "Error: The cookie \"sessionid\" is missing." << std::endl;
+			std::cerr << Messages::cookie_missing("sessionid") << std::endl;
 
 		if(get_cookie_val("mid").empty())
-			std::cerr << "Error: The cookie \"mid\" is missing." << std::endl;
+			std::cerr << Messages::cookie_missing("mid") << std::endl;
 
 		/*
 		 * if some app info is missing
@@ -344,7 +344,7 @@ namespace ig
 			m_device_id = "android-" + device_id_temp;
 			m_useragent = m_device->get_useragent();
 
-			std::cout << "No cookies from a previous session were found. Thus a new login is required whose cookies will be stored for the next logins." << std::endl;
+			std::cout << Messages::no_cookies_found << std::endl;
 		}
 		else
 		{
@@ -1010,11 +1010,11 @@ namespace ig
 													std::string choices;
 
 													if(step_data.HasMember("phone_number"))
-														choices.append("0 - Phone number\n");
+														choices.append("0 - Phone number");
 													if(step_data.HasMember("email"))
-														choices.append("1 - Email");
+														choices.append("\n1 - Email");
 
-													std::cout << "If you do not know your personal data like phone number or email here are some hints:" << std::endl;
+													std::cout << Messages::hints_from_last_server_response << std::endl;
 													std::cout << http_res1.m_body << std::endl;
 													std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
 													std::cout << choices << std::endl;
@@ -1028,7 +1028,7 @@ namespace ig
 															std::cin >> choice;
 
 															if(!(choice == 0 || choice == 1))
-																std::cout << "Error: Wrong choice. Try again!" << std::endl;
+																std::cout << Messages::wrong_choice_try_again << std::endl;
 														}
 													}
 													else if(step_data.HasMember("phone_number"))
@@ -1039,7 +1039,7 @@ namespace ig
 															std::cin >> choice;
 
 															if(choice != 0)
-																std::cout << "Error: Wrong choice. Try again!" << std::endl;
+																std::cout << Messages::wrong_choice_try_again << std::endl;
 														}
 													}
 													else if(step_data.HasMember("email"))
@@ -1050,7 +1050,7 @@ namespace ig
 															std::cin >> choice;
 
 															if(choice != 1)
-																std::cout << "Error: Wrong choice. Try again!" << std::endl;
+																std::cout << Messages::wrong_choice_try_again << std::endl;
 														}
 													}
 
@@ -1101,7 +1101,7 @@ namespace ig
 													choices.append("0 - It was me\n");
 													choices.append("1 - It wasn't me");
 
-													std::cout << "Here you have the last server response:" << std::endl;
+													std::cout << Messages::hints_from_last_server_response << std::endl;
 													std::cout << http_res1.m_body << std::endl;
 													std::cout << "You need to verify your login. Choose on whether the last login was you." << std::endl;
 													std::cout << choices << std::endl;
@@ -1113,7 +1113,7 @@ namespace ig
 														std::cin >> choice;
 
 														if(!(choice == 0 || choice == 1))
-															std::cout << "Error: Wrong choice. Try again!" << std::endl;
+															std::cout << Messages::wrong_choice_try_again << std::endl;
 													}
 
 													//http headers
@@ -1138,38 +1138,37 @@ namespace ig
 													}
 												}
 												else
-													std::cerr << std::string("Error: The challenge response's field \"step_name\" does not have the value ") <<
-													"\"select_verify_method\" or \"delta_login_review\"." << std::endl;
+													std::cerr << Messages::field_not_correct_value("step_name", "select_verify_method or delta_login_review") << std::endl;
 											}
 											else
-											    std::cerr << "Error: Field \"step_name\" does not contain a string." << std::endl;
+											    std::cerr << Messages::field_not_contain_string("step_name") << std::endl;
 										}
 										else
-											std::cerr << "Error: The challenge response does not have a field \"step_name\"." << std::endl;
+											std::cerr << Messages::field_not_found("step_name") << std::endl;
 									}
 									else
-										std::cerr << "Error: The challenge response is not a json object." << std::endl;
+										std::cerr << Messages::server_respone_not_json_obj << std::endl;
 								}
 								else
-								    std::cerr << "Error: Field \"api_path\" does not contain a string." << std::endl;
+								    std::cerr << Messages::field_not_contain_string("api_path") << std::endl;
 							}
 							else
-								std::cerr << "Error: Field \"challenge\" does not have field \"api_path\"." << std::endl;
+								std::cerr << Messages::field_not_found("api_path") << std::endl;
 						}
 						else
-							std::cerr << "Error: There is not field \"challenge\"." << std::endl;
+							std::cerr << Messages::field_not_found("challenge") << std::endl;
 					}
 					else
-						std::cerr << "Error: Field \"error_type\" does not have the value \"checkpoint_challenge_required\"." << std::endl;
+						std::cerr << Messages::field_not_correct_value("error_type", "checkpoint_challenge_required") << std::endl;
 				}
 				else
-					std::cerr << "Error: Field \"error_type\" does not contain a string." << std::endl;
+					std::cerr << Messages::field_not_contain_string("error_type") << std::endl;
 			}
 			else
-				std::cerr << "Error: There is not field \"error_type\"." << std::endl;
+				std::cerr << Messages::field_not_found("error_type") << std::endl;
 		}
 		else
-			std::cerr << "Error: The given server response is not a json object." << std::endl;
+			std::cerr << Messages::server_respone_not_json_obj << std::endl;
 
 		return false;
 	}
@@ -1240,16 +1239,10 @@ namespace ig
 				if(doc["message"].IsString())
 				{
 					if(doc["message"].GetString() == std::string("challenge_required"))
-					{
-						std::cerr << "######################" << std::endl;
-						std::cerr << "Warning!" << std::endl;
-						std::cerr << "If this is not the login process it may be that you need to solve a challenge manually. Log in into your Instagram account " <<
-								"in your browser and you should be requested to verify your identity. Do so." << std::endl;
-						std::cerr << "######################" << std::endl;
-					}
+						std::cerr << Messages::manual_challenge << std::endl;
 				}
 				else
-					std::cerr << "Error: Field \"message\" does not contain a string." << std::endl;
+					std::cerr << Messages::field_not_contain_string("message") << std::endl;
 			}
 
 			/*
@@ -1272,26 +1265,17 @@ namespace ig
 					{
 						m_del_cookies_uuids = true;
 
-						std::cerr << "######################" << std::endl;
-						std::cerr << "Warning!" << std::endl;
-						std::cerr << "A new login is required as you have been logged out." << std::endl;
-						std::cerr << "######################" << std::endl;
+						std::cerr << Messages::new_login_required_as_logged_out << std::endl;
 					}
 				}
 				else
-					std::cerr << "Error: Field \"message\" does not contain a string." << std::endl;
+					std::cerr << Messages::field_not_contain_string("message") << std::endl;
 			}
 		}
 
 		//Oops, an error occured.
 		if(boost::iequals(server_resp.m_body, "Oops, an error occured."))
-		{
-			std::cerr << "######################" << std::endl;
-			std::cerr << "Use a different account!" << std::endl;
-			std::cerr << "This response is similar to a soft ban from my experience when I encountered this problem. I could not even login in from the official" <<
-					" Android app. For me, my account was set free again after a few hours but it depends." << std::endl;
-			std::cerr << "######################" << std::endl;
-		}
+			std::cerr << Messages::acc_soft_ban << std::endl;
 
 		//too many requests
 		if(server_resp.m_code == 429)
@@ -1369,19 +1353,19 @@ namespace ig
 									return true;
 								}
 								else
-									std::cerr << "Error: The login challenge could not be solved." << std::endl;
+									std::cerr << Messages::challenge_not_solved << std::endl;
 							}
 							else
-								std::cerr << "Error: Field \"error_type\" does not contain the value \"checkpoint_challenge_required\"." << std::endl;
+								std::cerr << Messages::field_not_correct_value("error_type", "checkpoint_challenge_required") << std::endl;
 						}
 						else
-							std::cerr << "Error: Field \"error_type\" does not contain a string." << std::endl;
+							std::cerr << Messages::field_not_contain_string("error_type") << std::endl;
 					}
 					else
-						std::cerr << "Error: There is no field \"error_type\" in the json." << std::endl;
+						std::cerr << Messages::field_not_found("error_type") << std::endl;
 				}
 				else
-					std::cerr << "Error: The given server response is not a json object." << std::endl;
+					std::cerr << Messages::server_respone_not_json_obj << std::endl;
 
 				return false;
 			}
@@ -1454,7 +1438,7 @@ namespace ig
 						}
 					}
 					else
-					    std::cerr << "Error: Field \"comments\" does not contain a json array." << std::endl;
+					    std::cerr << Messages::field_not_contain_json_array("comments") << std::endl;
 
 					//perhaps, next page
 					if(doc.HasMember("has_more_comments") && doc.HasMember("next_max_id"))
@@ -1462,7 +1446,7 @@ namespace ig
 							response = get_media_comments(media_id, doc["next_max_id"].GetString());
 						else
 						{
-							std::cerr << "Error: Field \"next_max_id\" does not contain a string." << std::endl;
+							std::cerr << Messages::field_not_contain_string("next_max_id") << std::endl;
 							break;
 						}
 					else
@@ -1470,13 +1454,13 @@ namespace ig
 				}
 				else
 				{
-					std::cerr << "Error: There is no field \"comments\" in the json." << std::endl;
+					std::cerr << Messages::field_not_found("comments") << std::endl;
 					break;
 				}
 			}
 			else
 			{
-				std::cerr << "Error: The given server response is not a json object." << std::endl;
+				std::cerr << Messages::server_respone_not_json_obj << std::endl;
 				break;
 			}
 		}
@@ -1560,25 +1544,25 @@ namespace ig
 						return doc["media_id"].GetString();
 					else
 					{
-					    std::cerr << "Error: Field \"media_id\" does not contain a string." << std::endl;
+					    std::cerr << Messages::field_not_contain_string("media_id") << std::endl;
 					    return "";
 					}
 				}
 				else
 				{
-					std::cerr << "Error: There is no field \"media_id\" in the json." << std::endl;
+					std::cerr << Messages::field_not_found("media_id") << std::endl;
 					return "";
 				}
 			}
 			else
 			{
-				std::cerr << "Error: The string is not a json object." << std::endl;
+				std::cerr << Messages::server_respone_not_json_obj << std::endl;
 				return "";
 			}
 		}
 		else
 		{
-			std::cerr << "Error: This is not an Instagram post." << std::endl;
+			std::cerr << Messages::not_ig_post << std::endl;
 			return "";
 		}
 	}
@@ -1623,11 +1607,11 @@ namespace ig
 					if(doc["comments_disabled"].IsBool())
 						comments_allowed = !(doc["comments_disabled"].GetBool());
 					else
-					    std::cerr << "Error: Field \"comments_disabled\" does not contain a bool." << std::endl;
+					    std::cerr << Messages::Messages::field_not_contain_bool("comments_disabled") << std::endl;
 				}
 			}
 			else
-				std::cerr << "Error: The string is not a json object." << std::endl;
+				std::cerr << Messages::server_respone_not_json_obj << std::endl;
 		}
 
 		//###comments restricted###
@@ -1659,20 +1643,20 @@ namespace ig
 								if(media_info["commenting_disabled_for_viewer"].IsBool())
 									comments_allowed = !(media_info["commenting_disabled_for_viewer"].GetBool());
 								else
-									std::cerr << "Error: Field \"commenting_disabled_for_viewer\" does not contain a bool." << std::endl;
+									std::cerr << Messages::field_not_contain_bool("commenting_disabled_for_viewer") << std::endl;
 							}
 						}
 						else
-							std::cerr << "Error: Field \"items\" does not contain a json array with size greater than 0." << std::endl;
+							std::cerr << Messages::json_array_has_size_0("items") << std::endl;
 					}
 					else
-					    std::cerr << "Error: Field \"items\" does not contain a json array." << std::endl;
+					    std::cerr << Messages::field_not_contain_json_array("items") << std::endl;
 				}
 				else
-					std::cerr << "Error: There is no field \"items\" in the json." << std::endl;
+					std::cerr << Messages::field_not_found("items") << std::endl;
 			}
 			else
-				std::cerr << "Error: The string is not a json object." << std::endl;
+				std::cerr << Messages::server_respone_not_json_obj << std::endl;
 		}
 		return comments_allowed;
 	}
@@ -1695,24 +1679,24 @@ namespace ig
 						return user["username"].GetString();
 					else
 					{
-					    std::cerr << "Error: Field \"username\" does not contain a string." << std::endl;
+					    std::cerr << Messages::field_not_contain_string("username") << std::endl;
 					    return "";
 					}
 				else
 				{
-					std::cerr << "Error: There is no field \"username\" in the json." << std::endl;
+					std::cerr << Messages::field_not_found("username") << std::endl;
 					return "";
 				}
 			}
 			else
 			{
-				std::cerr <<  "Error: There is no field \"user\" in the json." << std::endl;
+				std::cerr << Messages::field_not_found("user") << std::endl;
 				return "";
 			}
 		}
 		else
 		{
-			std::cerr << "Error: The string is not a json object." << std::endl;
+			std::cerr << Messages::server_respone_not_json_obj << std::endl;
 			return "";
 		}
 	}
@@ -1745,42 +1729,42 @@ namespace ig
 									return user["username"].GetString();
 								else
 								{
-									std::cerr << "Error: Field \"username\" does not contain a string." << std::endl;
+									std::cerr << Messages::field_not_contain_string("username") << std::endl;
 									return "";
 								}
 							else
 							{
-								std::cerr << "Error: There is no field \"username\" in the json." << std::endl;
+								std::cerr << Messages::field_not_found("username") << std::endl;
 								return "";
 							}
 						}
 						else
 						{
-							std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
+							std::cerr << Messages::field_not_found("user") << std::endl;
 							return "";
 						}
 					}
 					else
 					{
-						std::cerr << "Error: Field \"items\" does not contain a json array with size greater than 0." << std::endl;
+						std::cerr << Messages::json_array_has_size_0("items") << std::endl;
 						return "";
 					}
 				}
 				else
 				{
-					std::cerr << "Error: Field \"error_type\" does not contain a json array." << std::endl;
+					std::cerr << Messages::field_not_contain_json_array("error_type") << std::endl;
 					return "";
 				}
 			}
 			else
 			{
-				std::cerr << "Error: There is no field \"items\" in the json." << std::endl;
+				std::cerr << Messages::field_not_found("items") << std::endl;
 				return "";
 			}
 		}
 		else
 		{
-			std::cerr << "Error: The string is not a json object." << std::endl;
+			std::cerr << Messages::server_respone_not_json_obj << std::endl;
 			return "";
 		}
 	}
@@ -1803,16 +1787,16 @@ namespace ig
 					if(user["follower_count"].IsInt())
 						return user["follower_count"].GetInt();
 					else
-						std::cerr << "Error: Field \"follower_count\" does not contain an int." << std::endl;
+						std::cerr << Messages::field_not_contain_int("follower_count") << std::endl;
 				}
 				else
-					std::cerr << "Error: There is no field \"follower_count\" in the \"user\" field." << std::endl;
+					std::cerr << Messages::field_not_found("follower_count") << std::endl;
 			}
 			else
-				std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
+				std::cerr << Messages::field_not_found("user") << std::endl;
 		}
 		else
-			std::cerr << "Error: The given server response is not a json object." << std::endl;
+			std::cerr << Messages::server_respone_not_json_obj << std::endl;
 
 		return 0;
 	}
@@ -1845,42 +1829,42 @@ namespace ig
 									return std::to_string(user["pk"].GetInt());
 								else
 								{
-								    std::cerr << "Error: Field \"pk\" does not contain an int." << std::endl;
+								    std::cerr << Messages::field_not_contain_int("pk") << std::endl;
 								    return "";
 								}
 							else
 							{
-								std::cerr << "Error: There is no field \"pk\" in the json." << std::endl;
+								std::cerr << Messages::field_not_found("pk") << std::endl;
 								return "";
 							}
 						}
 						else
 						{
-							std::cerr << "Error: There is no field \"user\" in the json." << std::endl;
+							std::cerr << Messages::field_not_found("user") << std::endl;
 							return "";
 						}
 					}
 					else
 					{
-						std::cerr << "Error: Field \"items\" does not contain a json array with size greater than 0." << std::endl;
+						std::cerr << Messages::json_array_has_size_0("items") << std::endl;
 						return "";
 					}
 				}
 				else
 				{
-					std::cerr << "Error: Field \"items\" does not contain a json array." << std::endl;
+					std::cerr << Messages::field_not_contain_json_array("items") << std::endl;
 					return "";
 				}
 			}
 			else
 			{
-				std::cerr << "Error: There is no field \"items\" in the json." << std::endl;
+				std::cerr << Messages::field_not_found("items") << std::endl;
 				return "";
 			}
 		}
 		else
 		{
-			std::cerr << "Error: The string is not a json object." << std::endl;
+			std::cerr << Messages::server_respone_not_json_obj << std::endl;
 			return "";
 		}
 	}

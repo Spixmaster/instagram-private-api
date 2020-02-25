@@ -8,7 +8,6 @@
 #include "tools/http/HttpArg.h"
 #include "tools/http/HttpCookie.h"
 #include "ig/devices/Device.h"
-#include "Constants.h"
 #include "tools/http/HttpResponse.h"
 #include "tools/http/HttpClient.h"
 

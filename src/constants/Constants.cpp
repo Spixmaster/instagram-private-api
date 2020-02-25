@@ -1,11 +1,11 @@
-#include "ig/Constants.h"
+#include "ig/constants/Constants.h"
 #include <string>
 #include <iostream>
 
 namespace ig
 {
-	const std::string Constants::version = "0.3.7";
-	const std::string Constants::release = "14.Feb.2020";
+	const std::string Constants::version = "0.3.8";
+	const std::string Constants::release = "25.Feb.2020";
 
 	const std::string Constants::ig_url = "https://i.instagram.com/api/v1/";
 	const std::string Constants::ig_version = "105.0.0.18.119";
