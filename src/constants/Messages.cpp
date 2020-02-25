@@ -7,7 +7,7 @@ namespace ig
 			"cookies will be stored for the next logins.";
 	const std::string Messages::wrong_choice_try_again = "Error: Wrong choice. Try again!";
 	const std::string Messages::hints_from_last_server_response = "If you do not know your personal data like phone number or email here are some hints:";
-	const std::string Messages::server_respone_not_json_obj = "Error: The challenge response is not a json object.";
+	const std::string Messages::server_respone_not_json_obj = "Error: The server response is not a json object.";
 	const std::string Messages::challenge_not_solved = "Error: The login challenge could not be solved.";
 	const std::string Messages::not_ig_post = "Error: This is not an Instagram post.";
 	const std::string Messages::new_login_required_as_logged_out = std::string("######################\n") +
