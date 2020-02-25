@@ -1,5 +1,5 @@
+#include "ig/constants/Constants.h"
 #include "ig/devices/Device.h"
-#include "ig/Constants.h"
 
 namespace ig
 {

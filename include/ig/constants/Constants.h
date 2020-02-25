@@ -1,5 +1,5 @@
-#ifndef IG_CONSTANTS_H
-#define IG_CONSTANTS_H
+#ifndef IG_CONSTANTS_CONSTANTS_H
+#define IG_CONSTANTS_CONSTANTS_H
 
 #include <string>
 #include <memory>

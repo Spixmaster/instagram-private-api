@@ -1,5 +1,5 @@
+#include "ig/constants/Constants.h"
 #include "ig/devices/HuaweiMate9Pro.h"
-#include "ig/Constants.h"
 
 namespace ig
 {
