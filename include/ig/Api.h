@@ -30,9 +30,9 @@ namespace ig
 			//Instagram's login credentials
 		std::string m_username;
 		std::string m_password;
-			//devices
+			//device which makes the request
 		Device::ptr m_device;
-			//session values(cookies, app info)
+			//files which contain the session values - cookies and app info is important data and general information I want to save
 		std::string m_file_app_info;
 		std::string m_file_cookies;
 			/*
@@ -41,20 +41,28 @@ namespace ig
 			 * will undo the deletion because they save the files again
 			 */
 		bool m_del_cookies_uuids;
-			//bool on which some actions depend
+			/*
+			 * whether the user logs in and thus no cookies are available
+			 * bool on which some actions depend
+			 */
 		bool m_new_login;
-			//app info
-		std::string m_phone_id;
+			//app info todo order changed
+		std::string m_x_pigeon_session_id;
+		std::string m_x_ig_device_id; //alternative header name "X-DEVICE-ID"
+		std::string m_x_ig_android_id;
+		std::string m_phone_id;//alternative name family_device_id
 		std::string m_uuid;
 		std::string m_client_session_id;
 		std::string m_advertising_id;
-		std::string m_device_id;
 		long long m_last_login = 0;
 		long long m_last_experiments = 0;
 		std::string m_useragent;
+		std::string m_request_id;//for feed_timeline
+		std::string m_session_id;//for feed_timeline
 			//all the cookies which are sent by the Instagram servers
 		std::vector<tools::HttpCookie> m_cookies;
-		std::string m_cookie_str; //all cookies concatenated as key-value-pairs to be used as a header value
+			//all cookies concatenated as key-value-pairs to be used as a header value
+		std::string m_cookie_str;
 
 	public:
 		//constructors
@@ -71,13 +79,16 @@ namespace ig
 		//member functions
 	private:
 		/*
-		 * @brief contains all the http headers which each request to the Instagram server should contain
+		 * @brief contains the http headers for the Instagram servers
+		 * @param x_device_id: whether this header shall be included
+		 * @param x_ig_www_claim: whether this header shall be included
+		 * @param authorization: whether this header shall be included
 		 * @return vector of the headers
 		 */
-		std::vector<tools::HttpHeader> get_ig_http_headers() const noexcept;
+		std::vector<tools::HttpHeader> get_ig_http_headers(const bool &x_device_id, const bool &x_ig_www_claim, const bool &authorization) const noexcept;
 
 		/*
-		 * @brief Instagram only accepts very specific http bodies which the function provides
+		 * @brief Instagram mostly only accepts very specific http bodies which the function provides
 		 * @param http_args: the key value pairs which shall be contained in the request's http body
 		 * @return the modified http body
 		 */
@@ -88,7 +99,7 @@ namespace ig
 		 * @brief if it cannot get all necessary values it generates new ones and sets m_new_login = true
 		 * @brief also sets m_cookie_str
 		 */
-		void setup_cookies_app_info() noexcept;
+		void setup_cookies_and_app_info() noexcept;
 
 		/*
 		 * @brief with the given cookies the function updates the old as member variable saved cookies
@@ -120,139 +131,45 @@ namespace ig
 		 */
 		std::string get_cookie_val(const std::string &cookie_name) const noexcept;
 
+		/*
+		 * these requests occur when the Instagram app is opened but no one is logged in yet
+		 * if someone is logged in and the app is opened these requests are not made
+		 */
 		//##############################pre login request##############################
 		/*
-		 * @brief the request is part of the login process
-		 * @param usage: defines part of the http body
+		 * @brief an http request
 		 * @return server response
 		 */
-		std::string read_msisdn_header(const std::string &usage);
+		std::string accounts_get_prefill_candidates();
 
 		/*
-		 * @brief the request is part of the login process
-		 * @param login: the http body depends on it
+		 * @brief an http request
 		 * @return server response
 		 */
-		std::string launcher_sync(const bool &login);
+		std::string qe_sync();
 
 		/*
-		 * @brief the request is part of the login process
-		 * @param login: the http body depends on it
+		 * @brief an http request
 		 * @return server response
 		 */
-		std::string sync_device_features(const bool &login);
+		std::string launcher_sync();
 
 		/*
-		 * @brief the request is part of the login process
+		 * @brief an http request
 		 * @return server response
 		 */
-		std::string log_attribution();
+		std::string accounts_contact_point_prefill();
 
-		/*
-		 * @brief the request is part of the login process
-		 * @param usage: defines part of the http body
-		 * @return server response
-		 */
-		std::string contact_point_prefill(const std::string &usage);
-
-		//@brief makes all http requests which are necessary before the actual login
+		//@brief makes all pre login http requests
 		void pre_login_requests();
 
-		//##############################post login requests##############################
+		//of course the login endpoint and possibly a challenge too
+		//##############################login requests##############################
 		/*
-		 * @brief the request is part of the login process
-		 * @param login: adds some data to the http body
-		 * @return server response
+		 * @brief logs into Instagram
+		 * @return true on success; otherwise false
 		 */
-		std::string sync_launcher(const bool &login);
-
-		/*
-		 * @brief the request is part of the login process
-		 * @return server response
-		 */
-		std::string sync_user_features();
-
-		/*
-		 * @brief the request is part of the login process
-		 * @param is_pull_to_refresh: would be part of the http body
-		 * @param push_disabled: would be part of the http body
-		 * @param recovered_from_crash: would be part of the http body
-		 * @return server response
-		 */
-		std::string get_timeline_feed(const bool &is_pull_to_refresh, const bool &push_disabled, const bool &recovered_from_crash);
-
-		/*
-		 * @brief the request is part of the login process
-		 * @param reason: possible values are "cold_start" and "pull_to_refresh"
-		 * @return server response
-		 */
-		std::string get_reels_tray_feed(const std::string &reason);
-
-		/*
-		 * @brief the request is part of the login process
-		 * @param type: search term
-		 * @return server response
-		 */
-		std::string get_suggested_searches(const std::string &type);
-
-		/*
-		 * @brief the request is part of the login process
-		 * @param mode: part of the http body, possible "reshare", "save"
-		 * @param show_threads: part of the http body
-		 * @param query: part of the http body
-		 * @return server response
-		 */
-		std::string get_ranked_recipients(const std::string &mode, const bool &show_threads, const std::string &query = "");
-
-		/*
-		 * @brief the request is part of the login process
-		 * @return server response
-		 */
-		std::string get_inbox_v2();
-
-		/*
-		 * @brief the request is part of the login process
-		 * @return server response
-		 */
-		std::string get_presence();
-
-		/*
-		 * @brief the request is part of the login process
-		 * @return server response
-		 */
-		std::string get_recent_activity();
-
-		/*
-		 * @brief the request is part of the login process
-		 * @return server response
-		 */
-		std::string get_loom_fetch_config();
-
-		/*
-		 * @brief the request is part of the login process
-		 * @return server response
-		 */
-		std::string get_profile_notice();
-
-		/*
-		 * @brief the request is part of the login process
-		 * @return server response
-		 */
-		std::string batch_fetch();
-
-		/*
-		 * @brief the request is part of the login process
-		 * @param is_prefetch: part of the http body
-		 * @return server response
-		 */
-		std::string explore(const bool &is_prefetch);
-
-		/*
-		 * @brief makes all http requests which are necessary after the actual login
-		 * @brief simulates that the app is opened
-		 */
-		void open_app(const bool &recent_login);
-		//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		bool login();
 
 		/*
 		 * @brief on Instagram login it can occur that a challenge is required for fulfillment
@@ -260,6 +177,210 @@ namespace ig
 		 * @return true on success; otherwise false
 		 */
 		bool solve_challenge(const std::string &server_resp);
+
+		/*
+		 * after successful login
+		 * like a normal opening of the app
+		 */
+		//##############################post login requests##############################
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string launcher_sync();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string multiple_accounts_get_account_family();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string qe_sync();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string launcher_sync();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string qe_sync();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string zr_token_result();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string banyan_banyan();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string feed_timeline();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string feed_reels_tray();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string push_register();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string media_blocked();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string news_inbox();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string scores_bootstrap_users();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string loom_fetch_config();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string business_eligibility_get_monezization_products_eligibility_data();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string linked_accounts_get_linkage_status();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string business_branded_content_should_require_professional_account();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string qp_get_cooldowns();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string users_arlink_download_info();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string push_register();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string users_x_info();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string attribution_log_resurrect_attribution();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string creatives_write_supported_capabilities();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string notifications_store_client_push_permissions();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string accounts_process_contact_point_signals();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string direct_v2_get_presence();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string qp_batch_fetch();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string status_get_viewable_statuses();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string direct_v2_inbox();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string direct_v2_inbox();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string notifications_badge();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string discover_topical_explore();
+
+		/*
+		 * @brief makes all http requests which are necessary after the actual login
+		 * @brief simulates that the app is opened
+		 */
+		void open_app(const bool &recent_login);
+		//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 		/*
 		 * @brief the rank token is assembled out of the user id an the uuid
@@ -274,12 +395,6 @@ namespace ig
 		 * @param server_resp: the server response
 		 */
 		void post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp);
-
-		/*
-		 * @brief logs into Instagram
-		 * @return true on success; otherwise false
-		 */
-		bool login();
 
 	public:
 		/*

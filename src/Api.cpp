@@ -59,7 +59,7 @@ namespace ig
 		}
 
 		//also determines whether a new login is required
-		setup_cookies_app_info();
+		setup_cookies_and_app_info();
 
 		//login
 		if(login())
@@ -81,33 +81,41 @@ namespace ig
 		}
 	}
 
-	std::vector<tools::HttpHeader> Api::get_ig_http_headers() const noexcept
+	std::vector<tools::HttpHeader> Api::get_ig_http_headers(const bool &x_device_id, const bool &x_ig_www_claim, const bool &authorization) const noexcept
 	{
-		//get time
-		time_t raw_time;
-		time(&raw_time);
-
-		//seed for rand
-		srand(raw_time);
-
-		std::vector<tools::HttpHeader> http_headers = std::vector<tools::HttpHeader>();
-		http_headers.push_back(tools::HttpHeader("Connection", "Keep-Alive"));
-		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", "IT7nCQ=="));
-		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", "567067343352427"));
-		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
-		http_headers.push_back(tools::HttpHeader("X-IG-Prefetch-Request", "foreground"));
-		http_headers.push_back(tools::HttpHeader("X-IG-VP9-Capable", "false"));
-		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
-		http_headers.push_back(tools::HttpHeader("Accept", "*/*"));
-		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip,deflate"));
-		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
-		http_headers.push_back(tools::HttpHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8"));
-		http_headers.push_back(tools::HttpHeader("Cookie2", "$Version=1"));
-		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		std::vector<tools::HttpHeader> http_headers;
+		if(x_device_id)
+			http_headers.push_back(tools::HttpHeader("X-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
 		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
-		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", std::to_string((rand() % 3001) + 7000)));
-		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", std::to_string((rand() % 400001) + 500000)));
-		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", std::to_string((rand() % 101) + 50)));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		if(x_ig_www_claim)
+			http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		if(authorization)
+			http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
 
 		return http_headers;
 	}
@@ -124,7 +132,7 @@ namespace ig
 				raw_http_body.append("\"" + http_args.at(j).m_key + "\": " + std::to_string(std::get<long long>(http_args.at(j).m_value)));
 
 				//add & for next key value pair
-				if(j < (http_args.size() - 1))
+				if(j != (http_args.size() - 1))
 					raw_http_body.append(", ");
 			}
 			else if(std::holds_alternative<std::string>(http_args.at(j).m_value))
@@ -132,7 +140,7 @@ namespace ig
 				raw_http_body.append("\"" + http_args.at(j).m_key + "\": \"" + std::get<std::string>(http_args.at(j).m_value) + "\"");
 
 				//add & for next key value pair
-				if(j < (http_args.size() - 1))
+				if(j != (http_args.size() - 1))
 					raw_http_body.append(", ");
 			}
 			//value is type of InputFile::ptr and thus ignored
@@ -141,14 +149,14 @@ namespace ig
 
 		//raw_http_body --> http_body
 		std::string http_body;
-		http_body.append("ig_sig_key_version=" + Constants::ig_sig_key_version + "&signed_body=");
-		http_body.append(tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) +
+		http_body.append("signed_body=" + tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) +
 				"." + tools::Tools::parse_url(raw_http_body, "@&="));
+		http_body.append("&ig_sig_key_version=" + Constants::ig_sig_key_version);
 
 		return http_body;
 	}
 
-	void Api::setup_cookies_app_info() noexcept
+	void Api::setup_cookies_and_app_info() noexcept
 	{
 		if(tools::Tools::file_exists(m_file_app_info))
 		{
@@ -324,15 +332,13 @@ namespace ig
 			devices.push_back(std::make_shared<SamsungGalaxyS9Plus>());
 			devices.push_back(std::make_shared<ZteAxon7>());
 
-				//get time
-			time_t raw_time;
-			time(&raw_time);
-
-			srand(raw_time);
+			srand(tools::Tools::get_time);
 			int random_index = rand() % devices.size();
 			m_device = devices.at(random_index);
 
 			//generate new uuids
+			m_x_pigeon_session_id = boost::uuids::to_string(boost::uuids::random_generator()());
+			m_x_ig_device_id = boost::uuids::to_string(boost::uuids::random_generator()());
 			m_phone_id = boost::uuids::to_string(boost::uuids::random_generator()());
 			m_uuid = boost::uuids::to_string(boost::uuids::random_generator()());
 			m_client_session_id = boost::uuids::to_string(boost::uuids::random_generator()());
@@ -341,7 +347,7 @@ namespace ig
 			std::string device_id_temp = boost::uuids::to_string(boost::uuids::random_generator()());
 			device_id_temp.erase(std::remove(device_id_temp.begin(), device_id_temp.end(), '-'), device_id_temp.end());
 			device_id_temp.resize(16);
-			m_device_id = "android-" + device_id_temp;
+			m_x_ig_android_id = "android-" + device_id_temp;
 			m_useragent = m_device->get_useragent();
 
 			std::cout << Messages::no_cookies_found << std::endl;
@@ -439,18 +445,21 @@ namespace ig
 		return cookie_val;
 	}
 
-	std::string Api::read_msisdn_header(const std::string &usage)
+	std::string Api::accounts_get_prefill_candidates()
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("X-DEVICE-ID", m_uuid));
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers(false, true, false);
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("device_id", m_uuid));
-		http_args.push_back(tools::HttpArg("mobile_subno_usage", usage));
+		http_args.push_back(tools::HttpArg("android_device_id", m_x_ig_android_id));
+		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("usages", "[\"account_recovery_omnibox\"]"));
+//		http_args.push_back(tools::HttpArg("_csrftoken", id)); todo habe ich nocht nicht
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
 
-		tools::HttpClient http_client(Constants::ig_url + "accounts/read_msisdn_header/", get_ig_http_headers());
+		tools::HttpClient http_client(Constants::ig_url + "accounts/get_prefill_candidates/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
@@ -459,23 +468,94 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::launcher_sync(const bool &login)
+	std::string Api::qe_sync()
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers(true, true, );
+		http_headers.push_back(tools::HttpHeader("X-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("id", m_uuid));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", "1"));
-		http_args.push_back(tools::HttpArg("experiments", Constants::launcher_configs));
-		if(login == false)
-		{
-			http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-			http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		}
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
+		http_args.push_back(tools::HttpArg("experiments", Constants::qe_sync_experiments));
+
+		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", get_ig_http_headers());
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::launcher_sync()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
 
 		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
@@ -486,65 +566,44 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::sync_device_features(const bool &login)
+	std::string Api::accounts_contact_point_prefill()
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("X-DEVICE-ID", m_uuid));
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("id", m_uuid));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", "1"));
-		http_args.push_back(tools::HttpArg("experiments", Constants::login_experiments));
-		if(login == false)
-		{
-			http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-			http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		}
-
-		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::log_attribution()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("adid", m_advertising_id));
-
-		tools::HttpClient http_client(Constants::ig_url + "attribution/log_attribution/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::contact_point_prefill(const std::string &usage)
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("id", m_uuid));
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("usage", usage));
+		http_args.push_back(tools::HttpArg("usage", "prefill"));
 
 		tools::HttpClient http_client(Constants::ig_url + "accounts/contact_point_prefill/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
@@ -557,403 +616,101 @@ namespace ig
 
 	void Api::pre_login_requests()
 	{
-		read_msisdn_header("default");
-		launcher_sync(true);
-		sync_device_features(true);
-		log_attribution();
-		contact_point_prefill("prefill");
+		accounts_get_prefill_candidates();
+		qe_sync();
+		launcher_sync();
+		accounts_contact_point_prefill();
 	}
 
-	std::string Api::sync_launcher(const bool &login)
+	bool Api::login()
 	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("id", m_uuid));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
-		http_args.push_back(tools::HttpArg("experiments", Constants::launcher_configs));
-		if(login == false)
+		if(m_new_login == true)
 		{
-			http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-			http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+			pre_login_requests();
+
+			/*
+			 * actual login
+			 * #####accounts/login/#####
+			 * Cookie: csrftoken, rur, mid
+			 * Set-Cookie: ds_user, csrftoken (csrftoken is different to before), shbid, shbts, rur, ds_user_id, urlgen, sessionid
+			 */
+			//http headers
+			std::vector<tools::HttpHeader> http_headers;
+			http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+
+			//http args
+			std::vector<tools::HttpArg> http_args;
+			http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		}
+			http_args.push_back(tools::HttpArg("username", m_username));
+			http_args.push_back(tools::HttpArg("guid", m_uuid));
+			http_args.push_back(tools::HttpArg("device_id", m_device_id));
+			http_args.push_back(tools::HttpArg("password", m_password));
+			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
 
-		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
+			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
+			update_data(http_res.m_cookies);
+			post_req_check(http_client, http_res);
 
-		return http_res.m_body;
-	}
+			if(http_res.m_code == 200)
+			{
+				open_app(true);
+				m_last_login = tools::Tools::get_time();
 
-	std::string Api::sync_user_features()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("X-DEVICE-ID", m_uuid));
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+				std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
 
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("id", m_uuid));
-		http_args.push_back(tools::HttpArg("experiments", Constants::experiments));
+				return true;
+			}
+			else
+			{
+				/*
+				 * #####checkpoint_challenge_required#####
+				 * Cookie: csrftoken, rur, mid
+				 * Set-Cookie: csrftoken, rur (both same as before)
+				 */
+				rapidjson::Document doc;
+				doc.Parse(http_res.m_body.c_str());
 
-		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+				if(doc.IsObject())
+				{
+					if(doc.HasMember("error_type"))
+					{
+						if(doc["error_type"].IsString())
+						{
+							if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
+							{
+								if(solve_challenge(http_res.m_body))
+								{
+									open_app(true);
+									m_last_login = raw_time;
 
-		//get time
-		time_t raw_time;
-		time(&raw_time);
+									return true;
+								}
+								else
+									std::cerr << Messages::challenge_not_solved << std::endl;
+							}
+							else
+								std::cerr << Messages::field_not_correct_value("error_type", "checkpoint_challenge_required") << std::endl;
+						}
+						else
+							std::cerr << Messages::field_not_contain_string("error_type") << std::endl;
+					}
+					else
+						std::cerr << Messages::field_not_found("error_type") << std::endl;
+				}
+				else
+					std::cerr << Messages::server_respone_not_json_obj << std::endl;
 
-		m_last_experiments = raw_time;
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_timeline_feed(const bool &is_pull_to_refresh, const bool &push_disabled, const bool &recovered_from_crash)
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("X-Ads-Opt-Out", "0"));
-		http_headers.push_back(tools::HttpHeader("X-DEVICE-ID", m_uuid));
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//get time
-		time_t raw_time;
-		time(&raw_time);
-		struct tm *time_info;
-		time_info = localtime(&raw_time);
-
-		//for strftime()
-		char buf[6];
-		strftime(buf, sizeof(buf), "%z", time_info);
-
-		//seed for rand
-		srand(raw_time);
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-		http_args.push_back(tools::HttpArg("is_prefetch", 0));
-		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("device_id", m_uuid));
-		http_args.push_back(tools::HttpArg("client_session_id", m_client_session_id));
-		http_args.push_back(tools::HttpArg("battery_level", std::to_string((rand() % 23) + 70)));
-		http_args.push_back(tools::HttpArg("is_charging", rand() % 2 ? "1" : "0"));
-		http_args.push_back(tools::HttpArg("will_sound_on", rand() % 2 ? "1" : "0"));
-		http_args.push_back(tools::HttpArg("is_on_screen", "1"));
-		http_args.push_back(tools::HttpArg("timezone_offset", buf));
-		if(is_pull_to_refresh)
-		{
-			http_args.push_back(tools::HttpArg("reason", "pull_to_refresh"));
-			http_args.push_back(tools::HttpArg("is_pull_to_refresh", "1"));
+				return false;
+			}
 		}
 		else
 		{
-			http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
-			http_args.push_back(tools::HttpArg("is_pull_to_refresh", "0"));
-		}
-		if(push_disabled)
-			http_args.push_back(tools::HttpArg("push_disabled", true));
-		if(recovered_from_crash)
-			http_args.push_back(tools::HttpArg("recovered_from_crash", "1"));
+			open_app(false);
 
-		tools::HttpClient http_client(Constants::ig_url + "feed/timeline/", http_headers, http_args);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(); //todo just normal http body, it seems to be correct
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_reels_tray_feed(const std::string &reason)
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("supported_capabilities_new", Constants::supported_capabilities));
-		http_args.push_back(tools::HttpArg("reason", reason));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-
-		tools::HttpClient http_client(Constants::ig_url + "feed/reels_tray/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_suggested_searches(const std::string &type)
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("type", type));
-
-		tools::HttpClient http_client(Constants::ig_url + "fbsearch/suggested_searches/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_ranked_recipients(const std::string &mode, const bool &show_threads, const std::string &query)
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("mode", mode));
-		http_args.push_back(tools::HttpArg("show_threads", show_threads ? "true" : "false"));
-		http_args.push_back(tools::HttpArg("use_unified_inbox", "true"));
-		if(!query.empty())
-			http_args.push_back(tools::HttpArg("query", query));
-
-		tools::HttpClient http_client(Constants::ig_url + "direct_v2/ranked_recipients/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_inbox_v2()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("persistentBadging", true));
-		http_args.push_back(tools::HttpArg("use_unified_inbox", true));
-
-		tools::HttpClient http_client(Constants::ig_url + "direct_v2/inbox/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_presence()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		tools::HttpClient http_client(Constants::ig_url + "direct_v2/get_presence/", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_recent_activity()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		tools::HttpClient http_client(Constants::ig_url + "news/inbox/?limited_activity=true&show_su=true", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_loom_fetch_config()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		tools::HttpClient http_client(Constants::ig_url + "loom/fetch_config/", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::get_profile_notice()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		tools::HttpClient http_client(Constants::ig_url + "users/profile_notice/", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	/*
-	 * todo this request returns
-	 * 400
-	 * {"message": "INVALID_REQUEST", "status": "fail"}
-	 */
-	std::string Api::batch_fetch()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("_uuid", m_uuid));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("scale", 3));
-		http_args.push_back(tools::HttpArg("version", 1));
-		http_args.push_back(tools::HttpArg("vc_policy", "default"));
-		http_args.push_back(tools::HttpArg("surfaces_to_triggers", "{\"5734\": [\"instagram_feed_prompt\"], \"4715\": [\"instagram_feed_header\"], "
-				"\"5858\": [\"instagram_feed_tool_tip\"]}"));
-		http_args.push_back(tools::HttpArg("surfaces_to_queries", Constants::batch_fetch_surfaces_to_queries));
-
-		tools::HttpClient http_client(Constants::ig_url + "qp/batch_fetch/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::explore(const bool &is_prefetch)
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-		//get time
-		time_t raw_time;
-		time(&raw_time);
-		struct tm *time_info;
-		time_info = localtime(&raw_time);
-
-		//for strftime()
-		char buf[6];
-		strftime(buf, sizeof(buf), "%z", time_info);
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("is_prefetch", is_prefetch));
-		http_args.push_back(tools::HttpArg("is_from_promote", false));
-		http_args.push_back(tools::HttpArg("timezone_offset", buf));
-		http_args.push_back(tools::HttpArg("session_id", m_client_session_id));
-		http_args.push_back(tools::HttpArg("supported_capabilities_new", Constants::supported_capabilities));
-		if(is_prefetch)
-		{
-			http_args.push_back(tools::HttpArg("max_id", 0));
-			http_args.push_back(tools::HttpArg("module", "explore_popular"));
-		}
-
-		tools::HttpClient http_client(Constants::ig_url + "discover/explore/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	void Api::open_app(const bool &recent_login)
-	{
-		if(recent_login)
-		{
-			//sync
-			sync_launcher(false);
-			sync_user_features();
-
-			//update feed and timeline
-			get_timeline_feed(false, false, false);
-			get_reels_tray_feed("cold_start");
-			get_suggested_searches("users");
-			get_suggested_searches("blended");
-
-			//dm update
-			get_ranked_recipients("reshare", true);
-			get_ranked_recipients("save", true);
-			get_inbox_v2();
-			get_presence();
-			get_recent_activity();
-
-			//config and other requests
-			get_loom_fetch_config();
-			get_profile_notice();
-			batch_fetch();
-			explore(true);
-		}
-		else
-		{
-			//random
-				//get time
-			time_t raw_time;
-			time(&raw_time);
-
-			srand(raw_time);
-
-			bool pull_to_refresh = (rand() % 101) % 2 == 0 ? true : false;
-			get_timeline_feed(pull_to_refresh, false, false);
-			get_reels_tray_feed(pull_to_refresh ? "pull_to_refresh" : "cold_start");
-
-			//new client session
-			if((raw_time - m_last_login) > Constants::app_refresh_interval)
-			{
-				m_last_login = raw_time;
-				m_client_session_id = boost::uuids::to_string(boost::uuids::random_generator()());
-
-				get_ranked_recipients("reshare", true);
-				get_ranked_recipients("save", true);
-				get_inbox_v2();
-				get_presence();
-				get_recent_activity();
-				get_profile_notice();
-				explore(false);
-			}
-
-			//new experiments
-			if((raw_time - m_last_experiments) > Constants::app_experiments_interval)
-			{
-				sync_user_features(); //m_last_experiments is updated in that function
-				sync_device_features(false);
-			}
+			return true;
 		}
 	}
 
@@ -1173,6 +930,1565 @@ namespace ig
 		return false;
 	}
 
+	std::string Api::launcher_sync()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("id", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
+
+		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::multiple_accounts_get_account_family()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "multiple_accounts/get_account_family/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::qe_sync()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-DEVICE-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
+		http_args.push_back(tools::HttpArg("experiments", Constants::qe_sync_experiments));
+
+		tools::HttpClient http_client(Constants::ig_url + "qe/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::launcher_sync()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
+
+		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::qe_sync()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		http_headers.push_back(tools::HttpHeader("Content-Length", asdf));
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("id", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
+		http_args.push_back(tools::HttpArg("experiments", Constants::qe_sync_experiments2));
+
+		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::zr_token_result()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "zr/token/result/?device_id=" + m_x_ig_android_id + "&token_hash=" +
+				"&custom_device_id=" + m_x_ig_device_id + "&fetch_reason=token_expired", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::banyan_banyan()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "banyan/banyan/?views=[\"story_share_sheet\",\"threads_people_picker\"," +
+				"\"group_stories_share_sheet\",\"reshare_share_sheet\"]", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::feed_timeline()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-Ads-Opt-Out", "0"));
+		http_headers.push_back(tools::HttpHeader("X-DEVICE-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-CM-Bandwidth-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-CM-Latency", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		srand(tools::Tools::get_time());
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("feed_view_info", "[]"));
+		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
+		http_args.push_back(tools::HttpArg("battery_level", (rand() % 101()) + 8));
+		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_timezone_offset()));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("request_id", m_request_id));
+		http_args.push_back(tools::HttpArg("is_pull_to_refresh", 0));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("is_charging", rand() % 2 == 0 ? 1 : 0));
+		http_args.push_back(tools::HttpArg("will_sound_on", rand() % 2 == 0 ? 1 : 0));
+		http_args.push_back(tools::HttpArg("session_id", m_session_id));
+		http_args.push_back(tools::HttpArg("bloks_versioning_id", Constants::bloks_version_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "feed/timeline/", http_headers, http_args);//normal http body
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::feed_reels_tray()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("supported_capabilities", Constants::supported_capabilities));
+		http_args.push_back(tools::HttpArg("reason", "cold_start"));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "feed/reels_tray/", http_headers, http_args);//normal http body
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::push_register()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("device_type", "android_mqtt"));
+		http_args.push_back(tools::HttpArg("is_main_push_channel", 2));
+		http_args.push_back(tools::HttpArg("device_token", id));//todo
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("guid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("family_device_id", m_phone_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "push/register/", http_headers, http_args);//normal http body
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::media_blocked()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "media/blocked/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::news_inbox()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Prefetch-Request", "foreground"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "news/inbox/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::scores_bootstrap_users()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "scores/bootstrap/users/surfaces=[\"autocomplete_user_list\",\"coefficient_besties_list_ranking\","
+				"\"coefficient_rank_recipient_user_suggestion\",\"coefficient_ios_section_test_bootstrap_ranking\",\"coefficient_direct_recipients_ranking_v"
+				"ariant_2\"]", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req());
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::loom_fetch_config()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", "0"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "loom/fetch_config/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::business_eligibility_get_monetization_products_eligibility_data()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "business/eligibility/get_monetization_products_eligibility_data/?product_types=branded_content",
+				http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::linked_accounts_get_linkage_status()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "linked_accounts/get_linkage_status/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::business_branded_content_should_require_professional_account()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "business/branded_content/should_require_professional_account/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::qp_get_cooldowns()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		//todo url missing
+		tools::HttpClient http_client(Constants::ig_url + "", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::users_arlink_download_info()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "users/arlink_download_info/?version_override=2.2.1", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::push_register()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("device_type", "android_mqtt"));
+		http_args.push_back(tools::HttpArg("is_main_push_channel", "true"));
+		http_args.push_back(tools::HttpArg("device_sub_type", 2));
+		http_args.push_back(tools::HttpArg("device_token", ""));//todo
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("guid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("users", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("family_device_id", m_phone_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::users_x_info()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "users/" + get_cookie_val("ds_user_id") + "/info", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::attribution_log_resurrect_attribution()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "attribution/log_resurrect_attribution/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::creatives_write_supported_capabilities()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("supported_capabilities_new", Constants::supported_capabilities_new));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "creatives/write_supported_capabilities/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::notifications_store_client_push_permissions()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args todo <|°_°|> jk, nur checken, wegen "enabled=true"
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("enabled", "true"));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "notifications/store_client_push_permissions/", http_headers, http_args);//normal http body
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::accounts_process_contact_point_signals()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("google_tokens", "[]"));
+
+		tools::HttpClient http_client(Constants::ig_url + "accounts/process_contact_point_signals/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::direct_v2_get_presence()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "direct_v2/get_presence/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::qp_batch_fetch()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("surfaces_to_triggers", "{\"4715\":[\"instagram_feed_header\"],\"5858\":[\"instagram_feed_tool_tip\"],"
+				"\"5734\":[\"instagram_feed_prompt\"]}"));
+		http_args.push_back(tools::HttpArg("surfaces_to_queries", Constants::surfaces_to_queries));
+		http_args.push_back(tools::HttpArg("vc_policy", "default"));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("scale", 4));
+		http_args.push_back(tools::HttpArg("version", 1));
+
+		tools::HttpClient http_client(Constants::ig_url + "launcher/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::status_get_viewable_statuses()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+		tools::HttpClient http_client(Constants::ig_url + "status/get_viewable_statuses/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::direct_v2_inbox()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Prefetch-Request", "foreground"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "direct_v2/inbox/?visual_message_return_type=unseen&persistentBadging=true&limit=0", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::direct_v2_inbox()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "direct_v2/inbox/?visual_message_return_type=unseen&thread_message_limit=10&persistentBadging=true&limit=20", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::notifications_badge()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", id));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
+
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("user_ids", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+
+		tools::HttpClient http_client(Constants::ig_url + "notifications/badge/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::discover_topical_explore()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers;
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Mapped-Locale", "en_US"));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Session-Id", m_x_pigeon_session_id));
+		http_headers.push_back(tools::HttpHeader("X-Pigeon-Rawclienttime", std::to_string(tools::Tools::get_time_w_millisec())));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Speed", "-1kbps"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Prefetch-Request", "foreground"));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", id));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Is-Layout-RTL", "false"));
+		http_headers.push_back(tools::HttpHeader("X-Bloks-Enable-RenderCore", "false"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Device-ID", m_x_ig_device_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Android-ID", m_x_ig_android_id));
+		http_headers.push_back(tools::HttpHeader("X-IG-Connection-Type", "WIFI"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Capabilities", Constants::x_ig_capabilities));
+		http_headers.push_back(tools::HttpHeader("X-IG-App-ID", Constants::x_ig_app_id));
+		http_headers.push_back(tools::HttpHeader("User-Agent", m_useragent));
+		http_headers.push_back(tools::HttpHeader("Accept-Language", "en-US"));
+		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		http_headers.push_back(tools::HttpHeader("Authorization", id));
+		http_headers.push_back(tools::HttpHeader("X-MID", get_cookie_val("mid")));
+		http_headers.push_back(tools::HttpHeader("Content-Type", id));
+		http_headers.push_back(tools::HttpHeader("Accept-Encoding", "gzip, deflate"));
+		http_headers.push_back(tools::HttpHeader("Host", "i.instagram.com"));
+		http_headers.push_back(tools::HttpHeader("X-FB-HTTP-Engine", "Liger"));
+		http_headers.push_back(tools::HttpHeader("Connection", "close"));
+
+		tools::HttpClient http_client(Constants::ig_url + "discover/topical_explore/?is_prefetch=true&omit_cover_media=true&use_sectional_payload=true&timezone_offset=-18000&session_id=435d11e3-21d7-461e-b641-04bc305f5e9f&include_fixed_destinations=true", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	void Api::open_app(const bool &recent_login)
+	{
+		if(recent_login)
+		{
+			//sync
+			sync_launcher(false);
+			sync_user_features();
+
+			//update feed and timeline
+			get_timeline_feed(false, false, false);
+			get_reels_tray_feed("cold_start");
+			get_suggested_searches("users");
+			get_suggested_searches("blended");
+
+			//dm update
+			get_ranked_recipients("reshare", true);
+			get_ranked_recipients("save", true);
+			get_inbox_v2();
+			get_presence();
+			get_recent_activity();
+
+			//config and other requests
+			get_loom_fetch_config();
+			get_profile_notice();
+			batch_fetch();
+			explore(true);
+		}
+		else
+		{
+			//random
+			srand(tools::Tools::get_time());
+
+			bool pull_to_refresh = (rand() % 101) % 2 == 0 ? true : false;
+			get_timeline_feed(pull_to_refresh, false, false);
+			get_reels_tray_feed(pull_to_refresh ? "pull_to_refresh" : "cold_start");
+
+			//new client session
+			if((raw_time - m_last_login) > Constants::app_refresh_interval)
+			{
+				m_last_login = raw_time;
+				m_client_session_id = boost::uuids::to_string(boost::uuids::random_generator()());
+
+				get_ranked_recipients("reshare", true);
+				get_ranked_recipients("save", true);
+				get_inbox_v2();
+				get_presence();
+				get_recent_activity();
+				get_profile_notice();
+				explore(false);
+			}
+
+			//new experiments
+			if((raw_time - m_last_experiments) > Constants::app_experiments_interval)
+			{
+				sync_user_features(); //m_last_experiments is updated in that function
+				sync_device_features(false);
+			}
+		}
+	}
+
 	std::string Api::get_rank_token() noexcept
 	{
 		return get_cookie_val("ds_user_id") + "_" + m_uuid;
@@ -1181,18 +2497,12 @@ namespace ig
 	void Api::post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp)
 	{
 		//###log###
-		//get time
-		time_t raw_time;
-		time(&raw_time);
-		struct tm *time_info;
-		time_info = localtime(&raw_time);
-
 		//file length is under Constants::log_lns --> just append
 		if(tools::Tools::get_amnt_file_lns(Constants::file_log) < Constants::log_lns)
 		{
 			std::ofstream outf(Constants::file_log, std::ios::app);
 			//pop_back() as asctime() ends with \n
-			std::string time = std::string(asctime(time_info));
+			std::string time = std::string(tools::Tools::get_date());
 			if(!time.empty())
 				time.pop_back();
 			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
@@ -1206,7 +2516,7 @@ namespace ig
 			outf << file_cont;
 
 			//pop_back() as asctime() ends with \n
-			std::string time = std::string(asctime(time_info));
+			std::string time = std::string(tools::Tools::get_date());
 			if(!time.empty())
 				time.pop_back();
 			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
@@ -1282,106 +2592,10 @@ namespace ig
 			throw std::runtime_error("Error. The Instagram servers refused the request as they are too many.");
 	}
 
-	bool Api::login()
-	{
-		if(m_new_login == true)
-		{
-			pre_login_requests();
-
-			/*
-			 * actual login
-			 * #####accounts/login/#####
-			 * Cookie: csrftoken, rur, mid
-			 * Set-Cookie: ds_user, csrftoken (csrftoken is different to before), shbid, shbts, rur, ds_user_id, urlgen, sessionid
-			 */
-			//http headers
-			std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-			http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-			//http args
-			std::vector<tools::HttpArg> http_args;
-			http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-			http_args.push_back(tools::HttpArg("username", m_username));
-			http_args.push_back(tools::HttpArg("guid", m_uuid));
-			http_args.push_back(tools::HttpArg("device_id", m_device_id));
-			http_args.push_back(tools::HttpArg("password", m_password));
-			http_args.push_back(tools::HttpArg("login_attempt_count", 0));
-
-			tools::HttpClient http_client(Constants::ig_url + "accounts/login/", http_headers, http_args);
-			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-			update_data(http_res.m_cookies);
-			post_req_check(http_client, http_res);
-
-			//get time
-			time_t raw_time;
-			time(&raw_time);
-
-			if(http_res.m_code == 200)
-			{
-				open_app(true);
-				m_last_login = raw_time;
-
-				std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
-
-				return true;
-			}
-			else
-			{
-				/*
-				 * #####checkpoint_challenge_required#####
-				 * Cookie: csrftoken, rur, mid
-				 * Set-Cookie: csrftoken, rur (both same as before)
-				 */
-				rapidjson::Document doc;
-				doc.Parse(http_res.m_body.c_str());
-
-				if(doc.IsObject())
-				{
-					if(doc.HasMember("error_type"))
-					{
-						if(doc["error_type"].IsString())
-						{
-							if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
-							{
-								if(solve_challenge(http_res.m_body))
-								{
-									open_app(true);
-									m_last_login = raw_time;
-
-									return true;
-								}
-								else
-									std::cerr << Messages::challenge_not_solved << std::endl;
-							}
-							else
-								std::cerr << Messages::field_not_correct_value("error_type", "checkpoint_challenge_required") << std::endl;
-						}
-						else
-							std::cerr << Messages::field_not_contain_string("error_type") << std::endl;
-					}
-					else
-						std::cerr << Messages::field_not_found("error_type") << std::endl;
-				}
-				else
-					std::cerr << Messages::server_respone_not_json_obj << std::endl;
-
-				return false;
-			}
-		}
-		else
-		{
-			open_app(false);
-
-			return true;
-		}
-	}
-
 	std::string Api::get_media_likers(const std::string &media_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		std::vector<tools::HttpHeader> http_headers;
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		tools::HttpClient http_client(Constants::ig_url + "media/" + media_id + "/likers/", http_headers);
@@ -1396,7 +2610,7 @@ namespace ig
 	std::string Api::get_media_comments(const std::string &media_id, const std::string &max_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		std::vector<tools::HttpHeader> http_headers;
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		std::string url = Constants::ig_url + "media/" + media_id + "/comments/";
@@ -1477,7 +2691,7 @@ namespace ig
 	std::string Api::get_media_info(const std::string &media_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		std::vector<tools::HttpHeader> http_headers;
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		std::string url = Constants::ig_url + "media/" + media_id + "/info/";
@@ -1494,7 +2708,7 @@ namespace ig
 	std::string Api::get_user_feed(const std::string &user_id, const std::string &max_id, const std::string &min_timestamp)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		std::vector<tools::HttpHeader> http_headers;
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		std::string url = Constants::ig_url + "feed/user/" + user_id + "/?max_id=" + max_id + "&min_timestamp=" + min_timestamp +
@@ -1512,7 +2726,7 @@ namespace ig
 	std::string Api::get_user_info(const std::string &user_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		std::vector<tools::HttpHeader> http_headers;
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		std::string url = Constants::ig_url + "users/" + user_id + "/info/";
@@ -1872,7 +3086,7 @@ namespace ig
 	std::string Api::logout()
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+		std::vector<tools::HttpHeader> http_headers;
 		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
 		//http args
