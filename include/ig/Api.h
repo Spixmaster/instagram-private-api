@@ -60,6 +60,7 @@ namespace ig
 		std::string m_phone_id;//alternative name family_device_id
 		std::string m_request_id;//for feed_timeline
 		std::string m_session_id;//for feed_timeline
+				//rest
 		long long m_last_login = 0;
 			//all the cookies which are sent by the Instagram servers
 		std::vector<tools::HttpCookie> m_cookies;
