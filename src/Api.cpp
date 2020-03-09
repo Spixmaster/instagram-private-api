@@ -385,7 +385,7 @@ namespace ig
 		outf << "m_x_ig_android_id: " << m_x_ig_android_id << std::endl;
 		outf << "m_useragent: " << m_useragent << std::endl;
 		outf << "m_phone_id: " << m_phone_id << std::endl;
-		outf << "m_request_id: " << m_last_login << std::endl;
+		outf << "m_request_id: " << m_request_id << std::endl;
 		outf << "m_session_id: " << m_session_id << std::endl;
 		outf << "m_last_login: " << m_last_login << std::endl;
 		outf.close();
