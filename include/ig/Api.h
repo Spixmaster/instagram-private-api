@@ -30,35 +30,37 @@ namespace ig
 			//Instagram's login credentials
 		std::string m_username;
 		std::string m_password;
-			//device which makes the request
-		Device::ptr m_device;
 			//files which contain the session values - cookies and app info is important data and general information I want to save
 		std::string m_file_app_info;
 		std::string m_file_cookies;
+			//device which makes the request
+		Device::ptr m_device;
 			/*
 			 * whether cookies and app info file are deleted when destructor is called
 			 * this is necessary as when these files are deleted immediately the functions save_app_info_in_file() and save_cookies_in_file()
 			 * will undo the deletion because they save the files again
 			 */
-		bool m_del_cookies_uuids;
+		bool m_del_app_info_and_cookies;
 			/*
 			 * whether the user logs in and thus no cookies are available
 			 * bool on which some actions depend
 			 */
 		bool m_new_login;
-			//app info todo order changed
+			//app info
+				//http header values
+		std::string m_x_google_ad_id;//alternative header name "adid"
 		std::string m_x_pigeon_session_id;
-		std::string m_x_ig_device_id; //alternative header name "X-DEVICE-ID"
+		std::string m_x_ig_device_id;//alternative header name "X-DEVICE-ID"
 		std::string m_x_ig_android_id;
-		std::string m_phone_id;//alternative name family_device_id
-		std::string m_uuid;
-		std::string m_client_session_id;
-		std::string m_advertising_id;
-		long long m_last_login = 0;
-		long long m_last_experiments = 0;
 		std::string m_useragent;
+					//only known after successful login
+		std::string m_x_ig_www_claim;//default: "0"
+		std::string m_authorization;//default: "Bearer IGT:2:"
+				//http body values
+		std::string m_phone_id;//alternative name family_device_id
 		std::string m_request_id;//for feed_timeline
 		std::string m_session_id;//for feed_timeline
+		long long m_last_login = 0;
 			//all the cookies which are sent by the Instagram servers
 		std::vector<tools::HttpCookie> m_cookies;
 			//all cookies concatenated as key-value-pairs to be used as a header value
@@ -79,13 +81,17 @@ namespace ig
 		//member functions
 	private:
 		/*
+		 * @brief gets all app info and cookie values from files
+		 * @brief if it cannot get all necessary values it generates new ones and sets m_new_login = true
+		 * @brief also sets m_cookie_str
+		 */
+		void setup_app_info_and_cookies() noexcept;
+
+		/*
 		 * @brief contains the http headers for the Instagram servers
-		 * @param x_device_id: whether this header shall be included
-		 * @param x_ig_www_claim: whether this header shall be included
-		 * @param authorization: whether this header shall be included
 		 * @return vector of the headers
 		 */
-		std::vector<tools::HttpHeader> get_ig_http_headers(const bool &x_device_id, const bool &x_ig_www_claim, const bool &authorization) const noexcept;
+		std::vector<tools::HttpHeader> get_ig_http_headers() const noexcept;
 
 		/*
 		 * @brief Instagram mostly only accepts very specific http bodies which the function provides
@@ -93,20 +99,6 @@ namespace ig
 		 * @return the modified http body
 		 */
 		std::string mk_ig_http_body(const std::vector<tools::HttpArg> &http_args) const noexcept;
-
-		/*
-		 * @brief gets all app info and cookie values from files
-		 * @brief if it cannot get all necessary values it generates new ones and sets m_new_login = true
-		 * @brief also sets m_cookie_str
-		 */
-		void setup_cookies_and_app_info() noexcept;
-
-		/*
-		 * @brief with the given cookies the function updates the old as member variable saved cookies
-		 * @brief it also updates m_cookie_str and the two files (cookie and app info file)
-		 * @param http_cookies: cookies with which the as member variable saved cookies shall be updated
-		 */
-		void update_data(const std::vector<tools::HttpCookie> &http_cookies) noexcept;
 
 		//@brief saves the proper member variables in the proper file
 		void save_app_info_in_file() const noexcept;
@@ -125,11 +117,40 @@ namespace ig
 		void set_cookie_str() noexcept;
 
 		/*
+		 * @brief with the given cookies the function updates the old as member variable saved cookies
+		 * @brief it also updates m_cookie_str and the two files (cookie and app info file)
+		 * @param http_cookies: cookies with which the as member variable saved cookies shall be updated
+		 */
+		void update_data(const std::vector<tools::HttpCookie> &http_cookies) noexcept;
+
+		/*
 		 * @brief gets the value of the cookie
 		 * @param name: the name of the cookie whose value we want
 		 * @return the cookie value
 		 */
 		std::string get_cookie_val(const std::string &cookie_name) const noexcept;
+
+		/*
+		 * @brief the login endpoint requires a field jazoest
+		 * @brief it is the sum of the chars of the phone id which is sent too
+		 * @brief it takes the member variable m_phone_id
+		 * @return value
+		 */
+		std::string get_jazoest() const noexcept;
+
+		/*
+		 * @brief the rank token is assembled out of the user id and the m_x_ig_device_id
+		 * @return the rank token
+		 */
+		std::string get_rank_token() const noexcept;
+
+		/*
+		 * @brief on every request Instagram can respond with error messages --> this function catches and handles them
+		 * @brief manages a log with a certain number of the last requests
+		 * @param http_client: needed for the log functionality
+		 * @param server_resp: the server response
+		 */
+		void post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp);
 
 		/*
 		 * these requests occur when the Instagram app is opened but no one is logged in yet
@@ -187,7 +208,7 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string launcher_sync();
+		std::string launcher_sync_1();
 
 		/*
 		 * @brief an http request
@@ -199,19 +220,19 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string qe_sync();
+		std::string qe_sync_1();
 
 		/*
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string launcher_sync();
+		std::string launcher_sync_2();
 
 		/*
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string qe_sync();
+		std::string qe_sync_2();
 
 		/*
 		 * @brief an http request
@@ -271,7 +292,7 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string business_eligibility_get_monezization_products_eligibility_data();
+		std::string business_eligibility_get_monetization_products_eligibility_data();
 
 		/*
 		 * @brief an http request
@@ -301,7 +322,7 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string push_register();
+		std::string push_register_1();
 
 		/*
 		 * @brief an http request
@@ -361,7 +382,7 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string direct_v2_inbox();
+		std::string direct_v2_inbox_1();
 
 		/*
 		 * @brief an http request
@@ -375,27 +396,28 @@ namespace ig
 		 */
 		std::string discover_topical_explore();
 
+		//@brief makes all http requests which are necessary after the actual login
+		void post_login_requests();
+
 		/*
-		 * @brief makes all http requests which are necessary after the actual login
-		 * @brief simulates that the app is opened
+		 * some request are the same as during the login process
+		 * ##############################app opening request##############################
 		 */
-		void open_app(const bool &recent_login);
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string feed_timeline1();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
+		std::string qe_sync_3();
+
+		//@brief makes all http requests which are necessary when the app is opened
+		void open_app();
 		//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-		/*
-		 * @brief the rank token is assembled out of the user id an the uuid
-		 * @return the rank token
-		 */
-		std::string get_rank_token() noexcept;
-
-		/*
-		 * @brief on every request Instagram can respond with error messages --> this function catches and handles them
-		 * @brief manages a log with a certain number of the last requests
-		 * @param http_client: needed for the log functionality
-		 * @param server_resp: the server response
-		 */
-		void post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp);
-
 	public:
 		/*
 		 * @brief gets all likers of the Instagram media
