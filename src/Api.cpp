@@ -268,7 +268,7 @@ namespace ig
 			devices.push_back(std::make_shared<SamsungGalaxyS9Plus>());
 			devices.push_back(std::make_shared<ZteAxon7>());
 
-			srand(tools::Tools::get_time());
+			srand(tools::Tools::get_seed());
 			int random_index = std::rand() % devices.size();
 			m_device = devices.at(random_index);
 
@@ -1128,7 +1128,7 @@ namespace ig
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
-		srand(tools::Tools::get_time());
+		srand(tools::Tools::get_seed());
 		//http args
 		std::vector<tools::HttpArg> http_args;
 		http_args.push_back(tools::HttpArg("feed_view_info", "[]"));
