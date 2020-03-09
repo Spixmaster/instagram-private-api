@@ -395,7 +395,7 @@ namespace ig
 	{
 		std::ofstream outf(m_file_cookies);
 
-		for(size_t j = 0; j < m_cookies.size(); ++j)
+		for(std::size_t j = 0; j < m_cookies.size(); ++j)
 			outf << m_cookies.at(j).to_string() << std::endl;
 
 		outf.close();
@@ -405,7 +405,7 @@ namespace ig
 	{
 		std::string temp;
 
-		for(size_t j = 0; j < m_cookies.size(); ++j)
+		for(std::size_t j = 0; j < m_cookies.size(); ++j)
 		{
 			temp.append(m_cookies.at(j).get_name() + "=" + m_cookies.at(j).get_value());
 
@@ -420,12 +420,12 @@ namespace ig
 	void Api::update_data(const std::vector<tools::HttpCookie> &http_cookies) noexcept
 	{
 		//update the cookies
-		for(size_t j = 0; j < http_cookies.size(); ++j)
+		for(std::size_t j = 0; j < http_cookies.size(); ++j)
 		{
 			//does the cookie already exist?
 			bool found = false;
-			size_t pos_old_cookie_to_updt;
-			for(size_t k = 0; k < m_cookies.size(); ++k)
+			std::size_t pos_old_cookie_to_updt;
+			for(std::size_t k = 0; k < m_cookies.size(); ++k)
 			{
 				if(http_cookies.at(j).get_name() == m_cookies.at(k).get_name())
 				{
@@ -457,7 +457,7 @@ namespace ig
 	{
 		std::string cookie_val;
 
-		for(size_t j = 0; j < m_cookies.size(); ++j)
+		for(std::size_t j = 0; j < m_cookies.size(); ++j)
 		{
 			if(m_cookies.at(j).get_name() == cookie_name)
 			{
@@ -473,7 +473,7 @@ namespace ig
 	{
 		int sum = 0;
 
-		for(size_t j = 0; j < m_phone_id.size(); ++j)
+		for(std::size_t j = 0; j < m_phone_id.size(); ++j)
 			sum += m_phone_id.at(j);
 
 		return "2" + std::to_string(sum);
@@ -487,7 +487,7 @@ namespace ig
 	void Api::post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp)
 	{
 		//###search for values we need###
-		for(size_t j = 0;  j < server_resp.m_headers.size(); ++j)
+		for(std::size_t j = 0;  j < server_resp.m_headers.size(); ++j)
 		{
 			if(server_resp.m_headers.at(j).m_key == "x-ig-set-www-claim")
 				m_x_ig_www_claim = server_resp.m_headers.at(j).m_value;
@@ -501,11 +501,7 @@ namespace ig
 		if(tools::Tools::get_amnt_file_lns(Constants::file_log) < Constants::log_lns)
 		{
 			std::ofstream outf(Constants::file_log, std::ios::app);
-			//pop_back() as asctime() ends with \n
-			std::string time = std::string(tools::Tools::get_date());
-			if(!time.empty())
-				time.pop_back();
-			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
+			outf << m_username << " " << tools::Tools::get_date() << " --> " << http_client.get_url() << std::endl;
 			outf.close();
 		}
 		else
@@ -514,12 +510,7 @@ namespace ig
 			std::string file_cont = tools::Tools::get_last_lns_file(Constants::file_log, tools::Tools::get_amnt_file_lns(Constants::file_log) - Constants::log_lns);
 			std::ofstream outf(Constants::file_log);
 			outf << file_cont;
-
-			//pop_back() as asctime() ends with \n
-			std::string time = std::string(tools::Tools::get_date());
-			if(!time.empty())
-				time.pop_back();
-			outf << m_username << " " << time << " --> " << http_client.get_url() << std::endl;
+			outf << m_username << " " << tools::Tools::get_date() << " --> " << http_client.get_url() << std::endl;
 			outf.close();
 		}
 
@@ -1144,7 +1135,7 @@ namespace ig
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
 		http_args.push_back(tools::HttpArg("battery_level", (rand() % 101) + 8));
-		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_timezone_offset()));
+		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_tm()->tm_gmtoff));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
 		http_args.push_back(tools::HttpArg("request_id", m_request_id));
@@ -1585,7 +1576,7 @@ namespace ig
 
 		//todo where does session_id come from?
 		tools::HttpClient http_client(Constants::ig_api_url + "discover/topical_explore/?is_prefetch=true&omit_cover_media=true&use_sectional_payload=true"
-				"&timezone_offset=" + tools::Tools::get_timezone_offset() + "&session_id=435d11e3-21d7-461e-b641-04bc305f5e9f&include_fixed_destinations=true", http_headers);
+				"&timezone_offset=" + std::to_string(tools::Tools::get_tm()->tm_gmtoff) + "&session_id=435d11e3-21d7-461e-b641-04bc305f5e9f&include_fixed_destinations=true", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -1643,7 +1634,7 @@ namespace ig
 		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
 		http_args.push_back(tools::HttpArg("battery_level", (rand() % 101) + 8));
 		http_args.push_back(tools::HttpArg("last_unseed_ad_id", 0));//todo
-		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_timezone_offset()));
+		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_tm()->tm_gmtoff));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
 		http_args.push_back(tools::HttpArg("request_id", m_request_id));
@@ -1769,7 +1760,7 @@ namespace ig
 
 					if(comments.IsArray())
 					{
-						for(size_t j = 0; j < comments.GetArray().Size(); ++j)
+						for(std::size_t j = 0; j < comments.GetArray().Size(); ++j)
 						{
 							result.append(tools::Tools::get_json_as_string(comments[j]));
 							result.append(", ");
