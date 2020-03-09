@@ -345,7 +345,7 @@ namespace ig
 		//http body as json
 		std::string raw_http_body;
 		raw_http_body.append("{");
-		for (std::size_t j = 0; j < http_args.size(); ++j)
+		for(std::size_t j = 0; j < http_args.size(); ++j)
 		{
 			if(std::holds_alternative<long long>(http_args.at(j).m_value))
 			{
