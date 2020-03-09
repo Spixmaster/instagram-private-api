@@ -20,22 +20,19 @@ namespace ig
 		static const std::string version;
 		static const std::string release;
 			//Instagram Api
-		static const std::string ig_url;
+		static const std::string ig_api_url;
 		static const std::string ig_version;
+		static const std::string ig_sig_key_version;
+		static const std::string ig_sig_key;
 		static const std::string bloks_version_id;
 		static const std::string x_ig_capabilities;
 		static const std::string x_ig_app_id;
-		static const std::string ig_sig_key_version;
-		static const std::string ig_sig_key;
-		static const std::string launcher_configs;
-		static const std::string qe_sync_experiments;
-		static const std::string qe_sync_experiments2;
-		static const std::string experiments;
-		static const std::string supported_capabilities;
-		static const std::string batch_fetch_surfaces_to_queries;
 		static const int app_refresh_interval;
 		static const int app_experiments_interval;
 		static const int log_lns;
+				//http body
+		static const std::string qe_sync_experiments;
+		static const std::string qe_sync_experiments2;
 		static const std::string supported_capabilities_new;
 		static const std::string surfaces_to_queries;
 			//folders

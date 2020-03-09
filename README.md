@@ -59,6 +59,7 @@ git submodule update
 * boost_system
 * boost_filesystem
 * boost_iostreams
+* boost_locale
 
 ### Example
 ```cpp
