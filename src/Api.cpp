@@ -269,7 +269,7 @@ namespace ig
 			devices.push_back(std::make_shared<ZteAxon7>());
 
 			srand(tools::Tools::get_time());
-			int random_index = rand() % devices.size();
+			int random_index = std::rand() % devices.size();
 			m_device = devices.at(random_index);
 
 			//generate new uuids
@@ -1134,15 +1134,15 @@ namespace ig
 		http_args.push_back(tools::HttpArg("feed_view_info", "[]"));
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
-		http_args.push_back(tools::HttpArg("battery_level", (rand() % 101) + 8));
+		http_args.push_back(tools::HttpArg("battery_level", (std::rand() % 101) + 8));
 		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_tm()->tm_gmtoff));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
 		http_args.push_back(tools::HttpArg("request_id", m_request_id));
 		http_args.push_back(tools::HttpArg("is_pull_to_refresh", 0));
 		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("is_charging", rand() % 2 == 0 ? 1 : 0));
-		http_args.push_back(tools::HttpArg("will_sound_on", rand() % 2 == 0 ? 1 : 0));
+		http_args.push_back(tools::HttpArg("is_charging", std::rand() % 2 == 0 ? 1 : 0));
+		http_args.push_back(tools::HttpArg("will_sound_on", std::rand() % 2 == 0 ? 1 : 0));
 		http_args.push_back(tools::HttpArg("session_id", m_session_id));
 		http_args.push_back(tools::HttpArg("bloks_versioning_id", Constants::bloks_version_id));
 
@@ -1632,7 +1632,7 @@ namespace ig
 		http_args.push_back(tools::HttpArg("feed_view_info", 0));//todo
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
-		http_args.push_back(tools::HttpArg("battery_level", (rand() % 101) + 8));
+		http_args.push_back(tools::HttpArg("battery_level", (std::rand() % 101) + 8));
 		http_args.push_back(tools::HttpArg("last_unseed_ad_id", 0));//todo
 		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_tm()->tm_gmtoff));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
@@ -1640,7 +1640,7 @@ namespace ig
 		http_args.push_back(tools::HttpArg("request_id", m_request_id));
 		http_args.push_back(tools::HttpArg("is_pull_to_refresh", 0));
 		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("is_charging", rand() % 2 == 0 ? 1 : 0));
+		http_args.push_back(tools::HttpArg("is_charging", std::rand() % 2 == 0 ? 1 : 0));
 		http_args.push_back(tools::HttpArg("will_sound_on", 0));
 		http_args.push_back(tools::HttpArg("session_id", m_session_id));
 		http_args.push_back(tools::HttpArg("bloks_versioning_id", Constants::bloks_version_id));
