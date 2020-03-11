@@ -15,6 +15,7 @@
  * @brief represents the Instagram Api which interacts with the Instagram servers
  * @brief the cookies need to be updated every time whenever an endpoint is called as even then cookies are set
  * @brief EVERY FUNCTION THAT CALLS post_req_check CANNOT BE NOEXCEPT
+ * @brief EVERY feed/timeline/ CALL NEEDS TO SET THE LAST SEEN MEDIA ID
  */
 
 namespace ig
@@ -58,8 +59,7 @@ namespace ig
 		std::string m_authorization;//default: "Bearer IGT:2:"
 				//http body values
 		std::string m_phone_id;//alternative name family_device_id
-		std::string m_request_id;//for feed_timeline
-		std::string m_session_id;//for feed_timeline
+		std::string m_last_seen_feed_media_id;//for feed_timeline
 				//rest
 		long long m_last_login = 0;
 			//all the cookies which are sent by the Instagram servers
@@ -146,6 +146,20 @@ namespace ig
 		std::string get_rank_token() const noexcept;
 
 		/*
+		 * @brief during app opening the endpoint /api/v1/feed/timeline/ send this information
+		 * @brief this value is got from the last time the feed was called
+		 * @brief the function sets the correct value for the member variable
+		 * @param last_feed_timeline: json object of last call /api/v1/feed/timeline/
+		 */
+		void set_last_seen_feed_media_id(const std::string &last_feed_timeline) noexcept;
+
+		/*
+		 * @brief created the field data for "feed_view_info" for the /feed/timeline/ endpoint
+		 * @return the field content
+		 */
+		std::string get_feed_view_info() const noexcept;
+
+		/*
 		 * @brief on every request Instagram can respond with error messages --> this function catches and handles them
 		 * @brief manages a log with a certain number of the last requests
 		 * @param http_client: needed for the log functionality
@@ -162,7 +176,7 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string accounts_get_prefill_candidates();
+		std::string accounts_contact_point_prefill();
 
 		/*
 		 * @brief an http request
@@ -174,13 +188,14 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string launcher_sync();
+		std::string accounts_get_prefill_candidates();
 
 		/*
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string accounts_contact_point_prefill();
+		std::string launcher_sync();
+
 
 		//@brief makes all pre login http requests
 		void pre_login_requests();
@@ -195,7 +210,7 @@ namespace ig
 
 		/*
 		 * @brief on Instagram login it can occur that a challenge is required for fulfillment
-		 * @param server_resp: the server response which contains the challenge
+		 * @param server_resp: the server response of the failed login endpoint which contains the challenge
 		 * @return true on success; otherwise false
 		 */
 		bool solve_challenge(const std::string &server_resp);
@@ -209,37 +224,7 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string launcher_sync_1();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
 		std::string multiple_accounts_get_account_family();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string qe_sync_1();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string launcher_sync_2();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string qe_sync_2();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string zr_token_result();
 
 		/*
 		 * @brief an http request
@@ -251,19 +236,19 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string feed_timeline();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
 		std::string feed_reels_tray();
 
 		/*
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string push_register();
+		std::string feed_timeline();
+
+//		/*
+//		 * @brief an http request
+//		 * @return server response
+//		 */
+//		std::string push_register();
 
 		/*
 		 * @brief an http request
@@ -275,19 +260,13 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string news_inbox();
+		std::string loom_fetch_config();
 
 		/*
 		 * @brief an http request
 		 * @return server response
 		 */
 		std::string scores_bootstrap_users();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string loom_fetch_config();
 
 		/*
 		 * @brief an http request
@@ -311,43 +290,13 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
+		std::string news_inbox();
+
+		/*
+		 * @brief an http request
+		 * @return server response
+		 */
 		std::string qp_get_cooldowns();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string users_arlink_download_info();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string push_register_1();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string users_x_info();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string attribution_log_resurrect_attribution();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string creatives_write_supported_capabilities();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string notifications_store_client_push_permissions();
 
 		/*
 		 * @brief an http request
@@ -359,13 +308,13 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string direct_v2_get_presence();
+		std::string users_x_info();
 
 		/*
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string qp_batch_fetch();
+		std::string direct_v2_get_presence();
 
 		/*
 		 * @brief an http request
@@ -383,7 +332,7 @@ namespace ig
 		 * @brief an http request
 		 * @return server response
 		 */
-		std::string direct_v2_inbox_1();
+		std::string qp_batch_fetch();
 
 		/*
 		 * @brief an http request
@@ -404,18 +353,6 @@ namespace ig
 		 * some request are the same as during the login process
 		 * ##############################app opening request##############################
 		 */
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string feed_timeline1();
-
-		/*
-		 * @brief an http request
-		 * @return server response
-		 */
-		std::string qe_sync_3();
-
 		//@brief makes all http requests which are necessary when the app is opened
 		void open_app();
 		//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -446,7 +383,6 @@ namespace ig
 		 * @brief it requests all comments by concatenating every page of the comments
 		 * @brief the returned string are several modified server responses
 		 * @param media_id: the proper media id
-		 * @param max_id: for pagination
 		 * @return the server response
 		 */
 		std::string get_media_comments_all(const std::string &media_id);
