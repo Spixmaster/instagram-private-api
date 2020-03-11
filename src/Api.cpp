@@ -167,34 +167,6 @@ namespace ig
 					std::cerr << Messages::field_not_found_in_file("m_phone_id", m_file_app_info) << std::endl;
 			}
 
-			//m_request_id
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_request_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_request_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_request_id", m_file_app_info) << std::endl;
-				}
-				else
-					std::cerr << Messages::field_not_found_in_file("m_request_id", m_file_app_info) << std::endl;
-			}
-
-			//m_session_id
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_session_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_session_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_session_id", m_file_app_info) << std::endl;
-				}
-				else
-					std::cerr << Messages::field_not_found_in_file("m_session_id", m_file_app_info) << std::endl;
-			}
-
 			//m_last_login
 			{
 				std::string entry = tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_login");
@@ -202,6 +174,20 @@ namespace ig
 					m_last_login = tools::Tools::get_num_ln_end(entry);
 				else
 					std::cerr << Messages::field_not_found_in_file("m_last_login", m_file_app_info) << std::endl;
+			}
+
+			//m_last_seen_feed_media_id
+			{
+				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_seen_feed_media_id"));
+				if(!args.empty())
+				{
+					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
+						m_last_seen_feed_media_id = args.at(args.size() - 1);
+					else
+						std::cerr << Messages::field_no_value_in_file("m_last_seen_feed_media_id", m_file_app_info) << std::endl;
+				}
+				else
+					std::cerr << Messages::field_not_found_in_file("m_last_seen_feed_media_id", m_file_app_info) << std::endl;
 			}
 		}
 		else
@@ -251,7 +237,7 @@ namespace ig
 		 * if a cookie is missing (I already know the names of those which are needed)
 		 */
 		if(m_x_google_ad_id.empty() || m_x_pigeon_session_id.empty() || m_x_ig_device_id.empty() || m_x_ig_android_id.empty() || m_useragent.empty() ||
-				m_phone_id.empty() || m_request_id.empty() || m_session_id.empty() || m_last_login == 0 ||
+				m_phone_id.empty() || m_last_login == 0 || m_last_seen_feed_media_id.empty() ||
 				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("rur").empty() ||
 				get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() || get_cookie_val("mid").empty())
 		{
@@ -283,8 +269,6 @@ namespace ig
 			m_x_ig_android_id = "android-" + m_x_ig_android_id_temp;
 			m_useragent = m_device->get_useragent();
 			m_phone_id = boost::uuids::to_string(boost::uuids::random_generator()());
-			m_request_id = boost::uuids::to_string(boost::uuids::random_generator()());
-			m_session_id = boost::uuids::to_string(boost::uuids::random_generator()());
 
 			std::cout << Messages::no_cookies_found << std::endl;
 		}
@@ -370,7 +354,7 @@ namespace ig
 		//raw_http_body --> http_body
 		std::string http_body;
 		http_body.append("signed_body=" + tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) +
-				"." + tools::Tools::parse_url(raw_http_body, "@&="));
+				"." + tools::Tools::parse_url(raw_http_body));
 		http_body.append("&ig_sig_key_version=" + Constants::ig_sig_key_version);
 
 		return http_body;
@@ -385,9 +369,8 @@ namespace ig
 		outf << "m_x_ig_android_id: " << m_x_ig_android_id << std::endl;
 		outf << "m_useragent: " << m_useragent << std::endl;
 		outf << "m_phone_id: " << m_phone_id << std::endl;
-		outf << "m_request_id: " << m_request_id << std::endl;
-		outf << "m_session_id: " << m_session_id << std::endl;
 		outf << "m_last_login: " << m_last_login << std::endl;
+		outf << "m_last_seen_feed_media_id: " << m_last_seen_feed_media_id << std::endl;
 		outf.close();
 	}
 
@@ -482,6 +465,65 @@ namespace ig
 	std::string Api::get_rank_token() const noexcept
 	{
 		return get_cookie_val("ds_user_id") + "_" + m_x_ig_device_id;
+	}
+
+	void Api::set_last_seen_feed_media_id(const std::string &last_feed_timeline) noexcept
+	{
+		rapidjson::Document doc;
+		doc.Parse(last_feed_timeline.c_str());
+
+		if(doc.IsObject())
+			if(doc.HasMember("feed_items"))
+				if(doc["feed_items"].IsArray())
+					if(doc["feed_items"].Size() > 0)
+						if(doc["feed_items"][0].HasMember("media_or_ad"))
+							if(doc["feed_items"][0]["media_or_ad"].HasMember("id"))
+								if(doc["feed_items"][0]["media_or_ad"]["id"].IsString())
+									m_last_seen_feed_media_id = doc["feed_items"][0]["media_or_ad"]["id"].GetString();
+								else
+									std::cerr << Messages::field_not_contain_string("id") << std::endl;
+							else
+								std::cerr << Messages::field_not_found("id") << std::endl;
+						else
+							std::cerr << Messages::field_not_found("media_or_ad") << std::endl;
+					else
+						std::cerr << Messages::json_array_has_size_0("feed_items") << std::endl;
+				else
+					std::cerr << Messages::field_not_contain_json_array("feed_items") << std::endl;
+			else
+				std::cerr << Messages::field_not_found("feed_items") << std::endl;
+		else
+			std::cerr << Messages::server_respone_not_json_obj << std::endl;
+	}
+
+	std::string Api::get_feed_view_info() const noexcept
+	{
+		srand(tools::Tools::get_seed());
+
+		//feed_view_info
+		std::string feed_view_info;
+			//as security because if the user has no feed (when having subscribed to nobody) it cannot be that madia_pct is set
+		if(!m_last_seen_feed_media_id.empty())
+		{
+			feed_view_info = "[{";
+			feed_view_info.append("\"media_id\":\"" + m_last_seen_feed_media_id + "\",");
+			feed_view_info.append("\"version\":24,");
+			double d = (rand() % 101) / 100;
+			if(d < 0.4)
+				d += 0.6;
+			feed_view_info.append("\"media_pct\":" + std::to_string(d) + ",");
+			int i = (rand() % 132491) + 3217;
+			feed_view_info.append("\"time_info\":{" +
+					std::string("\"10\":") + std::to_string(i) +
+					std::string("\"25\":") + std::to_string(i) +
+					std::string("\"50\":") + std::to_string(i) +
+					std::string("\"75\":") + std::to_string(i) + "}");
+			feed_view_info = "}]";
+		}
+		else
+			feed_view_info = "[]";
+
+		return feed_view_info;
 	}
 
 	void Api::post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp)
@@ -583,21 +625,18 @@ namespace ig
 			throw std::runtime_error("Error. The Instagram servers refused the request as they are too many.");
 	}
 
-	std::string Api::accounts_get_prefill_candidates()
+	std::string Api::accounts_contact_point_prefill()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("android_device_id", m_x_ig_android_id));
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("usages", "[\"account_recovery_omnibox\"]"));
-//		http_args.push_back(tools::HttpArg("_csrftoken", id)); todo habe ich noch nicht
-		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("usage", "prefill"));
 
-		tools::HttpClient http_client(Constants::ig_api_url + "accounts/get_prefill_candidates/", http_headers);
+		tools::HttpClient http_client(Constants::ig_api_url + "accounts/contact_point_prefill/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
@@ -610,7 +649,6 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
@@ -619,7 +657,29 @@ namespace ig
 		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
 		http_args.push_back(tools::HttpArg("experiments", Constants::qe_sync_experiments));
 
-		tools::HttpClient http_client(Constants::ig_api_url + "qe/sync/", get_ig_http_headers());
+		tools::HttpClient http_client(Constants::ig_api_url + "qe/sync/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
+	std::string Api::accounts_get_prefill_candidates()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("android_device_id", m_x_ig_android_id));
+		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("usages", "[\"account_recovery_omnibox\"]"));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
+
+		tools::HttpClient http_client(Constants::ig_api_url + "accounts/get_prefill_candidates/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
@@ -632,36 +692,14 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		http_args.push_back(tools::HttpArg("id", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
+		http_args.push_back(tools::HttpArg("server_config_retrieval", "1"));
 
 		tools::HttpClient http_client(Constants::ig_api_url + "launcher/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::accounts_contact_point_prefill()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("usage", "prefill"));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "accounts/contact_point_prefill/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
@@ -691,8 +729,7 @@ namespace ig
 			 * Set-Cookie: ds_user, csrftoken (csrftoken is different to before), shbid, shbts, rur, ds_user_id, urlgen, sessionid
 			 */
 			//http headers
-			std::vector<tools::HttpHeader> http_headers;
-			http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+			std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 			//http args
 			std::vector<tools::HttpArg> http_args;
@@ -708,7 +745,7 @@ namespace ig
 			http_args.push_back(tools::HttpArg("password", m_password));
 			http_args.push_back(tools::HttpArg("login_attempt_count", "0"));
 
-			tools::HttpClient http_client(Constants::ig_api_url + "accounts/login/", http_headers, http_args);
+			tools::HttpClient http_client(Constants::ig_api_url + "accounts/login/", http_headers);
 			tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 			update_data(http_res.m_cookies);
@@ -734,13 +771,9 @@ namespace ig
 				doc.Parse(http_res.m_body.c_str());
 
 				if(doc.IsObject())
-				{
 					if(doc.HasMember("error_type"))
-					{
 						if(doc["error_type"].IsString())
-						{
 							if(doc["error_type"].GetString() == std::string("checkpoint_challenge_required"))
-							{
 								if(solve_challenge(http_res.m_body))
 								{
 									post_login_requests();
@@ -750,16 +783,12 @@ namespace ig
 								}
 								else
 									std::cerr << Messages::challenge_not_solved << std::endl;
-							}
 							else
 								std::cerr << Messages::field_not_correct_value("error_type", "checkpoint_challenge_required") << std::endl;
-						}
 						else
 							std::cerr << Messages::field_not_contain_string("error_type") << std::endl;
-					}
 					else
 						std::cerr << Messages::field_not_found("error_type") << std::endl;
-				}
 				else
 					std::cerr << Messages::server_respone_not_json_obj << std::endl;
 
@@ -768,7 +797,11 @@ namespace ig
 		}
 		else
 		{
-//			post_login_requests(); todo open app
+			if(m_last_login < tools::Tools::get_time())
+			{
+				open_app();
+				m_last_login = tools::Tools::get_time();
+			}
 
 			return true;
 		}
@@ -804,9 +837,9 @@ namespace ig
 
 									//http headers
 									std::vector<tools::HttpHeader> http_headers1 = get_ig_http_headers();
-									http_headers1.push_back(tools::HttpHeader("Cookie", m_cookie_str));
 
-									tools::HttpClient http_client1(Constants::ig_api_url + challenge_path, http_headers1);
+									tools::HttpClient http_client1(Constants::ig_api_url + challenge_path + "?guid=" + m_x_ig_device_id +
+											"&device_id=" + m_x_ig_android_id, http_headers1);
 									tools::HttpResponse http_res1 = http_client1.send_get_req();
 
 									update_data(http_res1.m_cookies);
@@ -823,94 +856,104 @@ namespace ig
 											{
 												if(doc["step_name"].GetString() == std::string("select_verify_method"))
 												{
-													const rapidjson::Value &step_data = doc["step_data"];
-													std::string choices;
-
-													if(step_data.HasMember("phone_number"))
-														choices.append("0 - Phone number");
-													if(step_data.HasMember("email"))
-														choices.append("\n1 - Email");
-
-													std::cout << Messages::hints_from_last_server_response << std::endl;
-													std::cout << http_res1.m_body << std::endl;
-													std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
-													std::cout << choices << std::endl;
-													int choice = -1;
-
-													if(step_data.HasMember("phone_number") && step_data.HasMember("email"))
+													if(doc.HasMember("step_data"))
 													{
-														while(!(choice == 0 || choice == 1))
-														{
-															std::cout << "Your choice: ";
-															std::cin >> choice;
+														const rapidjson::Value &step_data = doc["step_data"];
+														std::string choices;
 
-															if(!(choice == 0 || choice == 1))
-																std::cout << Messages::wrong_choice_try_again << std::endl;
+														if(step_data.HasMember("phone_number"))
+															choices.append("0 - Phone number");
+														if(step_data.HasMember("email"))
+															choices.append("\n1 - Email");
+
+														std::cout << Messages::hints_from_last_server_response << std::endl;
+														std::cout << http_res1.m_body << std::endl;
+														std::cout << "You need to verify your login. Choose the method of approval." << std::endl;
+														std::cout << choices << std::endl;
+														int choice = -1;
+
+														if(step_data.HasMember("phone_number") && step_data.HasMember("email"))
+														{
+															while(!(choice == 0 || choice == 1))
+															{
+																std::cout << "Your choice: ";
+																std::cin >> choice;
+
+																if(!(choice == 0 || choice == 1))
+																	std::cout << Messages::wrong_choice_try_again << std::endl;
+															}
+														}
+														else if(step_data.HasMember("phone_number"))
+														{
+															while(choice != 0)
+															{
+																std::cout << "Your choice: ";
+																std::cin >> choice;
+
+																if(choice != 0)
+																	std::cout << Messages::wrong_choice_try_again << std::endl;
+															}
+														}
+														else if(step_data.HasMember("email"))
+														{
+															while(choice != 1)
+															{
+																std::cout << "Your choice: ";
+																std::cin >> choice;
+
+																if(choice != 1)
+																	std::cout << Messages::wrong_choice_try_again << std::endl;
+															}
+														}
+
+														//http headers
+														std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
+
+														//http args
+														std::vector<tools::HttpArg> http_args2;
+														http_args2.push_back(tools::HttpArg("choice", choice));
+														http_args2.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+														http_args2.push_back(tools::HttpArg("guid", m_x_ig_device_id));
+														http_args2.push_back(tools::HttpArg("device_id", m_x_ig_android_id));
+
+														tools::HttpClient http_client2(Constants::ig_api_url + challenge_path, http_headers2);
+														tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
+
+														update_data(http_res2.m_cookies);
+														post_req_check(http_client2, http_res2);
+
+														std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
+														std::string security_code;
+														std::cout << "Enter your verification code: ";
+														std::cin >> security_code;
+
+														//http headers
+														std::vector<tools::HttpHeader> http_headers3 = get_ig_http_headers();
+
+														//http args
+														std::vector<tools::HttpArg> http_args3;
+														http_args3.push_back(tools::HttpArg("security_code", security_code));
+														http_args2.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+														http_args2.push_back(tools::HttpArg("guid", m_x_ig_device_id));
+														http_args2.push_back(tools::HttpArg("device_id", m_x_ig_android_id));
+
+														tools::HttpClient http_client3(Constants::ig_api_url + challenge_path, http_headers3);
+														tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
+
+														update_data(http_res3.m_cookies);
+														post_req_check(http_client3, http_res3);
+
+														if(http_res3.m_code == 200)
+														{
+															std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
+
+															return true;
 														}
 													}
-													else if(step_data.HasMember("phone_number"))
-													{
-														while(choice != 0)
-														{
-															std::cout << "Your choice: ";
-															std::cin >> choice;
-
-															if(choice != 0)
-																std::cout << Messages::wrong_choice_try_again << std::endl;
-														}
-													}
-													else if(step_data.HasMember("email"))
-													{
-														while(choice != 1)
-														{
-															std::cout << "Your choice: ";
-															std::cin >> choice;
-
-															if(choice != 1)
-																std::cout << Messages::wrong_choice_try_again << std::endl;
-														}
-													}
-
-													//http headers
-													std::vector<tools::HttpHeader> http_headers2 = get_ig_http_headers();
-													http_headers2.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-													//http args
-													std::vector<tools::HttpArg> http_args2;
-													http_args2.push_back(tools::HttpArg("choice", choice));
-
-													tools::HttpClient http_client2(Constants::ig_api_url + challenge_path, http_headers2, http_args2);
-													tools::HttpResponse http_res2 = http_client2.send_post_req_urlencoded(mk_ig_http_body(http_args2));
-
-													update_data(http_res2.m_cookies);
-													post_req_check(http_client2, http_res2);
-
-													std::cout << "A verification code has been sent to the selected method, please check." << std::endl;
-													std::string security_code;
-													std::cout << "Enter your verification code: ";
-													std::cin >> security_code;
-
-													//http headers
-													std::vector<tools::HttpHeader> http_headers3 = get_ig_http_headers();
-													http_headers3.push_back(tools::HttpHeader("Cookie", m_cookie_str));
-
-													//http args
-													std::vector<tools::HttpArg> http_args3;
-													http_args3.push_back(tools::HttpArg("security_code", security_code));
-
-													tools::HttpClient http_client3(Constants::ig_api_url + challenge_path, http_headers3, http_args3);
-													tools::HttpResponse http_res3 = http_client3.send_post_req_urlencoded(mk_ig_http_body(http_args3));
-
-													update_data(http_res3.m_cookies);
-													post_req_check(http_client3, http_res3);
-
-													if(http_res3.m_code == 200)
-													{
-														std::cout << "Successful login! The cookies are saved to " << m_file_cookies << "!" << std::endl;
-
-														return true;
-													}
+													else
+														std::cerr << Messages::field_not_found("step_data") << std::endl;
 												}
+												//I do not know whether this code works --> copied from instabot
 												else if(doc["step_name"].GetString() == std::string("delta_login_review"))
 												{
 													std::string choices;
@@ -990,115 +1033,12 @@ namespace ig
 		return false;
 	}
 
-	std::string Api::launcher_sync_1()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("id", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "launcher/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
 	std::string Api::multiple_accounts_get_account_family()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		tools::HttpClient http_client(Constants::ig_api_url + "multiple_accounts/get_account_family/", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::qe_sync_1()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("id", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
-		http_args.push_back(tools::HttpArg("experiments", Constants::qe_sync_experiments));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "qe/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::launcher_sync_2()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("id", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "launcher/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::qe_sync_2()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", asdf)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("id", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
-		http_args.push_back(tools::HttpArg("experiments", Constants::qe_sync_experiments2));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "qe/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::zr_token_result()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-
-		tools::HttpClient http_client(Constants::ig_api_url + "zr/token/result/?device_id=" + m_x_ig_android_id + "&token_hash=" +
-				"&custom_device_id=" + m_x_ig_device_id + "&fetch_reason=token_expired", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -1122,44 +1062,10 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::feed_timeline()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		srand(tools::Tools::get_seed());
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("feed_view_info", "[]"));
-		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
-		http_args.push_back(tools::HttpArg("battery_level", (std::rand() % 101) + 8));
-		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_tm()->tm_gmtoff));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("request_id", m_request_id));
-		http_args.push_back(tools::HttpArg("is_pull_to_refresh", 0));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("is_charging", std::rand() % 2 == 0 ? 1 : 0));
-		http_args.push_back(tools::HttpArg("will_sound_on", std::rand() % 2 == 0 ? 1 : 0));
-		http_args.push_back(tools::HttpArg("session_id", m_session_id));
-		http_args.push_back(tools::HttpArg("bloks_versioning_id", Constants::bloks_version_id));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "feed/timeline/", http_headers, http_args);//normal http body
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
 	std::string Api::feed_reels_tray()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
@@ -1168,7 +1074,7 @@ namespace ig
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
 
-		tools::HttpClient http_client(Constants::ig_api_url + "feed/reels_tray/", http_headers, http_args);//normal http body
+		tools::HttpClient http_client(Constants::ig_api_url + "feed/reels_tray/", http_headers, http_args);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
 
 		update_data(http_res.m_cookies);
@@ -1177,29 +1083,65 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::push_register()
+	std::string Api::feed_timeline()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
+		srand(tools::Tools::get_seed());
+		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("device_type", "android_mqtt"));
-		http_args.push_back(tools::HttpArg("is_main_push_channel", 2));
-		http_args.push_back(tools::HttpArg("device_token", ""));//todo this is for getting notifications which is done via mqtt
+		http_args.push_back(tools::HttpArg("feed_view_info", get_feed_view_info()));
+		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
+		http_args.push_back(tools::HttpArg("battery_level", (std::rand() % 101) + 8));
+//		http_args.push_back(tools::HttpArg("last_unseed_ad_id", 0));not possible to get
+		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_tm()->tm_gmtoff));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("guid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("request_id", boost::uuids::to_string(boost::uuids::random_generator()())));
+		http_args.push_back(tools::HttpArg("is_pull_to_refresh", 0));
 		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("family_device_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("is_charging", std::rand() % 2 == 0 ? 1 : 0));
+		http_args.push_back(tools::HttpArg("will_sound_on", 0));
+		http_args.push_back(tools::HttpArg("session_id", boost::uuids::to_string(boost::uuids::random_generator()())));
+		http_args.push_back(tools::HttpArg("bloks_versioning_id", Constants::bloks_version_id));
 
-		tools::HttpClient http_client(Constants::ig_api_url + "push/register/", http_headers, http_args);//normal http body
+		tools::HttpClient http_client(Constants::ig_api_url + "feed/timeline/", http_headers, http_args);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
 
 		update_data(http_res.m_cookies);
 		post_req_check(http_client, http_res);
+		set_last_seen_feed_media_id(http_res.m_body);
 
 		return http_res.m_body;
 	}
+
+//	std::string Api::push_register()
+//	{
+//		//http headers
+//		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+//
+//		//http args
+//		std::vector<tools::HttpArg> http_args;
+//		http_args.push_back(tools::HttpArg("device_type", "android_mqtt"));
+//		http_args.push_back(tools::HttpArg("is_main_push_channel", "true"));
+//		http_args.push_back(tools::HttpArg("device_sub_type", 2));
+//		http_args.push_back(tools::HttpArg("device_token", ""));//needs to be got via sent mqtt requests.
+//		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+//		http_args.push_back(tools::HttpArg("guid", m_x_ig_device_id));
+//		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+//		http_args.push_back(tools::HttpArg("users", get_cookie_val("ds_user_id")));
+//		http_args.push_back(tools::HttpArg("family_device_id", m_phone_id));
+//
+//		tools::HttpClient http_client(Constants::ig_api_url + "launcher/sync/", http_headers);
+//		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+//
+//		update_data(http_res.m_cookies);
+//		post_req_check(http_client, http_res);
+//
+//		return http_res.m_body;
+//	}
 
 	std::string Api::media_blocked()
 	{
@@ -1215,12 +1157,12 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::news_inbox()
+	std::string Api::loom_fetch_config()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
-		tools::HttpClient http_client(Constants::ig_api_url + "news/inbox/", http_headers);
+		tools::HttpClient http_client(Constants::ig_api_url + "loom/fetch_config/", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -1234,23 +1176,9 @@ namespace ig
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
-		tools::HttpClient http_client(Constants::ig_api_url + "scores/bootstrap/users/surfaces=[\"autocomplete_user_list\",\"coefficient_besties_list_ranking\","
+		tools::HttpClient http_client(Constants::ig_api_url + "scores/bootstrap/users/?surfaces=[\"autocomplete_user_list\",\"coefficient_besties_list_ranking\","
 				"\"coefficient_rank_recipient_user_suggestion\",\"coefficient_ios_section_test_bootstrap_ranking\",\"coefficient_direct_recipients_ranking_v"
 				"ariant_2\"]", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::loom_fetch_config()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-
-		tools::HttpClient http_client(Constants::ig_api_url + "loom/fetch_config/", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -1302,13 +1230,29 @@ namespace ig
 		return http_res.m_body;
 	}
 
+	std::string Api::news_inbox()
+	{
+		//http headers
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
+
+		tools::HttpClient http_client(Constants::ig_api_url + "news/inbox/", http_headers);
+		tools::HttpResponse http_res = http_client.send_get_req();
+
+		update_data(http_res.m_cookies);
+		post_req_check(http_client, http_res);
+
+		return http_res.m_body;
+	}
+
 	std::string Api::qp_get_cooldowns()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
-		//todo url not complete
-		tools::HttpClient http_client(Constants::ig_api_url + "qp/get_cooldowns/", http_headers);
+		//http args
+		std::vector<tools::HttpArg> http_args;
+
+		tools::HttpClient http_client(Constants::ig_api_url + "qp/get_cooldowns/?" + mk_ig_http_body(http_args), http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -1317,39 +1261,21 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::users_arlink_download_info()
+	std::string Api::accounts_process_contact_point_signals()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-
-		tools::HttpClient http_client(Constants::ig_api_url + "users/arlink_download_info/?version_override=2.2.1", http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::push_register_1()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("device_type", "android_mqtt"));
-		http_args.push_back(tools::HttpArg("is_main_push_channel", "true"));
-		http_args.push_back(tools::HttpArg("device_sub_type", 2));
-		http_args.push_back(tools::HttpArg("device_token", ""));//todo
+		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("guid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
 		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("users", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("family_device_id", m_phone_id));
+		http_args.push_back(tools::HttpArg("google_tokens", "[]"));
 
-		tools::HttpClient http_client(Constants::ig_api_url + "launcher/sync/", http_headers);
+		tools::HttpClient http_client(Constants::ig_api_url + "accounts/process_contact_point_signals/", http_headers);
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
@@ -1363,97 +1289,8 @@ namespace ig
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
-		tools::HttpClient http_client(Constants::ig_api_url + "users/" + get_cookie_val("ds_user_id") + "/info", http_headers);
+		tools::HttpClient http_client(Constants::ig_api_url + "users/" + get_cookie_val("ds_user_id") + "/info/", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::attribution_log_resurrect_attribution()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "attribution/log_resurrect_attribution/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::creatives_write_supported_capabilities()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("supported_capabilities_new", Constants::supported_capabilities_new));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "creatives/write_supported_capabilities/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::notifications_store_client_push_permissions()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("enabled", "true"));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "notifications/store_client_push_permissions/", http_headers, http_args);//normal http body
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::accounts_process_contact_point_signals()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("google_tokens", "[]"));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "accounts/process_contact_point_signals/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
 		post_req_check(http_client, http_res);
@@ -1475,38 +1312,10 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::qp_batch_fetch()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("surfaces_to_triggers", "{\"4715\":[\"instagram_feed_header\"],\"5858\":[\"instagram_feed_tool_tip\"],"
-				"\"5734\":[\"instagram_feed_prompt\"]}"));
-		http_args.push_back(tools::HttpArg("surfaces_to_queries", Constants::surfaces_to_queries));
-		http_args.push_back(tools::HttpArg("vc_policy", "default"));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("scale", 4));
-		http_args.push_back(tools::HttpArg("version", 1));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "launcher/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
 	std::string Api::status_get_viewable_statuses()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		tools::HttpClient http_client(Constants::ig_api_url + "status/get_viewable_statuses/", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
@@ -1531,14 +1340,25 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	std::string Api::direct_v2_inbox_1()
+	std::string Api::qp_batch_fetch()
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
-		tools::HttpClient http_client(Constants::ig_api_url + "direct_v2/inbox/?visual_message_return_type=unseen&thread_message_limit=10&persistentBadging=true&limit=20",
-				http_headers);
-		tools::HttpResponse http_res = http_client.send_get_req();
+		//http args
+		std::vector<tools::HttpArg> http_args;
+		http_args.push_back(tools::HttpArg("surfaces_to_triggers", "{\"4715\":[\"instagram_feed_header\"],\"5858\":[\"instagram_feed_tool_tip\"],"
+				"\"5734\":[\"instagram_feed_prompt\"]}"));
+		http_args.push_back(tools::HttpArg("surfaces_to_queries", Constants::surfaces_to_queries));
+		http_args.push_back(tools::HttpArg("vc_policy", "default"));
+		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
+		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
+		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
+		http_args.push_back(tools::HttpArg("scale", "4"));
+		http_args.push_back(tools::HttpArg("version", "1"));
+
+		tools::HttpClient http_client(Constants::ig_api_url + "qp/batch_fetch/", http_headers);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
 		post_req_check(http_client, http_res);
@@ -1550,7 +1370,6 @@ namespace ig
 	{
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", id)); todo
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
@@ -1560,8 +1379,8 @@ namespace ig
 		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
 		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
 
-		tools::HttpClient http_client(Constants::ig_api_url + "notifications/badge/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
+		tools::HttpClient http_client(Constants::ig_api_url + "notifications/badge/", http_headers, http_args);
+		tools::HttpResponse http_res = http_client.send_post_req_urlencoded();
 
 		update_data(http_res.m_cookies);
 		post_req_check(http_client, http_res);
@@ -1574,9 +1393,9 @@ namespace ig
 		//http headers
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
-		//todo where does session_id come from?
 		tools::HttpClient http_client(Constants::ig_api_url + "discover/topical_explore/?is_prefetch=true&omit_cover_media=true&use_sectional_payload=true"
-				"&timezone_offset=" + std::to_string(tools::Tools::get_tm()->tm_gmtoff) + "&session_id=435d11e3-21d7-461e-b641-04bc305f5e9f&include_fixed_destinations=true", http_headers);
+				"&timezone_offset=" + std::to_string(tools::Tools::get_tm()->tm_gmtoff) + "&session_id=" +
+				boost::uuids::to_string(boost::uuids::random_generator()()) + "&include_fixed_destinations=true", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -1587,123 +1406,46 @@ namespace ig
 
 	void Api::post_login_requests()
 	{
-		launcher_sync_1();
 		multiple_accounts_get_account_family();
-		qe_sync_1();
-		launcher_sync_2();
-		qe_sync_2();
-		zr_token_result();
 		banyan_banyan();
-		feed_timeline();
 		feed_reels_tray();
-		push_register();
+		feed_timeline();
+//		push_register();
 		media_blocked();
-		news_inbox();
-		scores_bootstrap_users();
 		loom_fetch_config();
+		scores_bootstrap_users();
 		business_eligibility_get_monetization_products_eligibility_data();
 		linked_accounts_get_linkage_status();
 		business_branded_content_should_require_professional_account();
+		news_inbox();
 		qp_get_cooldowns();
-		users_arlink_download_info();
-		push_register_1();
-		users_x_info();
-		attribution_log_resurrect_attribution();
-		creatives_write_supported_capabilities();
-		notifications_store_client_push_permissions();
 		accounts_process_contact_point_signals();
+		users_x_info();
 		direct_v2_get_presence();
-		qp_batch_fetch();
 		status_get_viewable_statuses();
 		direct_v2_inbox();
-		direct_v2_inbox_1();
+		qp_batch_fetch();
 		notifications_badge();
 		discover_topical_explore();
 	}
 
-	std::string Api::feed_timeline1()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-
-		srand(tools::Tools::get_seed());
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("feed_view_info", 0));//todo
-		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("reason", "cold_start_fetch"));
-		http_args.push_back(tools::HttpArg("battery_level", (std::rand() % 101) + 8));
-		http_args.push_back(tools::HttpArg("last_unseed_ad_id", 0));//todo
-		http_args.push_back(tools::HttpArg("timezone_offset", tools::Tools::get_tm()->tm_gmtoff));
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("request_id", m_request_id));
-		http_args.push_back(tools::HttpArg("is_pull_to_refresh", 0));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("is_charging", std::rand() % 2 == 0 ? 1 : 0));
-		http_args.push_back(tools::HttpArg("will_sound_on", 0));
-		http_args.push_back(tools::HttpArg("session_id", m_session_id));
-		http_args.push_back(tools::HttpArg("bloks_versioning_id", Constants::bloks_version_id));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "feed/timeline/", http_headers, http_args);
-		tools::HttpResponse http_res = http_client.send_get_req();
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
-	std::string Api::qe_sync_3()
-	{
-		//http headers
-		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
-		//http_headers.push_back(tools::HttpHeader("Content-Length", asdf)); todo
-
-		//http args
-		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
-		http_args.push_back(tools::HttpArg("id", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uid", get_cookie_val("ds_user_id")));
-		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
-		http_args.push_back(tools::HttpArg("server_config_retrieval", 1));
-		http_args.push_back(tools::HttpArg("experiments", Constants::qe_sync_experiments));
-
-		tools::HttpClient http_client(Constants::ig_api_url + "qe/sync/", http_headers);
-		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
-
-		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
-
-		return http_res.m_body;
-	}
-
 	void Api::open_app()
 	{
-		feed_timeline1();
+		feed_timeline();
 		feed_reels_tray();
-		qe_sync_3();
-		launcher_sync_1();
-		launcher_sync_1();
-		qe_sync_2();
-		media_blocked();
-		loom_fetch_config();
 		banyan_banyan();
-		business_eligibility_get_monetization_products_eligibility_data();
-		users_arlink_download_info();
-		business_branded_content_should_require_professional_account();
+		loom_fetch_config();
 		multiple_accounts_get_account_family();
-		linked_accounts_get_linkage_status();
+		business_eligibility_get_monetization_products_eligibility_data();
+		business_branded_content_should_require_professional_account();
 		news_inbox();
-		scores_bootstrap_users();
-		push_register_1();
 		accounts_process_contact_point_signals();
 		users_x_info();
 		direct_v2_get_presence();
-		status_get_viewable_statuses();
 		direct_v2_inbox();
-		creatives_write_supported_capabilities();
-
+		status_get_viewable_statuses();
+		scores_bootstrap_users();
+		discover_topical_explore();
 		notifications_badge();
 	}
 

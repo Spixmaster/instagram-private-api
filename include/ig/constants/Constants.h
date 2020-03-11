@@ -28,7 +28,6 @@ namespace ig
 		static const std::string x_ig_capabilities;
 		static const std::string x_ig_app_id;
 		static const int app_refresh_interval;
-		static const int app_experiments_interval;
 		static const int log_lns;
 				//http body
 		static const std::string qe_sync_experiments;
