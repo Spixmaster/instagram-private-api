@@ -85,86 +85,92 @@ namespace ig
 		{
 			//m_x_google_ad_id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_google_ad_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_x_google_ad_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_x_google_ad_id", m_file_app_info) << std::endl;
-				}
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_google_ad_id"));
+
+				if(!val.empty())
+					m_x_google_ad_id = val;
 				else
-					std::cerr << Messages::field_not_found_in_file("m_x_google_ad_id", m_file_app_info) << std::endl;
+					std::cerr << Messages::field_no_value_in_file("m_x_google_ad_id", m_file_app_info) << std::endl;
 			}
 
 			//m_x_pigeon_session_id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_pigeon_session_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_x_pigeon_session_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_x_pigeon_session_id", m_file_app_info) << std::endl;
-				}
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_pigeon_session_id"));
+
+				if(!val.empty())
+					m_x_pigeon_session_id = val;
 				else
-					std::cerr << Messages::field_not_found_in_file("m_x_pigeon_session_id", m_file_app_info) << std::endl;
+					std::cerr << Messages::field_no_value_in_file("m_x_pigeon_session_id", m_file_app_info) << std::endl;
 			}
 
 			//m_x_ig_device_id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_device_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_x_ig_device_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_x_ig_device_id", m_file_app_info) << std::endl;
-				}
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_device_id"));
+
+				if(!val.empty())
+					m_x_ig_device_id = val;
 				else
-					std::cerr << Messages::field_not_found_in_file("m_x_ig_device_id", m_file_app_info) << std::endl;
+					std::cerr << Messages::field_no_value_in_file("m_x_ig_device_id", m_file_app_info) << std::endl;
 			}
 
 			//m_x_ig_android_id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_android_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_x_ig_android_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_x_ig_android_id", m_file_app_info) << std::endl;
-				}
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_android_id"));
+
+				if(!val.empty())
+					m_x_ig_android_id = val;
 				else
-					std::cerr << Messages::field_not_found_in_file("m_x_ig_android_id", m_file_app_info) << std::endl;
+					std::cerr << Messages::field_no_value_in_file("m_x_ig_android_id", m_file_app_info) << std::endl;
 			}
 
-			//m_useragent todo hier wird nur das letzte wort genommen
+			//m_useragent
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_useragent"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_useragent = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_useragent", m_file_app_info) << std::endl;
-				}
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_useragent"));
+
+				if(!val.empty())
+					m_useragent = val;
 				else
-					std::cerr << Messages::field_not_found_in_file("m_useragent", m_file_app_info) << std::endl;
+					std::cerr << Messages::field_no_value_in_file("m_useragent", m_file_app_info) << std::endl;
+			}
+
+			//m_x_ig_www_claim
+			{
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_www_claim"));
+
+				if(!val.empty())
+					m_x_ig_www_claim = val;
+				else
+					std::cerr << Messages::field_no_value_in_file("m_x_ig_www_claim", m_file_app_info) << std::endl;
+			}
+
+			//m_authorization
+			{
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_authorization"));
+
+				if(!val.empty())
+					m_authorization = val;
+				else
+					std::cerr << Messages::field_no_value_in_file("m_authorization", m_file_app_info) << std::endl;
 			}
 
 			//m_phone_id
 			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_phone_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_phone_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_phone_id", m_file_app_info) << std::endl;
-				}
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_phone_id"));
+
+				if(!val.empty())
+					m_phone_id = val;
 				else
-					std::cerr << Messages::field_not_found_in_file("m_phone_id", m_file_app_info) << std::endl;
+					std::cerr << Messages::field_no_value_in_file("m_phone_id", m_file_app_info) << std::endl;
+			}
+
+			//m_last_seen_feed_media_id
+			{
+				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_seen_feed_media_id"));
+
+				if(!val.empty())
+					m_last_seen_feed_media_id = val;
+				else
+					std::cerr << Messages::field_no_value_in_file("m_last_seen_feed_media_id", m_file_app_info) << std::endl;
 			}
 
 			//m_last_login
@@ -174,20 +180,6 @@ namespace ig
 					m_last_login = tools::Tools::get_num_ln_end(entry);
 				else
 					std::cerr << Messages::field_not_found_in_file("m_last_login", m_file_app_info) << std::endl;
-			}
-
-			//m_last_seen_feed_media_id
-			{
-				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_seen_feed_media_id"));
-				if(!args.empty())
-				{
-					if(!tools::Tools::ends_w(args.at(args.size() - 1), ":"))
-						m_last_seen_feed_media_id = args.at(args.size() - 1);
-					else
-						std::cerr << Messages::field_no_value_in_file("m_last_seen_feed_media_id", m_file_app_info) << std::endl;
-				}
-				else
-					std::cerr << Messages::field_not_found_in_file("m_last_seen_feed_media_id", m_file_app_info) << std::endl;
 			}
 		}
 		else
@@ -237,7 +229,7 @@ namespace ig
 		 * if a cookie is missing (I already know the names of those which are needed)
 		 */
 		if(m_x_google_ad_id.empty() || m_x_pigeon_session_id.empty() || m_x_ig_device_id.empty() || m_x_ig_android_id.empty() || m_useragent.empty() ||
-				m_phone_id.empty() || m_last_login == 0 || m_last_seen_feed_media_id.empty() ||
+				m_x_ig_www_claim.empty() || m_authorization.empty() || m_phone_id.empty() || m_last_seen_feed_media_id.empty() || m_last_login == 0 ||
 				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("rur").empty() ||
 				get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() || get_cookie_val("mid").empty())
 		{
@@ -340,7 +332,7 @@ namespace ig
 				raw_http_body.append("\"" + http_args.at(j).m_key + "\": " + std::to_string(std::get<long long>(http_args.at(j).m_value)));
 
 				//add & for next key value pair
-				if(j != (http_args.size() - 1))
+				if(j != http_args.size() - 1)
 					raw_http_body.append(", ");
 			}
 			else if(std::holds_alternative<std::string>(http_args.at(j).m_value))
@@ -348,7 +340,7 @@ namespace ig
 				raw_http_body.append("\"" + http_args.at(j).m_key + "\": \"" + std::get<std::string>(http_args.at(j).m_value) + "\"");
 
 				//add & for next key value pair
-				if(j != (http_args.size() - 1))
+				if(j != http_args.size() - 1)
 					raw_http_body.append(", ");
 			}
 			//value is type of InputFile::ptr and thus ignored
@@ -372,9 +364,11 @@ namespace ig
 		outf << "m_x_ig_device_id: " << m_x_ig_device_id << std::endl;
 		outf << "m_x_ig_android_id: " << m_x_ig_android_id << std::endl;
 		outf << "m_useragent: " << m_useragent << std::endl;
+		outf << "m_x_ig_www_claim: " << m_x_ig_www_claim << std::endl;
+		outf << "m_authorization: " << m_authorization << std::endl;
 		outf << "m_phone_id: " << m_phone_id << std::endl;
-		outf << "m_last_login: " << m_last_login << std::endl;
 		outf << "m_last_seen_feed_media_id: " << m_last_seen_feed_media_id << std::endl;
+		outf << "m_last_login: " << m_last_login << std::endl;
 		outf.close();
 	}
 
@@ -397,7 +391,7 @@ namespace ig
 			temp.append(m_cookies.at(j).get_name() + "=" + m_cookies.at(j).get_value());
 
 			//semicolon needed?
-			if(j < (m_cookies.size() - 1))
+			if(j != m_cookies.size() - 1)
 				temp.append("; ");
 		}
 
