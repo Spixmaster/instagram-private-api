@@ -63,7 +63,9 @@ git submodule update
 
 ### Example
 ```cpp
+#include "ig/constants/Constants.h"
 #include "ig/Api.h"
+#include <memory>
 
 int main()
 {
