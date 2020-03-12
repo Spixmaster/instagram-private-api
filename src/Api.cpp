@@ -228,9 +228,10 @@ namespace ig
 		 * if some app info is missing
 		 * if a cookie is missing (I already know the names of those which are needed)
 		 * it is not checked for last_login as it is not necessary and would only cause problems
+		 * 		same for m_last_seen_feed_media_id because it is not even set when there is no feed
 		 */
 		if(m_x_google_ad_id.empty() || m_x_pigeon_session_id.empty() || m_x_ig_device_id.empty() || m_x_ig_android_id.empty() || m_useragent.empty() ||
-				m_x_ig_www_claim.empty() || m_authorization.empty() || m_phone_id.empty() || m_last_seen_feed_media_id.empty() ||
+				m_x_ig_www_claim.empty() || m_authorization.empty() || m_phone_id.empty() ||
 				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("rur").empty() ||
 				get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() || get_cookie_val("mid").empty())
 		{
