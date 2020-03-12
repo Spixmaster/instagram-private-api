@@ -165,8 +165,9 @@ namespace ig
 		 * @brief manages a log with a certain number of the last requests
 		 * @param http_client: needed for the log functionality
 		 * @param server_resp: the server response
+		 * @param no_throw: when true no exception is thrown
 		 */
-		void post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp);
+		void post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp, const bool &no_throw = false);
 
 		/*
 		 * these requests occur when the Instagram app is opened but no one is logged in yet
