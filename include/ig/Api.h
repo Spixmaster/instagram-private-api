@@ -55,8 +55,8 @@ namespace ig
 		std::string m_x_ig_android_id;
 		std::string m_useragent;
 					//only known after successful login
-		std::string m_x_ig_www_claim;//default: "0"
-		std::string m_authorization;//default: "Bearer IGT:2:"
+		std::string m_x_ig_www_claim;//default: "0" todo wird nicht gespeichert
+		std::string m_authorization;//default: "Bearer IGT:2:" todo das auch nicht
 				//http body values
 		std::string m_phone_id;//alternative name family_device_id
 		std::string m_last_seen_feed_media_id;//for feed_timeline

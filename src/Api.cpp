@@ -139,7 +139,7 @@ namespace ig
 					std::cerr << Messages::field_not_found_in_file("m_x_ig_android_id", m_file_app_info) << std::endl;
 			}
 
-			//m_useragent
+			//m_useragent todo hier wird nur das letzte wort genommen
 			{
 				std::vector<std::string> args = tools::Tools::get_args(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_useragent"));
 				if(!args.empty())
@@ -242,6 +242,10 @@ namespace ig
 				get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() || get_cookie_val("mid").empty())
 		{
 			m_new_login = true;
+
+			//empty cookies so that the existing entries are not used for the next login; the app info can remain
+			std::ofstream outf(m_file_cookies);
+			outf.close();
 
 			//get a random device
 			std::vector<Device::ptr> devices;
@@ -354,7 +358,7 @@ namespace ig
 		//raw_http_body --> http_body
 		std::string http_body;
 		http_body.append("signed_body=" + tools::Tools::hmac_sha256_hash(Constants::ig_sig_key, raw_http_body) +
-				"." + tools::Tools::parse_url(raw_http_body));
+				"." + raw_http_body);
 		http_body.append("&ig_sig_key_version=" + Constants::ig_sig_key_version);
 
 		return http_body;
@@ -675,7 +679,7 @@ namespace ig
 		std::vector<tools::HttpArg> http_args;
 		http_args.push_back(tools::HttpArg("android_device_id", m_x_ig_android_id));
 		http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
-		http_args.push_back(tools::HttpArg("usages", "[\"account_recovery_omnibox\"]"));
+		http_args.push_back(tools::HttpArg("usages", "[\\\"account_recovery_omnibox\\\"]"));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 		http_args.push_back(tools::HttpArg("device_id", m_x_ig_device_id));
 
@@ -710,10 +714,10 @@ namespace ig
 
 	void Api::pre_login_requests()
 	{
-		accounts_get_prefill_candidates();
-		qe_sync();
-		launcher_sync();
 		accounts_contact_point_prefill();
+		qe_sync();
+		accounts_get_prefill_candidates();
+		launcher_sync();
 	}
 
 	bool Api::login()
@@ -734,7 +738,7 @@ namespace ig
 			//http args
 			std::vector<tools::HttpArg> http_args;
 			http_args.push_back(tools::HttpArg("jazoest", get_jazoest()));
-			http_args.push_back(tools::HttpArg("country_codes", "[{\"country_code\":\"1\",\"source\":[\"default\"]}]"));
+			http_args.push_back(tools::HttpArg("country_codes", "[{\\\"country_code\\\":\\\"1\\\",\\\"source\\\":[\\\"default\\\"]}]"));
 			http_args.push_back(tools::HttpArg("phone_id", m_phone_id));
 			http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
 			http_args.push_back(tools::HttpArg("username", m_username));
@@ -797,7 +801,7 @@ namespace ig
 		}
 		else
 		{
-			if(m_last_login < tools::Tools::get_time())
+			if((m_last_login + Constants::app_refresh_interval) < tools::Tools::get_time())
 			{
 				open_app();
 				m_last_login = tools::Tools::get_time();
@@ -1177,8 +1181,8 @@ namespace ig
 		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		tools::HttpClient http_client(Constants::ig_api_url + "scores/bootstrap/users/?surfaces=[\"autocomplete_user_list\",\"coefficient_besties_list_ranking\","
-				"\"coefficient_rank_recipient_user_suggestion\",\"coefficient_ios_section_test_bootstrap_ranking\",\"coefficient_direct_recipients_ranking_v"
-				"ariant_2\"]", http_headers);
+				"\"coefficient_rank_recipient_user_suggestion\",\"coefficient_ios_section_test_bootstrap_ranking\",\"coefficient_direct_recipients_ranking_"
+				"variant_2\"]", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
 
 		update_data(http_res.m_cookies);
@@ -1347,8 +1351,8 @@ namespace ig
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
-		http_args.push_back(tools::HttpArg("surfaces_to_triggers", "{\"4715\":[\"instagram_feed_header\"],\"5858\":[\"instagram_feed_tool_tip\"],"
-				"\"5734\":[\"instagram_feed_prompt\"]}"));
+		http_args.push_back(tools::HttpArg("surfaces_to_triggers", "{\\\"4715\\\":[\\\"instagram_feed_header\\\"],\\\"5858\\\":[\\\"instagram_feed_tool_tip\\\"],"
+				"\\\"5734\\\":[\\\"instagram_feed_prompt\\\"]}"));
 		http_args.push_back(tools::HttpArg("surfaces_to_queries", Constants::surfaces_to_queries));
 		http_args.push_back(tools::HttpArg("vc_policy", "default"));
 		http_args.push_back(tools::HttpArg("_csrftoken", get_cookie_val("csrftoken")));
@@ -1452,8 +1456,7 @@ namespace ig
 	std::string Api::get_media_likers(const std::string &media_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers;
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		tools::HttpClient http_client(Constants::ig_api_url + "media/" + media_id + "/likers/", http_headers);
 		tools::HttpResponse http_res = http_client.send_get_req();
@@ -1467,8 +1470,7 @@ namespace ig
 	std::string Api::get_media_comments(const std::string &media_id, const std::string &max_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers;
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		std::string url = Constants::ig_api_url + "media/" + media_id + "/comments/";
 		if(!max_id.empty())
@@ -1548,8 +1550,7 @@ namespace ig
 	std::string Api::get_media_info(const std::string &media_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers;
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		std::string url = Constants::ig_api_url + "media/" + media_id + "/info/";
 
@@ -1565,8 +1566,7 @@ namespace ig
 	std::string Api::get_user_feed(const std::string &user_id, const std::string &max_id, const std::string &min_timestamp)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers;
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		std::string url = Constants::ig_api_url + "feed/user/" + user_id + "/?max_id=" + max_id + "&min_timestamp=" + min_timestamp +
 	            "&rank_token=" + get_rank_token() + "&ranked_content=true";
@@ -1583,8 +1583,7 @@ namespace ig
 	std::string Api::get_user_info(const std::string &user_id)
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers;
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		std::string url = Constants::ig_api_url + "users/" + user_id + "/info/";
 
@@ -1943,8 +1942,7 @@ namespace ig
 	std::string Api::logout()
 	{
 		//http headers
-		std::vector<tools::HttpHeader> http_headers;
-		http_headers.push_back(tools::HttpHeader("Cookie", m_cookie_str));
+		std::vector<tools::HttpHeader> http_headers = get_ig_http_headers();
 
 		//http args
 		std::vector<tools::HttpArg> http_args;
