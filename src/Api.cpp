@@ -1082,6 +1082,7 @@ namespace ig
 		return http_res.m_body;
 	}
 
+	//todo seems to make problems
 	std::string Api::feed_timeline()
 	{
 		//http headers
