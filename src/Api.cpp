@@ -297,6 +297,8 @@ namespace ig
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-Speed-KBPS", "-1.000"));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalBytes-B", "0"));
 		http_headers.push_back(tools::HttpHeader("X-IG-Bandwidth-TotalTime-MS", "0"));
+		http_headers.push_back(tools::HttpHeader("X-IG-Prefetch-Request", "foreground"));
+//		http_headers.push_back(tools::HttpHeader("X-IG-EU-DC-ENABLED", "true")); only in EU
 		http_headers.push_back(tools::HttpHeader("X-IG-App-Startup-Country", std::use_facet<boost::locale::info>(loc).country()));
 		http_headers.push_back(tools::HttpHeader("X-Bloks-Version-Id", Constants::bloks_version_id));
 		http_headers.push_back(tools::HttpHeader("X-IG-WWW-Claim", m_x_ig_www_claim));
