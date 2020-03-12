@@ -227,9 +227,10 @@ namespace ig
 		/*
 		 * if some app info is missing
 		 * if a cookie is missing (I already know the names of those which are needed)
+		 * it is not checked for last_login as it is not necessary and would only cause problems
 		 */
 		if(m_x_google_ad_id.empty() || m_x_pigeon_session_id.empty() || m_x_ig_device_id.empty() || m_x_ig_android_id.empty() || m_useragent.empty() ||
-				m_x_ig_www_claim.empty() || m_authorization.empty() || m_phone_id.empty() || m_last_seen_feed_media_id.empty() || m_last_login == 0 ||
+				m_x_ig_www_claim.empty() || m_authorization.empty() || m_phone_id.empty() || m_last_seen_feed_media_id.empty() ||
 				get_cookie_val("ds_user").empty() || get_cookie_val("csrftoken").empty() || get_cookie_val("rur").empty() ||
 				get_cookie_val("ds_user_id").empty() || get_cookie_val("urlgen").empty() || get_cookie_val("sessionid").empty() || get_cookie_val("mid").empty())
 		{
@@ -524,7 +525,7 @@ namespace ig
 		return feed_view_info;
 	}
 
-	void Api::post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp)
+	void Api::post_req_check(const tools::HttpClient &http_client, const tools::HttpResponse &server_resp, const bool &no_throw)
 	{
 		//###search for values we need###
 		for(std::size_t j = 0;  j < server_resp.m_headers.size(); ++j)
@@ -619,7 +620,7 @@ namespace ig
 			std::cerr << Messages::acc_soft_ban << std::endl;
 
 		//too many requests
-		if(server_resp.m_code == 429)
+		if(server_resp.m_code == 429 && (!no_throw))
 			throw std::runtime_error("Error. The Instagram servers refused the request as they are too many.");
 	}
 
@@ -1273,11 +1274,12 @@ namespace ig
 		http_args.push_back(tools::HttpArg("_uuid", m_x_ig_device_id));
 		http_args.push_back(tools::HttpArg("google_tokens", "[]"));
 
-		tools::HttpClient http_client(Constants::ig_api_url + "accounts/process_contact_point_signals/", http_headers);
+		tools::HttpClient http_client(Constants::ig_api_url + "accounts/process_contact_point_signals/",
+				http_headers, false);//this endpoint causes 429 responses regularly in the app
 		tools::HttpResponse http_res = http_client.send_post_req_urlencoded(mk_ig_http_body(http_args));
 
 		update_data(http_res.m_cookies);
-		post_req_check(http_client, http_res);
+		post_req_check(http_client, http_res, true);//this endpoint causes 429 responses regularly in the app
 
 		return http_res.m_body;
 	}
