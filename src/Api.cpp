@@ -510,17 +510,17 @@ namespace ig
 			feed_view_info = "[{";
 			feed_view_info.append("\"media_id\":\"" + m_last_seen_feed_media_id + "\",");
 			feed_view_info.append("\"version\":24,");
-			double d = (rand() % 101) / 100;
-			if(d < 0.4)
-				d += 0.6;
+			double d = (rand() % 101) / 100.0;
+			if(d < 0.3)
+				d += 0.7;
 			feed_view_info.append("\"media_pct\":" + std::to_string(d) + ",");
 			int i = (rand() % 132491) + 3217;
 			feed_view_info.append("\"time_info\":{" +
-					std::string("\"10\":") + std::to_string(i) +
-					std::string("\"25\":") + std::to_string(i) +
-					std::string("\"50\":") + std::to_string(i) +
+					std::string("\"10\":") + std::to_string(i) + "," +
+					std::string("\"25\":") + std::to_string(i) + "," +
+					std::string("\"50\":") + std::to_string(i) + "," +
 					std::string("\"75\":") + std::to_string(i) + "}");
-			feed_view_info = "}]";
+			feed_view_info.append("}]");
 		}
 		else
 			feed_view_info = "[]";
@@ -1085,7 +1085,6 @@ namespace ig
 		return http_res.m_body;
 	}
 
-	//todo seems to make problems
 	std::string Api::feed_timeline()
 	{
 		//http headers
