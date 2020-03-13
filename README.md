@@ -100,8 +100,8 @@ Everything you read here in this section is not required but I would recommend y
 * You should use an account with a verified mobile number. You do not even need a SIM card for this. Consider [this service](https://sms-activate.ru/en/).
 
 ## Thanks to
-Sniffing Instagram's http requests is not easy as I described in the wiki. Thus, I copied the endpoints from already existing projects. These repos helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my code for this project.
-* https://github.com/mgp25/Instagram-API
+These repos helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my first code for this project.
 * https://github.com/instagrambot/instabot
-* https://github.com/ping/instagram_private_api
 * https://github.com/LevPasha/Instagram-API-python
+* https://github.com/ping/instagram_private_api
+* https://github.com/mgp25/Instagram-API (not available anymore)
