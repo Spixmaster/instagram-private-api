@@ -98,6 +98,7 @@ Everything you read here in this section is not required but I would recommend y
 * After the login go to [this page](https://www.instagram.com/session/login_activity/) in your browser again and approve your login. You will encouter the information that a device logged in. Just tell Instagram that that was you by clicking the proper button.
 * Go [here](https://www.instagram.com/session/login_activity/) regularly to check your sessions.
 * You should use an account with a verified mobile number. You do not even need a SIM card for this. Consider [this service](https://sms-activate.ru/en/).
+* Make the account look trustworthy. Set up a profile picture, follow some accounts, like and comment on some posts.
 
 ## Thanks to
 These repos helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my first code for this project.
