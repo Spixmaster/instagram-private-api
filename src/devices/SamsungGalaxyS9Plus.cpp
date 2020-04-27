@@ -1,23 +1,22 @@
 #include "ig/constants/Constants.h"
 #include "ig/devices/SamsungGalaxyS9Plus.h"
+#include <boost/format.hpp>
 
 namespace ig
 {
 	SamsungGalaxyS9Plus::SamsungGalaxyS9Plus()
 	{
 		m_ig_version = Constants::ig_version;
-		m_android_version = "24";
-		m_android_release = "7.0";
+		m_android_api_version = "24";
+		m_android_version = "7.0";
 		m_dpi = "640dpi";
 		m_resolution = "1440x2560";
 		m_manufacturer = "samsung";
 		m_device = "SM_G965F";
 		m_model = "star2qltecs";
 		m_cpu = "samsungexynos9810";
-		m_useragent = "Instagram " + m_ig_version + " Android (" +
-				m_android_version + "/" + m_android_release + "; " + m_dpi + "; " +
-				m_resolution + "; " + m_manufacturer + "; " + m_device +
-				"; " + m_model + "; " + m_cpu + "; en_US)";
+		boost::str(boost::format("Instagram %1% Android (%2%/%3%; %4%; %5%; %6%; %7%; %8%; %9%; en_US") % m_ig_version % m_android_api_version % m_android_version %
+				m_dpi % m_resolution % m_manufacturer % m_device % m_model % m_cpu);
 	}
 
 	SamsungGalaxyS9Plus::~SamsungGalaxyS9Plus()
@@ -28,14 +27,14 @@ namespace ig
 		return m_ig_version;
 	}
 
+	std::string SamsungGalaxyS9Plus::get_android_api_version() const noexcept
+	{
+		return m_android_api_version;
+	}
+
 	std::string SamsungGalaxyS9Plus::get_android_version() const noexcept
 	{
 		return m_android_version;
-	}
-
-	std::string SamsungGalaxyS9Plus::get_android_release() const noexcept
-	{
-		return m_android_release;
 	}
 
 	std::string SamsungGalaxyS9Plus::get_dpi() const noexcept

@@ -1,0 +1,387 @@
+\hypertarget{classig_1_1Messages}{}\doxysection{ig\+::Messages Class Reference}
+\label{classig_1_1Messages}\index{ig::Messages@{ig::Messages}}
+
+
+This class contains messages which are used throughout the programme.  
+
+
+
+
+{\ttfamily \#include $<$Messages.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classig_1_1Messages_a1d323b2b8014c1ed10710f6d7da98f0f}\label{classig_1_1Messages_a1d323b2b8014c1ed10710f6d7da98f0f}} 
+typedef std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classig_1_1Messages}{Messages}} $>$ \mbox{\hyperlink{classig_1_1Messages_a1d323b2b8014c1ed10710f6d7da98f0f}{ptr}}
+\begin{DoxyCompactList}\small\item\em A pointer of itself. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_a36fc1f0099fb06a64e7b26dbb1c0c103}{field\+\_\+no\+\_\+value\+\_\+in\+\_\+file}} (const std\+::string \&field, const std\+::string \&file) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field has no value in the file. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_a23ce34752dbdc74eb4ecde06821ccde7}{field\+\_\+not\+\_\+found\+\_\+in\+\_\+file}} (const std\+::string \&field, const std\+::string \&file) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field is not found the file. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_adaae41cd3f32a5f9e4380f960bb3c9de}{cookie\+\_\+missing}} (const std\+::string \&name) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the cookie is missing. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_a9da2a270958caab60b34cc0ca0f5a44d}{field\+\_\+not\+\_\+correct\+\_\+value}} (const std\+::string \&field, const std\+::string \&value) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field does not have the proper value. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_adfb7150af812046b0aec897305eb3051}{field\+\_\+not\+\_\+contain\+\_\+string}} (const std\+::string \&field) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field does not contain a string. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_a6e97899b433eb697d28df5e10c1991cf}{field\+\_\+not\+\_\+found}} (const std\+::string \&field) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field is not found. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_ad25336dfd641b0401fa4476de02b5b47}{field\+\_\+not\+\_\+contain\+\_\+json\+\_\+array}} (const std\+::string \&field) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field does not contain a J\+S\+ON array. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_aabbb5d534f9c139cdd23d5a7557de943}{field\+\_\+not\+\_\+contain\+\_\+bool}} (const std\+::string \&field) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field does not contain a boolean. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_a156b95a3509fd15124b2651eb1010a10}{json\+\_\+array\+\_\+has\+\_\+size\+\_\+0}} (const std\+::string \&field) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the J\+S\+ON array has a size of zero. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_ac74b2bdd695e8330cf2294eeb5b353be}{field\+\_\+not\+\_\+contain\+\_\+int}} (const std\+::string \&field) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field does not contain an integer. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_a0a35426dbc0dcbcca329ae524f8aa8c0}{field\+\_\+not\+\_\+contain\+\_\+int64}} (const std\+::string \&field) noexcept
+\begin{DoxyCompactList}\small\item\em The message states that the field does not contain a 64 bits integer. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Messages_a2bbc51c30d99415621d6f152da316c30}{successful\+\_\+login}} (const std\+::string \&cookie\+\_\+file) noexcept
+\begin{DoxyCompactList}\small\item\em Returns a message which informs that the login was successful. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a91a80668ffe4c09fa6775e60b0f33b05}{no\+\_\+cookies\+\_\+found}}
+\begin{DoxyCompactList}\small\item\em Message that no cookies were found. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_ad5b27117102fa0ac1e04467a24187f83}\label{classig_1_1Messages_ad5b27117102fa0ac1e04467a24187f83}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_ad5b27117102fa0ac1e04467a24187f83}{wrong\+\_\+choice\+\_\+try\+\_\+again}} = \char`\"{}Wrong choice. Try again!\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that the user input was wrong. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_ac7465c4087c1a9070dc5cb430f84c3b3}\label{classig_1_1Messages_ac7465c4087c1a9070dc5cb430f84c3b3}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_ac7465c4087c1a9070dc5cb430f84c3b3}{hints\+\_\+from\+\_\+last\+\_\+server\+\_\+response}} = \char`\"{}If you do not know your personal data like phone number or \mbox{\hyperlink{classig_1_1Messages_ab095ac66d9a4fd0ce76617f1ed4b4e1d}{email}} here are some hints\+:\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that states that there is following information. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_addb858d10767ae0a90c92f3865463f2d}\label{classig_1_1Messages_addb858d10767ae0a90c92f3865463f2d}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_addb858d10767ae0a90c92f3865463f2d}{server\+\_\+respone\+\_\+not\+\_\+json\+\_\+obj}} = \char`\"{}The server response is not a J\+S\+ON object.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that the server response is not an J\+S\+ON object. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_addce906c21cd8e7ca1ccb5a60abacfe6}\label{classig_1_1Messages_addce906c21cd8e7ca1ccb5a60abacfe6}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_addce906c21cd8e7ca1ccb5a60abacfe6}{server\+\_\+respone\+\_\+not\+\_\+json\+\_\+arr}} = \char`\"{}The server response is not a J\+S\+ON array.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that the server response is not an J\+S\+ON array. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_ae91afdee123ec25c37524eecfd3e8b3e}\label{classig_1_1Messages_ae91afdee123ec25c37524eecfd3e8b3e}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_ae91afdee123ec25c37524eecfd3e8b3e}{challenge\+\_\+not\+\_\+solved}} = \char`\"{}The login challenge could not be solved.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that the challenge was not solved. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a018c2f5df85d132c0ea5b4e177623d26}\label{classig_1_1Messages_a018c2f5df85d132c0ea5b4e177623d26}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a018c2f5df85d132c0ea5b4e177623d26}{not\+\_\+ig\+\_\+post}} = \char`\"{}This is not an Instagram post.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that it is not a link to an Instagram post. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a1707bd61e8fe695ae983306b3ce14e38}\label{classig_1_1Messages_a1707bd61e8fe695ae983306b3ce14e38}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a1707bd61e8fe695ae983306b3ce14e38}{new\+\_\+login\+\_\+required\+\_\+as\+\_\+logged\+\_\+out}} = \char`\"{}Warning!\textbackslash{}nA new login is required as you have been logged out.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that a new login is required as the account was logged out. \end{DoxyCompactList}\item 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a1b06ad4f737f6438552a0e0fad58d35d}{acc\+\_\+soft\+\_\+ban}}
+\begin{DoxyCompactList}\small\item\em Message that the account was probably soft banned. \end{DoxyCompactList}\item 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a102936cd364262b579ee9e3d8cfa98b5}{manual\+\_\+challenge}}
+\begin{DoxyCompactList}\small\item\em Message that a challenge needs to be done manually. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a4281a9f9dffac8847e43d3341f384303}\label{classig_1_1Messages_a4281a9f9dffac8847e43d3341f384303}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a4281a9f9dffac8847e43d3341f384303}{phone\+\_\+number}} = \char`\"{}Phone number\char`\"{}
+\begin{DoxyCompactList}\small\item\em Contains the word for \char`\"{}phone number\char`\"{}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_ab095ac66d9a4fd0ce76617f1ed4b4e1d}\label{classig_1_1Messages_ab095ac66d9a4fd0ce76617f1ed4b4e1d}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_ab095ac66d9a4fd0ce76617f1ed4b4e1d}{email}} = \char`\"{}Email\char`\"{}
+\begin{DoxyCompactList}\small\item\em Contains the word for \char`\"{}\+Email\char`\"{}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a31e1627c95258651c41aa45a11be6628}\label{classig_1_1Messages_a31e1627c95258651c41aa45a11be6628}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a31e1627c95258651c41aa45a11be6628}{verify\+\_\+login}} = \char`\"{}You need to verify your login. Choose the approval method.\char`\"{}
+\begin{DoxyCompactList}\small\item\em This message is used when during the login process a verification is needed. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a8ff7250ec87c85e3c478e5e560f7fee7}\label{classig_1_1Messages_a8ff7250ec87c85e3c478e5e560f7fee7}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a8ff7250ec87c85e3c478e5e560f7fee7}{your\+\_\+choice\+\_\+inp}} = \char`\"{}Your choice\+: \char`\"{}
+\begin{DoxyCompactList}\small\item\em Contains the word for \char`\"{}\+Your choice\+: \char`\"{}. The colon an space are needed as an input follows. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a8879ff59eca0a152583036ca41085f2b}\label{classig_1_1Messages_a8879ff59eca0a152583036ca41085f2b}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a8879ff59eca0a152583036ca41085f2b}{ver\+\_\+code\+\_\+sent}} = \char`\"{}A verification code has been sent to the selected method, please check.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that says that the verification code was sent. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a16bbac483b5f1073bb2d94d179caa358}\label{classig_1_1Messages_a16bbac483b5f1073bb2d94d179caa358}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a16bbac483b5f1073bb2d94d179caa358}{prompt\+\_\+ver\+\_\+code\+\_\+inp}} = \char`\"{}Enter your verification code\+: \char`\"{}
+\begin{DoxyCompactList}\small\item\em Message that prompt the user to input the verification code. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_a9f1d355d78547f8143db2c0498e17e9a}\label{classig_1_1Messages_a9f1d355d78547f8143db2c0498e17e9a}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_a9f1d355d78547f8143db2c0498e17e9a}{was\+\_\+it\+\_\+you}} = \char`\"{}You need to verify your login. Choose on whether the last login was you.\char`\"{}
+\begin{DoxyCompactList}\small\item\em This is a message that is sent on a challenge to approve the recent login. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_ae5837d4ecdbc4fb487642bd88582c82b}\label{classig_1_1Messages_ae5837d4ecdbc4fb487642bd88582c82b}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_ae5837d4ecdbc4fb487642bd88582c82b}{it\+\_\+was\+\_\+me}} = \char`\"{}It was me.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Contains the sentence \char`\"{}\+It was me.\char`\"{}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classig_1_1Messages_afa16337aa9c4faa898f878af170d813e}\label{classig_1_1Messages_afa16337aa9c4faa898f878af170d813e}} 
+static const std\+::string \mbox{\hyperlink{classig_1_1Messages_afa16337aa9c4faa898f878af170d813e}{it\+\_\+was\+\_\+not\+\_\+me}} = \char`\"{}It was not me.\char`\"{}
+\begin{DoxyCompactList}\small\item\em Contains the sentence \char`\"{}\+It was not me.\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class contains messages which are used throughout the programme. 
+
+it is a monostate. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classig_1_1Messages_adaae41cd3f32a5f9e4380f960bb3c9de}\label{classig_1_1Messages_adaae41cd3f32a5f9e4380f960bb3c9de}} 
+\index{ig::Messages@{ig::Messages}!cookie\_missing@{cookie\_missing}}
+\index{cookie\_missing@{cookie\_missing}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{cookie\_missing()}{cookie\_missing()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::cookie\+\_\+missing (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the cookie is missing. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em name} & Name of the cookie. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_a36fc1f0099fb06a64e7b26dbb1c0c103}\label{classig_1_1Messages_a36fc1f0099fb06a64e7b26dbb1c0c103}} 
+\index{ig::Messages@{ig::Messages}!field\_no\_value\_in\_file@{field\_no\_value\_in\_file}}
+\index{field\_no\_value\_in\_file@{field\_no\_value\_in\_file}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_no\_value\_in\_file()}{field\_no\_value\_in\_file()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+no\+\_\+value\+\_\+in\+\_\+file (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field,  }\item[{const std\+::string \&}]{file }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field has no value in the file. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field has no value. \\
+\hline
+\mbox{\texttt{ in}}  & {\em file} & The file in which the field has no value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_aabbb5d534f9c139cdd23d5a7557de943}\label{classig_1_1Messages_aabbb5d534f9c139cdd23d5a7557de943}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_contain\_bool@{field\_not\_contain\_bool}}
+\index{field\_not\_contain\_bool@{field\_not\_contain\_bool}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_contain\_bool()}{field\_not\_contain\_bool()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+contain\+\_\+bool (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field does not contain a boolean. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which does not contain a boolean. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_ac74b2bdd695e8330cf2294eeb5b353be}\label{classig_1_1Messages_ac74b2bdd695e8330cf2294eeb5b353be}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_contain\_int@{field\_not\_contain\_int}}
+\index{field\_not\_contain\_int@{field\_not\_contain\_int}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_contain\_int()}{field\_not\_contain\_int()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+contain\+\_\+int (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field does not contain an integer. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which does not contain an integer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_a0a35426dbc0dcbcca329ae524f8aa8c0}\label{classig_1_1Messages_a0a35426dbc0dcbcca329ae524f8aa8c0}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_contain\_int64@{field\_not\_contain\_int64}}
+\index{field\_not\_contain\_int64@{field\_not\_contain\_int64}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_contain\_int64()}{field\_not\_contain\_int64()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+contain\+\_\+int64 (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field does not contain a 64 bits integer. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which does not contain a 64 bits integer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_ad25336dfd641b0401fa4476de02b5b47}\label{classig_1_1Messages_ad25336dfd641b0401fa4476de02b5b47}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_contain\_json\_array@{field\_not\_contain\_json\_array}}
+\index{field\_not\_contain\_json\_array@{field\_not\_contain\_json\_array}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_contain\_json\_array()}{field\_not\_contain\_json\_array()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+contain\+\_\+json\+\_\+array (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field does not contain a J\+S\+ON array. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which does not contain a J\+S\+ON array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_adfb7150af812046b0aec897305eb3051}\label{classig_1_1Messages_adfb7150af812046b0aec897305eb3051}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_contain\_string@{field\_not\_contain\_string}}
+\index{field\_not\_contain\_string@{field\_not\_contain\_string}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_contain\_string()}{field\_not\_contain\_string()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+contain\+\_\+string (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field does not contain a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which does not contain a string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_a9da2a270958caab60b34cc0ca0f5a44d}\label{classig_1_1Messages_a9da2a270958caab60b34cc0ca0f5a44d}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_correct\_value@{field\_not\_correct\_value}}
+\index{field\_not\_correct\_value@{field\_not\_correct\_value}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_correct\_value()}{field\_not\_correct\_value()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+correct\+\_\+value (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field,  }\item[{const std\+::string \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field does not have the proper value. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which does not have the right value. \\
+\hline
+\mbox{\texttt{ in}}  & {\em value} & The value which is not there although it was expected. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_a6e97899b433eb697d28df5e10c1991cf}\label{classig_1_1Messages_a6e97899b433eb697d28df5e10c1991cf}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_found@{field\_not\_found}}
+\index{field\_not\_found@{field\_not\_found}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_found()}{field\_not\_found()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+found (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field is not found. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which is not found. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_a23ce34752dbdc74eb4ecde06821ccde7}\label{classig_1_1Messages_a23ce34752dbdc74eb4ecde06821ccde7}} 
+\index{ig::Messages@{ig::Messages}!field\_not\_found\_in\_file@{field\_not\_found\_in\_file}}
+\index{field\_not\_found\_in\_file@{field\_not\_found\_in\_file}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{field\_not\_found\_in\_file()}{field\_not\_found\_in\_file()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::field\+\_\+not\+\_\+found\+\_\+in\+\_\+file (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field,  }\item[{const std\+::string \&}]{file }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the field is not found the file. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which is not found. \\
+\hline
+\mbox{\texttt{ in}}  & {\em file} & The file in which the field is not found. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_a156b95a3509fd15124b2651eb1010a10}\label{classig_1_1Messages_a156b95a3509fd15124b2651eb1010a10}} 
+\index{ig::Messages@{ig::Messages}!json\_array\_has\_size\_0@{json\_array\_has\_size\_0}}
+\index{json\_array\_has\_size\_0@{json\_array\_has\_size\_0}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{json\_array\_has\_size\_0()}{json\_array\_has\_size\_0()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::json\+\_\+array\+\_\+has\+\_\+size\+\_\+0 (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+The message states that the J\+S\+ON array has a size of zero. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em field} & The field which contains the J\+S\+ON array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The message. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Messages_a2bbc51c30d99415621d6f152da316c30}\label{classig_1_1Messages_a2bbc51c30d99415621d6f152da316c30}} 
+\index{ig::Messages@{ig::Messages}!successful\_login@{successful\_login}}
+\index{successful\_login@{successful\_login}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{successful\_login()}{successful\_login()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Messages\+::successful\+\_\+login (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{cookie\+\_\+file }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Returns a message which informs that the login was successful. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em cookie\+\_\+file} & The file to which the cookies are written. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classig_1_1Messages_a1b06ad4f737f6438552a0e0fad58d35d}\label{classig_1_1Messages_a1b06ad4f737f6438552a0e0fad58d35d}} 
+\index{ig::Messages@{ig::Messages}!acc\_soft\_ban@{acc\_soft\_ban}}
+\index{acc\_soft\_ban@{acc\_soft\_ban}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{acc\_soft\_ban}{acc\_soft\_ban}}
+{\footnotesize\ttfamily const std\+::string ig\+::\+Messages\+::acc\+\_\+soft\+\_\+ban\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= std::string(\textcolor{stringliteral}{"Use a different account!\(\backslash\)n"}) +}
+\DoxyCodeLine{            \textcolor{stringliteral}{"This response is similar to a soft ban from my experience when I encountered this problem. I could not even login in from the official "} +}
+\DoxyCodeLine{            \textcolor{stringliteral}{"Android app. For me, my account was set free again after a few hours but it depends."}}
+
+\end{DoxyCode}
+
+
+Message that the account was probably soft banned. 
+
+\mbox{\Hypertarget{classig_1_1Messages_a102936cd364262b579ee9e3d8cfa98b5}\label{classig_1_1Messages_a102936cd364262b579ee9e3d8cfa98b5}} 
+\index{ig::Messages@{ig::Messages}!manual\_challenge@{manual\_challenge}}
+\index{manual\_challenge@{manual\_challenge}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{manual\_challenge}{manual\_challenge}}
+{\footnotesize\ttfamily const std\+::string ig\+::\+Messages\+::manual\+\_\+challenge\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= std::string(\textcolor{stringliteral}{"Warning!\(\backslash\)n"}) +}
+\DoxyCodeLine{            \textcolor{stringliteral}{"If this is not the login process it may be that you need to solve a challenge manually. Log in into your Instagram account "} +}
+\DoxyCodeLine{            \textcolor{stringliteral}{"in your browser and you should be requested to verify your identity. Do so."}}
+
+\end{DoxyCode}
+
+
+Message that a challenge needs to be done manually. 
+
+\mbox{\Hypertarget{classig_1_1Messages_a91a80668ffe4c09fa6775e60b0f33b05}\label{classig_1_1Messages_a91a80668ffe4c09fa6775e60b0f33b05}} 
+\index{ig::Messages@{ig::Messages}!no\_cookies\_found@{no\_cookies\_found}}
+\index{no\_cookies\_found@{no\_cookies\_found}!ig::Messages@{ig::Messages}}
+\doxysubsubsection{\texorpdfstring{no\_cookies\_found}{no\_cookies\_found}}
+{\footnotesize\ttfamily const std\+::string ig\+::\+Messages\+::no\+\_\+cookies\+\_\+found\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= std::string(\textcolor{stringliteral}{"No cookies from a previous session were found. Thus a new login is required whose "}) +}
+\DoxyCodeLine{            \textcolor{stringliteral}{"cookies will be stored for the next logins."}}
+
+\end{DoxyCode}
+
+
+Message that no cookies were found. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/ig/constants/Messages.\+h\item 
+src/constants/Messages.\+cpp\end{DoxyCompactItemize}

@@ -11,14 +11,14 @@ namespace ig
 		return m_ig_version;
 	}
 
+	std::string Device::get_android_api_version() const noexcept
+	{
+		return m_android_api_version;
+	}
+
 	std::string Device::get_android_version() const noexcept
 	{
 		return m_android_version;
-	}
-
-	std::string Device::get_android_release() const noexcept
-	{
-		return m_android_release;
 	}
 
 	std::string Device::get_dpi() const noexcept
