@@ -1,0 +1,11 @@
+<map id="ig::Device" name="ig::Device">
+<area shape="rect" id="node1" title="This class is only there for inheritance reasons. It contains all information of a device which are n..." alt="" coords="5,183,92,209"/>
+<area shape="rect" id="node2" href="$classig_1_1HuaweiMate9Pro.html" title="This class represents the Huawei Mate 9 Pro." alt="" coords="161,5,315,32"/>
+<area shape="rect" id="node3" href="$classig_1_1LgG5.html" title="This class represents the LG G5." alt="" coords="201,56,275,83"/>
+<area shape="rect" id="node4" href="$classig_1_1OnePlus3T.html" title="This class represents the OnePlus 3T." alt="" coords="183,107,293,133"/>
+<area shape="rect" id="node5" href="$classig_1_1OnePlus7.html" title="This class represents the OnePlus 7." alt="" coords="187,157,289,184"/>
+<area shape="rect" id="node6" href="$classig_1_1SamsungGalaxyS7.html" title="This class represents the Samsung Galaxy S7." alt="" coords="156,208,320,235"/>
+<area shape="rect" id="node7" href="$classig_1_1SamsungGalaxyS7Edge.html" title="This class represents the Samsung Galaxy S7 Edge." alt="" coords="140,259,336,285"/>
+<area shape="rect" id="node8" href="$classig_1_1SamsungGalaxyS9Plus.html" title="This class represents the Samsung Galaxy S9+." alt="" coords="143,309,333,336"/>
+<area shape="rect" id="node9" href="$classig_1_1ZteAxon7.html" title="This class represents the ZTE Axon 7." alt="" coords="186,360,290,387"/>
+</map>

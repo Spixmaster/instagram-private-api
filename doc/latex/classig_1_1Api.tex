@@ -1,0 +1,381 @@
+\hypertarget{classig_1_1Api}{}\doxysection{ig\+::Api Class Reference}
+\label{classig_1_1Api}\index{ig::Api@{ig::Api}}
+
+
+This class represents the Instagram A\+PI which interacts with the Instagram servers.  
+
+
+
+
+{\ttfamily \#include $<$Api.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classig_1_1Api_a97454267ac90948c5371a4f0f571a037}\label{classig_1_1Api_a97454267ac90948c5371a4f0f571a037}} 
+typedef std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classig_1_1Api}{Api}} $>$ \mbox{\hyperlink{classig_1_1Api_a97454267ac90948c5371a4f0f571a037}{ptr}}
+\begin{DoxyCompactList}\small\item\em A pointer of itself. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classig_1_1Api_a28c5c26c54e8d5fb0fd4da08e0a96c63}{Api}} (const std\+::string \&username, const std\+::string \&password, const std\+::string \&files\+\_\+folder)
+\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_ab86163fb729da433202d9492e0ee1668}{get\+\_\+media\+\_\+likers}} (const std\+::string \&media\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets all likers of the Instagram media. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_a645b98a461023dce2d7d1f07b9e2312e}{get\+\_\+media\+\_\+comments}} (const std\+::string \&media\+\_\+id, const std\+::string \&max\+\_\+id=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Gets the comments of the Instagram media. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_a978a7ec062f32a4de6a5321aebcf903e}{get\+\_\+media\+\_\+comments\+\_\+all}} (const std\+::string \&media\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets all comments of the Instagram media. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_ae6cc320fe77e6c19ed893e2befad18a4}{get\+\_\+media\+\_\+info}} (const std\+::string \&media\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets the available information about the Instagram media. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_a11254de292d242615751c7ca3a9f66b9}{get\+\_\+user\+\_\+feed}} (const std\+::string \&user\+\_\+id, const std\+::string \&max\+\_\+id=\char`\"{}\char`\"{}, const std\+::string \&min\+\_\+timestamp=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Gets the user feed which is the media the user uploaded. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_a6210e5bc8aa6093f612ea8d6336fc000}{get\+\_\+user\+\_\+info}} (const std\+::string \&user\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets the available user info. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classig_1_1Api_af76615797d20c53cd3358b9264c4a7f2}{media\+\_\+comments\+\_\+allowed}} (const std\+::string \&media\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Looks whether comments are allowed for the Instagram post. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_a1c3d26d483e46bda837453b729ad3b43}{get\+\_\+username\+\_\+from\+\_\+user\+\_\+id}} (const std\+::string \&user\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets the Instgram username of an Instagram profile. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_acaffadef9e00654ea26dbea8ec13d1da}{get\+\_\+username\+\_\+from\+\_\+media\+\_\+id}} (const std\+::string \&media\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets the Instgram username from a media id. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classig_1_1Api_a69024a79998fe42a9eb0941180d78712}{get\+\_\+amnt\+\_\+flwrs}} (const std\+::string \&user\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets the amount of followers. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_ab6fd0aaea02642e44c3c45c3ec8d083e}{get\+\_\+user\+\_\+id\+\_\+from\+\_\+media\+\_\+id}} (const std\+::string \&media\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Gets the user id from a media id. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classig_1_1Api_a1d1eae8cdde1d393e1ce27bf054044c6}{logout}} ()
+\begin{DoxyCompactList}\small\item\em Logs out which means that the session with its corresponding cookies will no longer be usable. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::string \mbox{\hyperlink{classig_1_1Api_aea0920568307a0adb8c3c9c44ef30322}{get\+\_\+media\+\_\+id}} (const std\+::string \&ig\+\_\+post) noexcept
+\begin{DoxyCompactList}\small\item\em Gets the media id of an Instagram post. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{classig_1_1Api_ae8be0e6f07fafcc0cc16642ab0caa744}{is\+\_\+ig\+\_\+post}} (const std\+::string \&url) noexcept
+\begin{DoxyCompactList}\small\item\em Checks whether the U\+RL is a valid Instagram post. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class represents the Instagram A\+PI which interacts with the Instagram servers. 
+
+\begin{DoxyNote}{Note}
+The cookies need to be updated whenever an endpoint is called as even then cookies are set. 
+
+Every function that calls post\+\_\+req\+\_\+check cannot be \char`\"{}noexcept\char`\"{}. 
+
+Every \char`\"{}feed/timeline/\char`\"{} call needs to set the most recent seen media id. 
+\end{DoxyNote}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classig_1_1Api_a28c5c26c54e8d5fb0fd4da08e0a96c63}\label{classig_1_1Api_a28c5c26c54e8d5fb0fd4da08e0a96c63}} 
+\index{ig::Api@{ig::Api}!Api@{Api}}
+\index{Api@{Api}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{Api()}{Api()}}
+{\footnotesize\ttfamily ig\+::\+Api\+::\+Api (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{username,  }\item[{const std\+::string \&}]{password,  }\item[{const std\+::string \&}]{files\+\_\+folder }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em username} & The username for the Instagram login. \\
+\hline
+\mbox{\texttt{ in}}  & {\em password} & The password for the Instagram login. \\
+\hline
+\mbox{\texttt{ in}}  & {\em files\+\_\+folder} & The folder where the files shall be saved. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classig_1_1Api_a69024a79998fe42a9eb0941180d78712}\label{classig_1_1Api_a69024a79998fe42a9eb0941180d78712}} 
+\index{ig::Api@{ig::Api}!get\_amnt\_flwrs@{get\_amnt\_flwrs}}
+\index{get\_amnt\_flwrs@{get\_amnt\_flwrs}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_amnt\_flwrs()}{get\_amnt\_flwrs()}}
+{\footnotesize\ttfamily int ig\+::\+Api\+::get\+\_\+amnt\+\_\+flwrs (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{user\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets the amount of followers. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em user\+\_\+id} & The id of the user from whom we want the follower amount. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The amount of followers. 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/1} & An error occurred. \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{classig_1_1Api_a645b98a461023dce2d7d1f07b9e2312e}\label{classig_1_1Api_a645b98a461023dce2d7d1f07b9e2312e}} 
+\index{ig::Api@{ig::Api}!get\_media\_comments@{get\_media\_comments}}
+\index{get\_media\_comments@{get\_media\_comments}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_media\_comments()}{get\_media\_comments()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+media\+\_\+comments (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{media\+\_\+id,  }\item[{const std\+::string \&}]{max\+\_\+id = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Gets the comments of the Instagram media. 
+
+Only a part of all comments is shown.
+
+Normally, the function is called without max\+\_\+id.
+
+If there are more possible comments to show, the field exists\+: \char`\"{}\char`\"{}has\+\_\+more\+\_\+comments\char`\"{}\+:true\char`\"{}.
+
+The following attribute will be set\+:
+
+\char`\"{}next\+\_\+max\+\_\+id\char`\"{}\+:\char`\"{}\{\textbackslash{}\char`\"{}server\+\_\+cursor"\+: "Q\+V\+F\+D\+N\+H\+Zu\+Umxa\+T\+F\+Jze\+H\+J\+S\+Q0\+Uyej\+Vwc\+G\+Fp\+Xz\+B\+O\+W\+G\+V\+H\+Q\+Xpfe\+T\+Nhal\+V\+O\+S1l\+U\+T\+U\+Fr\+R\+W\+Zua\+H\+Boak\+F\+Bb\+Xl\+V\+W\+E\+V1ej\+E4a\+W\+F\+G\+L\+X\+Z\+P\+S29\+T\+Z\+U\+I4c3\+F5d\+Xl1\+R\+H\+Z\+U\+L\+V\+Z2\+Wg==","is\+\_\+server\+\_\+cursor\+\_\+inverse"\+: false\}"
+
+Use that value for max\+\_\+id to receive the next page of comments. \begin{DoxyNote}{Note}
+The pagination does not work like\+: 1, 2, 3,... 
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em media\+\_\+id} & The proper media id. \\
+\hline
+\mbox{\texttt{ in}}  & {\em max\+\_\+id} & For pagination. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The server response. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_a978a7ec062f32a4de6a5321aebcf903e}\label{classig_1_1Api_a978a7ec062f32a4de6a5321aebcf903e}} 
+\index{ig::Api@{ig::Api}!get\_media\_comments\_all@{get\_media\_comments\_all}}
+\index{get\_media\_comments\_all@{get\_media\_comments\_all}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_media\_comments\_all()}{get\_media\_comments\_all()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+media\+\_\+comments\+\_\+all (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{media\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets all comments of the Instagram media. 
+
+The returned string are several modified server responses. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em media\+\_\+id} & The proper media id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The server response. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_aea0920568307a0adb8c3c9c44ef30322}\label{classig_1_1Api_aea0920568307a0adb8c3c9c44ef30322}} 
+\index{ig::Api@{ig::Api}!get\_media\_id@{get\_media\_id}}
+\index{get\_media\_id@{get\_media\_id}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_media\_id()}{get\_media\_id()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+media\+\_\+id (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{ig\+\_\+post }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Gets the media id of an Instagram post. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em ig\+\_\+post} & The U\+RL to the Instagram post. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The media id. 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em \char`\"{}\char`\"{}} & An error occurred. \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{classig_1_1Api_ae6cc320fe77e6c19ed893e2befad18a4}\label{classig_1_1Api_ae6cc320fe77e6c19ed893e2befad18a4}} 
+\index{ig::Api@{ig::Api}!get\_media\_info@{get\_media\_info}}
+\index{get\_media\_info@{get\_media\_info}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_media\_info()}{get\_media\_info()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+media\+\_\+info (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{media\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets the available information about the Instagram media. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em media\+\_\+id} & The proper media id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The server response. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_ab86163fb729da433202d9492e0ee1668}\label{classig_1_1Api_ab86163fb729da433202d9492e0ee1668}} 
+\index{ig::Api@{ig::Api}!get\_media\_likers@{get\_media\_likers}}
+\index{get\_media\_likers@{get\_media\_likers}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_media\_likers()}{get\_media\_likers()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+media\+\_\+likers (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{media\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets all likers of the Instagram media. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em media\+\_\+id} & The proper media id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The server response. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_a11254de292d242615751c7ca3a9f66b9}\label{classig_1_1Api_a11254de292d242615751c7ca3a9f66b9}} 
+\index{ig::Api@{ig::Api}!get\_user\_feed@{get\_user\_feed}}
+\index{get\_user\_feed@{get\_user\_feed}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_user\_feed()}{get\_user\_feed()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+user\+\_\+feed (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{user\+\_\+id,  }\item[{const std\+::string \&}]{max\+\_\+id = {\ttfamily \char`\"{}\char`\"{}},  }\item[{const std\+::string \&}]{min\+\_\+timestamp = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Gets the user feed which is the media the user uploaded. 
+
+Normally, the function is called without max\+\_\+id. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em user\+\_\+id} & The proper user id. \\
+\hline
+\mbox{\texttt{ in}}  & {\em max\+\_\+id} & For pagination. Use the field value of \char`\"{}next\+\_\+max\+\_\+id\char`\"{} that was sent when making the request without max id. \\
+\hline
+\mbox{\texttt{ in}}  & {\em min\+\_\+timestamp} & No idea. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The server response. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_ab6fd0aaea02642e44c3c45c3ec8d083e}\label{classig_1_1Api_ab6fd0aaea02642e44c3c45c3ec8d083e}} 
+\index{ig::Api@{ig::Api}!get\_user\_id\_from\_media\_id@{get\_user\_id\_from\_media\_id}}
+\index{get\_user\_id\_from\_media\_id@{get\_user\_id\_from\_media\_id}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_user\_id\_from\_media\_id()}{get\_user\_id\_from\_media\_id()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+user\+\_\+id\+\_\+from\+\_\+media\+\_\+id (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{media\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets the user id from a media id. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em media\+\_\+id} & The proper media id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The user id. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_a6210e5bc8aa6093f612ea8d6336fc000}\label{classig_1_1Api_a6210e5bc8aa6093f612ea8d6336fc000}} 
+\index{ig::Api@{ig::Api}!get\_user\_info@{get\_user\_info}}
+\index{get\_user\_info@{get\_user\_info}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_user\_info()}{get\_user\_info()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+user\+\_\+info (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{user\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets the available user info. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em user\+\_\+id} & The proper user id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The server response. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_acaffadef9e00654ea26dbea8ec13d1da}\label{classig_1_1Api_acaffadef9e00654ea26dbea8ec13d1da}} 
+\index{ig::Api@{ig::Api}!get\_username\_from\_media\_id@{get\_username\_from\_media\_id}}
+\index{get\_username\_from\_media\_id@{get\_username\_from\_media\_id}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_username\_from\_media\_id()}{get\_username\_from\_media\_id()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+username\+\_\+from\+\_\+media\+\_\+id (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{media\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets the Instgram username from a media id. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em media\+\_\+id} & The proper media id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The Instagram username. 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em \char`\"{}\char`\"{}} & An error occurred. \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{classig_1_1Api_a1c3d26d483e46bda837453b729ad3b43}\label{classig_1_1Api_a1c3d26d483e46bda837453b729ad3b43}} 
+\index{ig::Api@{ig::Api}!get\_username\_from\_user\_id@{get\_username\_from\_user\_id}}
+\index{get\_username\_from\_user\_id@{get\_username\_from\_user\_id}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{get\_username\_from\_user\_id()}{get\_username\_from\_user\_id()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::get\+\_\+username\+\_\+from\+\_\+user\+\_\+id (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{user\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Gets the Instgram username of an Instagram profile. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em user\+\_\+id} & The Instagram user id which leads to the Instagram username. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The Instagram username. 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em \char`\"{}\char`\"{}} & An error occurred. \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{classig_1_1Api_ae8be0e6f07fafcc0cc16642ab0caa744}\label{classig_1_1Api_ae8be0e6f07fafcc0cc16642ab0caa744}} 
+\index{ig::Api@{ig::Api}!is\_ig\_post@{is\_ig\_post}}
+\index{is\_ig\_post@{is\_ig\_post}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{is\_ig\_post()}{is\_ig\_post()}}
+{\footnotesize\ttfamily bool ig\+::\+Api\+::is\+\_\+ig\+\_\+post (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{url }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Checks whether the U\+RL is a valid Instagram post. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em url} & The U\+RL to the Instagram post. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns true when it is a valid Instagram link. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_a1d1eae8cdde1d393e1ce27bf054044c6}\label{classig_1_1Api_a1d1eae8cdde1d393e1ce27bf054044c6}} 
+\index{ig::Api@{ig::Api}!logout@{logout}}
+\index{logout@{logout}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{logout()}{logout()}}
+{\footnotesize\ttfamily std\+::string ig\+::\+Api\+::logout (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Logs out which means that the session with its corresponding cookies will no longer be usable. 
+
+This results in all files getting deleted upon object destruction. \begin{DoxyNote}{Note}
+After that no request can be made with that object anymore. 
+\end{DoxyNote}
+\begin{DoxyReturn}{Returns}
+The server response. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classig_1_1Api_af76615797d20c53cd3358b9264c4a7f2}\label{classig_1_1Api_af76615797d20c53cd3358b9264c4a7f2}} 
+\index{ig::Api@{ig::Api}!media\_comments\_allowed@{media\_comments\_allowed}}
+\index{media\_comments\_allowed@{media\_comments\_allowed}!ig::Api@{ig::Api}}
+\doxysubsubsection{\texorpdfstring{media\_comments\_allowed()}{media\_comments\_allowed()}}
+{\footnotesize\ttfamily bool ig\+::\+Api\+::media\+\_\+comments\+\_\+allowed (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{media\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Looks whether comments are allowed for the Instagram post. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em media\+\_\+id} & States the media which we want to check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns true when comments are allowed, otherwise false. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/ig/Api.\+h\item 
+src/Api.\+cpp\end{DoxyCompactItemize}

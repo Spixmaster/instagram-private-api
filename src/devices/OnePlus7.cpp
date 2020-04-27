@@ -1,23 +1,22 @@
 #include "ig/constants/Constants.h"
 #include "ig/devices/OnePlus7.h"
+#include <boost/format.hpp>
 
 namespace ig
 {
 	OnePlus7::OnePlus7()
 	{
 		m_ig_version = Constants::ig_version;
-		m_android_version = "28";
-		m_android_release = "9.0";
+		m_android_api_version = "28";
+		m_android_version = "9.0";
 		m_dpi = "420dpi";
 		m_resolution = "1080x2260";
 		m_manufacturer = "OnePlus";
 		m_device = "GM1903";
 		m_model = "OnePlus7";
 		m_cpu = "qcom";
-		m_useragent = "Instagram " + m_ig_version + " Android (" +
-				m_android_version + "/" + m_android_release + "; " + m_dpi + "; " +
-				m_resolution + "; " + m_manufacturer + "; " + m_device +
-				"; " + m_model + "; " + m_cpu + "; en_US)";
+		boost::str(boost::format("Instagram %1% Android (%2%/%3%; %4%; %5%; %6%; %7%; %8%; %9%; en_US") % m_ig_version % m_android_api_version % m_android_version %
+				m_dpi % m_resolution % m_manufacturer % m_device % m_model % m_cpu);
 	}
 
 	OnePlus7::~OnePlus7()
@@ -28,14 +27,14 @@ namespace ig
 		return m_ig_version;
 	}
 
+	std::string OnePlus7::get_android_api_version() const noexcept
+	{
+		return m_android_api_version;
+	}
+
 	std::string OnePlus7::get_android_version() const noexcept
 	{
 		return m_android_version;
-	}
-
-	std::string OnePlus7::get_android_release() const noexcept
-	{
-		return m_android_release;
 	}
 
 	std::string OnePlus7::get_dpi() const noexcept
