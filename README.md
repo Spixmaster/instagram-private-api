@@ -95,15 +95,15 @@ The good part is that as soon as you logged in and got the proper cookies. You a
 * A: Just follow the instructions sent with the message. There is no reason to worry. Your session is still valid but Instagram blocks requests from it as long as you have not solved the challenge. The challenge is nothing remarkable. It is a simple captcha. You will encounter it when you log in to Instagram in your browser.
 
 ## Safe usage
-Everything you read here in this section is not required but I would recommend you follow suit these advices.
-* Do not keep too many open sessions which happens if you only log in to Instagram with your account but do not log out and instead just delete the cookies and additional app information. Thus, call the logout member function if you no longer want to use that specific session. This will also delete the proper files from your machine for you. It is a security risk and should make Instagram suspicous if there are to many open sessions for one account. Go to [this page](https://www.instagram.com/session/login_activity/) when logged in in your browser and manage your open sessions if your forgot to log out and just deleted your cookies.
-* After the login go to [this page](https://www.instagram.com/session/login_activity/) in your browser again and approve your login. You will encouter the information that a device logged in. Just tell Instagram that that was you by clicking the proper button.
+Everything you read here in this section is not required but I would recommend you follow suit this advice.
+* Do not keep too many open sessions which happens if you only log in to Instagram with your account but do not log out and instead just delete the cookies and additional app information. Thus, call the logout member function if you no longer want to use that specific session. This will also delete the proper files from your machine for you. It is a security risk and should make Instagram suspicious if there are to many open sessions for one account. Go to [this page](https://www.instagram.com/session/login_activity/) when logged in in your browser and manage your open sessions if your forgot to log out and just deleted your cookies.
+* After the login go to [this page](https://www.instagram.com/session/login_activity/) in your browser again and approve your login. You will encounter the information that a device logged in. Just tell Instagram that that was you by clicking the proper button.
 * Go [here](https://www.instagram.com/session/login_activity/) regularly to check your sessions.
 * You should use an account with a verified mobile number. You do not even need a SIM card for this. Consider [this service](https://sms-activate.ru/en/).
 * Make the account look trustworthy. Set up a profile picture, follow some accounts, like and comment on some posts.
 
 ## Thanks to
-These repos helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my first code for this project.
+These repositories helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my first code for this project.
 * https://github.com/instagrambot/instabot
 * https://github.com/LevPasha/Instagram-API-python
 * https://github.com/ping/instagram_private_api
