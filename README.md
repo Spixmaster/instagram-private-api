@@ -68,7 +68,7 @@ The documentation was generated with the help of Doxygen. It is an HTML document
 #include "ig/Api.h"
 #include <memory>
 
-int main()
+int main(int argc, const char *argv[])
 {
 	ig::Api::ptr api = std::make_shared<ig::Api>("the_username", "the_password", ig::Constants::folder);
 

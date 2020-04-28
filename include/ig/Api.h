@@ -16,6 +16,9 @@
  * @author Matheus Gabriel Werny de Lima
  * @copyright GNU General Public License v2.0
  * @version
+ * 0.5.1 (28.04.2020)
+ * - Updated the README.md.
+ * @version
  * 0.5.0 (27.04.2020)
  * - Made the get_media_likers() function more secure.
  * - Revision of the whole code.
