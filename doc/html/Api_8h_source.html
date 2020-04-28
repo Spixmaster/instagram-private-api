@@ -82,189 +82,189 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;tools/http/HttpResponse.h&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;tools/http/HttpClient.h&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">namespace </span>ig</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classig_1_1Api.html">   43</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classig_1_1Api.html">Api</a></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">//Pointer of itself</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">   51</a></span>&#160;<span class="comment"></span>        <span class="keyword">typedef</span> std::shared_ptr&lt;Api&gt; <a class="code" href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ptr</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">//Member variables</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="comment">//Instagram&#39;s login credentials</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"></span>        std::string m_username;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        std::string m_password;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="comment">//Files</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"></span>        std::string m_file_app_info;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        std::string m_file_cookies;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <a class="code" href="classig_1_1Device.html#a798aebab1fa2d21d88d6eb8abf3a7e3f">Device::ptr</a> m_device;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordtype">bool</span> m_del_app_info_and_cookies;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordtype">bool</span> m_new_login;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="comment">//App info</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="comment">//HTTP header values</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"></span>        std::string m_x_google_ad_id;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        std::string m_x_pigeon_session_id;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        std::string m_x_ig_device_id;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        std::string m_x_ig_android_id;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        std::string m_useragent;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="comment">//Only known after successful login.</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment"></span>        std::string m_x_ig_www_claim;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        std::string m_authorization;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="comment">//HTTP body values</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment"></span>        std::string m_phone_id;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="comment">//Only known after &quot;/feed/timeline/&quot; called.</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment"></span>        std::string m_last_seen_feed_media_id;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        <span class="comment">//Rest</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment"></span>        <span class="keywordtype">long</span> <span class="keywordtype">long</span> m_last_app_opening = 0;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        std::vector&lt;tools::HttpCookie&gt; m_cookies;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        std::string m_cookie_str;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="comment">//Constructors</span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment"></span>        <a class="code" href="classig_1_1Api.html#a28c5c26c54e8d5fb0fd4da08e0a96c63">Api</a>(<span class="keyword">const</span> std::string &amp;username, <span class="keyword">const</span> std::string &amp;password, <span class="keyword">const</span> std::string &amp;files_folder);</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="comment">//Destructors</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        ~<a class="code" href="classig_1_1Api.html">Api</a>();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">namespace </span>ig</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="classig_1_1Api.html">   46</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classig_1_1Api.html">Api</a></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="comment">//Pointer of itself</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">   54</a></span>&#160;<span class="comment"></span>        <span class="keyword">typedef</span> std::shared_ptr&lt;Api&gt; <a class="code" href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ptr</a>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="comment">//Member variables</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="comment">//Instagram&#39;s login credentials</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment"></span>        std::string m_username;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        std::string m_password;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="comment">//Files</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment"></span>        std::string m_file_app_info;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        std::string m_file_cookies;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <a class="code" href="classig_1_1Device.html#a798aebab1fa2d21d88d6eb8abf3a7e3f">Device::ptr</a> m_device;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordtype">bool</span> m_del_app_info_and_cookies;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordtype">bool</span> m_new_login;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="comment">//App info</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="comment">//HTTP header values</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment"></span>        std::string m_x_google_ad_id;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        std::string m_x_pigeon_session_id;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        std::string m_x_ig_device_id;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        std::string m_x_ig_android_id;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        std::string m_useragent;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="comment">//Only known after successful login.</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment"></span>        std::string m_x_ig_www_claim;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        std::string m_authorization;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="comment">//HTTP body values</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment"></span>        std::string m_phone_id;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="comment">//Only known after &quot;/feed/timeline/&quot; called.</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment"></span>        std::string m_last_seen_feed_media_id;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        <span class="comment">//Rest</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment"></span>        <span class="keywordtype">long</span> <span class="keywordtype">long</span> m_last_app_opening = 0;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        std::vector&lt;tools::HttpCookie&gt; m_cookies;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        std::string m_cookie_str;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        <span class="comment">//Constructors</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment"></span>        <a class="code" href="classig_1_1Api.html#a28c5c26c54e8d5fb0fd4da08e0a96c63">Api</a>(<span class="keyword">const</span> std::string &amp;username, <span class="keyword">const</span> std::string &amp;password, <span class="keyword">const</span> std::string &amp;files_folder);</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="comment">//Member functions</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="keywordtype">void</span> setup_app_info_and_cookies() noexcept;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        std::vector&lt;tools::HttpHeader&gt; get_ig_http_headers() const noexcept;</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        std::<span class="keywordtype">string</span> mk_ig_http_body(const std::vector&lt;tools::HttpArg&gt; &amp;http_args) const noexcept;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordtype">void</span> save_app_info_in_file() const noexcept;</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <span class="keywordtype">void</span> save_cookies_in_file() const noexcept;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        <span class="keywordtype">void</span> set_cookie_str() noexcept;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="keywordtype">void</span> update_data(const std::vector&lt;tools::HttpCookie&gt; &amp;http_cookies) noexcept;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        std::<span class="keywordtype">string</span> get_cookie_val(const std::<span class="keywordtype">string</span> &amp;cookie_name) const noexcept;</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">         * @brief This function returns the value which is needed by the login endpoint.</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">         * @details It is the sum of the chars of the phone id which is sent too.</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">         * @return The jazoest value.</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        std::<span class="keywordtype">string</span> get_jazoest() const noexcept;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        std::<span class="keywordtype">string</span> get_rank_token() const noexcept;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <span class="keywordtype">void</span> set_last_seen_feed_media_id(const std::<span class="keywordtype">string</span> &amp;last_feed_timeline) noexcept;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        std::<span class="keywordtype">string</span> get_feed_view_info() const noexcept;</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        <span class="keywordtype">void</span> post_req_check(const tools::HttpClient &amp;http_client, const tools::HttpResponse &amp;server_resp, const <span class="keywordtype">bool</span> &amp;no_throw = false);</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">         * These requests occur when the Instagram app is opened but no one is logged in yet.</span></div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">         * If someone is logged in and the app is opened these requests are not made.</span></div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <span class="comment">//Pre login requests</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="comment"></span>        std::<span class="keywordtype">string</span> accounts_contact_point_prefill();</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        std::<span class="keywordtype">string</span> qe_sync();</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        std::<span class="keywordtype">string</span> accounts_get_prefill_candidates();</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        std::<span class="keywordtype">string</span> launcher_sync();</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <span class="keywordtype">void</span> pre_login_requests();</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment">         * The login endpoint and possibly a challenge too.</span></div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">         * Login requests.</span></div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        <span class="keywordtype">bool</span> login();</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160; </div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        <span class="keywordtype">bool</span> solve_challenge(const std::<span class="keywordtype">string</span> &amp;server_resp);</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="comment">//Post login requests</span></div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment"></span>        std::<span class="keywordtype">string</span> multiple_accounts_get_account_family();</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        std::<span class="keywordtype">string</span> banyan_banyan();</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160; </div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        std::<span class="keywordtype">string</span> feed_reels_tray();</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        std::<span class="keywordtype">string</span> feed_timeline();</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">//      std::string push_register();</span></div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160; </div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        std::<span class="keywordtype">string</span> media_blocked();</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160; </div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        std::<span class="keywordtype">string</span> loom_fetch_config();</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        std::<span class="keywordtype">string</span> scores_bootstrap_users();</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        std::<span class="keywordtype">string</span> business_eligibility_get_monetization_products_eligibility_data();</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160; </div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        std::<span class="keywordtype">string</span> linked_accounts_get_linkage_status();</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        std::<span class="keywordtype">string</span> business_branded_content_should_require_professional_account();</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160; </div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        std::<span class="keywordtype">string</span> news_inbox();</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;        std::<span class="keywordtype">string</span> qp_get_cooldowns();</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160; </div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;        std::<span class="keywordtype">string</span> accounts_process_contact_point_signals();</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160; </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        std::<span class="keywordtype">string</span> users_x_info();</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160; </div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;        std::<span class="keywordtype">string</span> direct_v2_get_presence();</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160; </div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        std::<span class="keywordtype">string</span> status_get_viewable_statuses();</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160; </div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;        std::<span class="keywordtype">string</span> direct_v2_inbox();</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160; </div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        std::<span class="keywordtype">string</span> qp_batch_fetch();</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160; </div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        std::<span class="keywordtype">string</span> notifications_badge();</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160; </div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;        std::<span class="keywordtype">string</span> discover_topical_explore();</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;        <span class="keywordtype">void</span> post_login_requests();</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160; </div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;<span class="comment">         * App opening</span></div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;<span class="comment">         * A few less requests are made compared to the post login process</span></div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;        <span class="keywordtype">void</span> open_app();</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    public:</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#ab86163fb729da433202d9492e0ee1668">get_media_likers</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160; </div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a645b98a461023dce2d7d1f07b9e2312e">get_media_comments</a>(const std::<span class="keywordtype">string</span> &amp;media_id, const std::<span class="keywordtype">string</span> &amp;max_id = &quot;&quot;);</div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160; </div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a978a7ec062f32a4de6a5321aebcf903e">get_media_comments_all</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160; </div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#ae6cc320fe77e6c19ed893e2befad18a4">get_media_info</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160; </div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a11254de292d242615751c7ca3a9f66b9">get_user_feed</a>(const std::<span class="keywordtype">string</span> &amp;user_id, const std::<span class="keywordtype">string</span> &amp;max_id = &quot;&quot;, const std::<span class="keywordtype">string</span> &amp;min_timestamp = &quot;&quot;);</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160; </div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a6210e5bc8aa6093f612ea8d6336fc000">get_user_info</a>(const std::<span class="keywordtype">string</span> &amp;user_id);</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160; </div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;        static std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#aea0920568307a0adb8c3c9c44ef30322">get_media_id</a>(const std::<span class="keywordtype">string</span> &amp;ig_post) noexcept;</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160; </div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        static <span class="keywordtype">bool</span> <a class="code" href="classig_1_1Api.html#ae8be0e6f07fafcc0cc16642ab0caa744">is_ig_post</a>(const std::<span class="keywordtype">string</span> &amp;url) noexcept;</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160; </div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classig_1_1Api.html#af76615797d20c53cd3358b9264c4a7f2">media_comments_allowed</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160; </div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a1c3d26d483e46bda837453b729ad3b43">get_username_from_user_id</a>(const std::<span class="keywordtype">string</span> &amp;user_id);</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160; </div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#acaffadef9e00654ea26dbea8ec13d1da">get_username_from_media_id</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160; </div>
-<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classig_1_1Api.html#a69024a79998fe42a9eb0941180d78712">get_amnt_flwrs</a>(const std::<span class="keywordtype">string</span> &amp;user_id);</div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160; </div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#ab6fd0aaea02642e44c3c45c3ec8d083e">get_user_id_from_media_id</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160; </div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a1d1eae8cdde1d393e1ce27bf054044c6">logout</a>();</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;    };</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;}</div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160; </div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="comment">//Destructors</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        ~<a class="code" href="classig_1_1Api.html">Api</a>();</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="comment">//Member functions</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="keywordtype">void</span> setup_app_info_and_cookies() noexcept;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        std::vector&lt;tools::HttpHeader&gt; get_ig_http_headers() const noexcept;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        std::<span class="keywordtype">string</span> mk_ig_http_body(const std::vector&lt;tools::HttpArg&gt; &amp;http_args) const noexcept;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <span class="keywordtype">void</span> save_app_info_in_file() const noexcept;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keywordtype">void</span> save_cookies_in_file() const noexcept;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        <span class="keywordtype">void</span> set_cookie_str() noexcept;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keywordtype">void</span> update_data(const std::vector&lt;tools::HttpCookie&gt; &amp;http_cookies) noexcept;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        std::<span class="keywordtype">string</span> get_cookie_val(const std::<span class="keywordtype">string</span> &amp;cookie_name) const noexcept;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">         * @brief This function returns the value which is needed by the login endpoint.</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">         * @details It is the sum of the chars of the phone id which is sent too.</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment">         * @return The jazoest value.</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">         */</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        std::<span class="keywordtype">string</span> get_jazoest() const noexcept;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        std::<span class="keywordtype">string</span> get_rank_token() const noexcept;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="keywordtype">void</span> set_last_seen_feed_media_id(const std::<span class="keywordtype">string</span> &amp;last_feed_timeline) noexcept;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        std::<span class="keywordtype">string</span> get_feed_view_info() const noexcept;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        <span class="keywordtype">void</span> post_req_check(const tools::HttpClient &amp;http_client, const tools::HttpResponse &amp;server_resp, const <span class="keywordtype">bool</span> &amp;no_throw = false);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="comment">         * These requests occur when the Instagram app is opened but no one is logged in yet.</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="comment">         * If someone is logged in and the app is opened these requests are not made.</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="comment">         */</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        <span class="comment">//Pre login requests</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="comment"></span>        std::<span class="keywordtype">string</span> accounts_contact_point_prefill();</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        std::<span class="keywordtype">string</span> qe_sync();</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        std::<span class="keywordtype">string</span> accounts_get_prefill_candidates();</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        std::<span class="keywordtype">string</span> launcher_sync();</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="keywordtype">void</span> pre_login_requests();</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">         * The login endpoint and possibly a challenge too.</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">         * Login requests.</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">         */</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        <span class="keywordtype">bool</span> login();</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keywordtype">bool</span> solve_challenge(const std::<span class="keywordtype">string</span> &amp;server_resp);</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        <span class="comment">//Post login requests</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="comment"></span>        std::<span class="keywordtype">string</span> multiple_accounts_get_account_family();</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        std::<span class="keywordtype">string</span> banyan_banyan();</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        std::<span class="keywordtype">string</span> feed_reels_tray();</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        std::<span class="keywordtype">string</span> feed_timeline();</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="comment">//      std::string push_register();</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        std::<span class="keywordtype">string</span> media_blocked();</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        std::<span class="keywordtype">string</span> loom_fetch_config();</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        std::<span class="keywordtype">string</span> scores_bootstrap_users();</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160; </div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        std::<span class="keywordtype">string</span> business_eligibility_get_monetization_products_eligibility_data();</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160; </div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;        std::<span class="keywordtype">string</span> linked_accounts_get_linkage_status();</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        std::<span class="keywordtype">string</span> business_branded_content_should_require_professional_account();</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;        std::<span class="keywordtype">string</span> news_inbox();</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        std::<span class="keywordtype">string</span> qp_get_cooldowns();</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;        std::<span class="keywordtype">string</span> accounts_process_contact_point_signals();</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        std::<span class="keywordtype">string</span> users_x_info();</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160; </div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;        std::<span class="keywordtype">string</span> direct_v2_get_presence();</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;        std::<span class="keywordtype">string</span> status_get_viewable_statuses();</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;        std::<span class="keywordtype">string</span> direct_v2_inbox();</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160; </div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        std::<span class="keywordtype">string</span> qp_batch_fetch();</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160; </div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        std::<span class="keywordtype">string</span> notifications_badge();</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160; </div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;        std::<span class="keywordtype">string</span> discover_topical_explore();</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160; </div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;        <span class="keywordtype">void</span> post_login_requests();</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160; </div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="comment">         * App opening</span></div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="comment">         * A few less requests are made compared to the post login process</span></div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="comment">         */</span></div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        <span class="keywordtype">void</span> open_app();</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    public:</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#ab86163fb729da433202d9492e0ee1668">get_media_likers</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160; </div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a645b98a461023dce2d7d1f07b9e2312e">get_media_comments</a>(const std::<span class="keywordtype">string</span> &amp;media_id, const std::<span class="keywordtype">string</span> &amp;max_id = &quot;&quot;);</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160; </div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a978a7ec062f32a4de6a5321aebcf903e">get_media_comments_all</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160; </div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#ae6cc320fe77e6c19ed893e2befad18a4">get_media_info</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160; </div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a11254de292d242615751c7ca3a9f66b9">get_user_feed</a>(const std::<span class="keywordtype">string</span> &amp;user_id, const std::<span class="keywordtype">string</span> &amp;max_id = &quot;&quot;, const std::<span class="keywordtype">string</span> &amp;min_timestamp = &quot;&quot;);</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160; </div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a6210e5bc8aa6093f612ea8d6336fc000">get_user_info</a>(const std::<span class="keywordtype">string</span> &amp;user_id);</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        static std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#aea0920568307a0adb8c3c9c44ef30322">get_media_id</a>(const std::<span class="keywordtype">string</span> &amp;ig_post) noexcept;</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160; </div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;        static <span class="keywordtype">bool</span> <a class="code" href="classig_1_1Api.html#ae8be0e6f07fafcc0cc16642ab0caa744">is_ig_post</a>(const std::<span class="keywordtype">string</span> &amp;url) noexcept;</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160; </div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classig_1_1Api.html#af76615797d20c53cd3358b9264c4a7f2">media_comments_allowed</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160; </div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a1c3d26d483e46bda837453b729ad3b43">get_username_from_user_id</a>(const std::<span class="keywordtype">string</span> &amp;user_id);</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160; </div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#acaffadef9e00654ea26dbea8ec13d1da">get_username_from_media_id</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160; </div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classig_1_1Api.html#a69024a79998fe42a9eb0941180d78712">get_amnt_flwrs</a>(const std::<span class="keywordtype">string</span> &amp;user_id);</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160; </div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#ab6fd0aaea02642e44c3c45c3ec8d083e">get_user_id_from_media_id</a>(const std::<span class="keywordtype">string</span> &amp;media_id);</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160; </div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        std::<span class="keywordtype">string</span> <a class="code" href="classig_1_1Api.html#a1d1eae8cdde1d393e1ce27bf054044c6">logout</a>();</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;    };</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;}</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160; </div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclassig_1_1Api_html_aea0920568307a0adb8c3c9c44ef30322"><div class="ttname"><a href="classig_1_1Api.html#aea0920568307a0adb8c3c9c44ef30322">ig::Api::get_media_id</a></div><div class="ttdeci">static std::string get_media_id(const std::string &amp;ig_post) noexcept</div><div class="ttdoc">Gets the media id of an Instagram post.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1623</div></div>
 <div class="ttc" id="aclassig_1_1Api_html_ab6fd0aaea02642e44c3c45c3ec8d083e"><div class="ttname"><a href="classig_1_1Api.html#ab6fd0aaea02642e44c3c45c3ec8d083e">ig::Api::get_user_id_from_media_id</a></div><div class="ttdeci">std::string get_user_id_from_media_id(const std::string &amp;media_id)</div><div class="ttdoc">Gets the user id from a media id.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1891</div></div>
@@ -279,11 +279,11 @@ $(function() {
 <div class="ttc" id="aclassig_1_1Api_html_a1c3d26d483e46bda837453b729ad3b43"><div class="ttname"><a href="classig_1_1Api.html#a1c3d26d483e46bda837453b729ad3b43">ig::Api::get_username_from_user_id</a></div><div class="ttdeci">std::string get_username_from_user_id(const std::string &amp;user_id)</div><div class="ttdoc">Gets the Instgram username of an Instagram profile.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1751</div></div>
 <div class="ttc" id="aclassig_1_1Api_html_ae8be0e6f07fafcc0cc16642ab0caa744"><div class="ttname"><a href="classig_1_1Api.html#ae8be0e6f07fafcc0cc16642ab0caa744">ig::Api::is_ig_post</a></div><div class="ttdeci">static bool is_ig_post(const std::string &amp;url) noexcept</div><div class="ttdoc">Checks whether the URL is a valid Instagram post.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1664</div></div>
 <div class="ttc" id="aclassig_1_1Api_html_a28c5c26c54e8d5fb0fd4da08e0a96c63"><div class="ttname"><a href="classig_1_1Api.html#a28c5c26c54e8d5fb0fd4da08e0a96c63">ig::Api::Api</a></div><div class="ttdeci">Api(const std::string &amp;username, const std::string &amp;password, const std::string &amp;files_folder)</div><div class="ttdef"><b>Definition:</b> Api.cpp:34</div></div>
-<div class="ttc" id="aclassig_1_1Api_html"><div class="ttname"><a href="classig_1_1Api.html">ig::Api</a></div><div class="ttdoc">This class represents the Instagram API which interacts with the Instagram servers.</div><div class="ttdef"><b>Definition:</b> Api.h:43</div></div>
+<div class="ttc" id="aclassig_1_1Api_html"><div class="ttname"><a href="classig_1_1Api.html">ig::Api</a></div><div class="ttdoc">This class represents the Instagram API which interacts with the Instagram servers.</div><div class="ttdef"><b>Definition:</b> Api.h:46</div></div>
 <div class="ttc" id="aclassig_1_1Api_html_af76615797d20c53cd3358b9264c4a7f2"><div class="ttname"><a href="classig_1_1Api.html#af76615797d20c53cd3358b9264c4a7f2">ig::Api::media_comments_allowed</a></div><div class="ttdeci">bool media_comments_allowed(const std::string &amp;media_id)</div><div class="ttdoc">Looks whether comments are allowed for the Instagram post.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1680</div></div>
 <div class="ttc" id="aclassig_1_1Device_html_a798aebab1fa2d21d88d6eb8abf3a7e3f"><div class="ttname"><a href="classig_1_1Device.html#a798aebab1fa2d21d88d6eb8abf3a7e3f">ig::Device::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; Device &gt; ptr</div><div class="ttdoc">A pointer of itself.</div><div class="ttdef"><b>Definition:</b> Device.h:21</div></div>
 <div class="ttc" id="aclassig_1_1Api_html_a978a7ec062f32a4de6a5321aebcf903e"><div class="ttname"><a href="classig_1_1Api.html#a978a7ec062f32a4de6a5321aebcf903e">ig::Api::get_media_comments_all</a></div><div class="ttdeci">std::string get_media_comments_all(const std::string &amp;media_id)</div><div class="ttdoc">Gets all comments of the Instagram media.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1512</div></div>
-<div class="ttc" id="aclassig_1_1Api_html_a97454267ac90948c5371a4f0f571a037"><div class="ttname"><a href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ig::Api::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; Api &gt; ptr</div><div class="ttdoc">A pointer of itself.</div><div class="ttdef"><b>Definition:</b> Api.h:51</div></div>
+<div class="ttc" id="aclassig_1_1Api_html_a97454267ac90948c5371a4f0f571a037"><div class="ttname"><a href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ig::Api::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; Api &gt; ptr</div><div class="ttdoc">A pointer of itself.</div><div class="ttdef"><b>Definition:</b> Api.h:54</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
