@@ -1,4 +1,4 @@
-# Contributing v0.0.29 (29.04.2020)
+# Contributing v0.0.30 (29.04.2020)
 This file may content irrelevant content as all my projects include the same CONTRIBUTING.md for easier maintenance. I want to keep this file as simple as possible. Therefore, all rules a grouped in suitable subsections. Overall, British English is used as language for all text.
 
 ## 1. Description on how to contribute
@@ -112,7 +112,7 @@ The main file of the project shall contain the @mainpage Doxygen comment block. 
 ### 2.2. Only for C++
 Comments are put only in .h and not in .cpp where the definitions are.
 
-## 3. General programming behaviour by experience with C++17
+## 3. General programming behaviour by experience with C++
 1. Always close open files.
 2. Error handling: I prefer returning error messages or default values than throwing an exception but it depends on the use case. By throwing exception all the time in libraries, it bulks the source code and at the end there would not be a positive effect. Take for example a function that reads out file content. Good practice is to return nothing if the files does not exist and save a suitable message in the error log. If we threw an exception the file content would still be empty and we needed to use several try-catch blocks.
 3. Have a struct "Constants" with version and release.
