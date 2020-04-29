@@ -1,4 +1,4 @@
-# Contributing v0.0.28 (27.04.2020)
+# Contributing v0.0.29 (29.04.2020)
 This file may content irrelevant content as all my projects include the same CONTRIBUTING.md for easier maintenance. I want to keep this file as simple as possible. Therefore, all rules a grouped in suitable subsections. Overall, British English is used as language for all text.
 
 ## 1. Description on how to contribute
@@ -29,6 +29,7 @@ Contributing works as always by forking the repository and then making a pull re
  */
 ```
 * Special commands start with *\\* or *@*. We use the @.
+* Special characters like '@', '<>' and '#' can be escaped with a preceding '\'.
 
 #### 2.1.1. Special commands
 ##### 2.1.1.1. Structural indicators (define type of comment blocks)
