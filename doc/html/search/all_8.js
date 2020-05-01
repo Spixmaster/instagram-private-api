@@ -7,5 +7,6 @@ var searchData=
   ['instagram_2dprivate_2dapi_47',['instagram-private-api',['../index.html',1,'']]],
   ['is_5fig_5fpost_48',['is_ig_post',['../classig_1_1Api.html#ae8be0e6f07fafcc0cc16642ab0caa744',1,'ig::Api']]],
   ['it_5fwas_5fme_49',['it_was_me',['../classig_1_1Messages.html#ae5837d4ecdbc4fb487642bd88582c82b',1,'ig::Messages']]],
-  ['it_5fwas_5fnot_5fme_50',['it_was_not_me',['../classig_1_1Messages.html#afa16337aa9c4faa898f878af170d813e',1,'ig::Messages']]]
+  ['it_5fwas_5fnot_5fme_50',['it_was_not_me',['../classig_1_1Messages.html#afa16337aa9c4faa898f878af170d813e',1,'ig::Messages']]],
+  ['instagram_2dprivate_2dapi_51',['instagram-private-api',['../md_README.html',1,'']]]
 ];
