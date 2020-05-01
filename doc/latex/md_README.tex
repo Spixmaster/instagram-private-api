@@ -1,0 +1,105 @@
+A C++ library for the Instagram A\+PI. As Instagram does not provide a public A\+PI for developers this library pretends to be an Instagram account logging in from a mobile device.\hypertarget{md_README_autotoc_md1}{}\doxysection{Installation}\label{md_README_autotoc_md1}
+\hypertarget{md_README_autotoc_md2}{}\doxysubsection{As a submodule}\label{md_README_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd to/your/project}
+\DoxyCodeLine{git submodule add *link-\/to-\/this-\/repo*}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md3}{}\doxysubsection{As a contributor}\label{md_README_autotoc_md3}
+The project needs to be set up properly in your I\+DE to be able to compile it.\hypertarget{md_README_autotoc_md4}{}\doxysubsubsection{Example eclipse}\label{md_README_autotoc_md4}
+These instructions show how to set up the project right in eclipse.
+\begin{DoxyEnumerate}
+\item Clone the project to anywhere.
+\item Create a new eclipse project.
+\item Right click on the project $>$ \char`\"{}\+Import\char`\"{} $>$ \char`\"{}\+General\char`\"{} $>$ \char`\"{}\+File System\char`\"{}.
+\item Select all content from the cloned project.
+\end{DoxyEnumerate}\hypertarget{md_README_autotoc_md5}{}\doxysubsection{Compiler}\label{md_README_autotoc_md5}
+You need to use a C++20 compiler for compilation.\hypertarget{md_README_autotoc_md6}{}\doxysubsection{Dependencies}\label{md_README_autotoc_md6}
+This software is built with the help of third party libraries. It is shown below how to install them.\hypertarget{md_README_autotoc_md7}{}\doxysubsubsection{Poco}\label{md_README_autotoc_md7}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo apt install libpoco-\/dev}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md8}{}\doxysubsubsection{rapidjson}\label{md_README_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo apt install rapidjson-\/dev}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md9}{}\doxysubsubsection{boost}\label{md_README_autotoc_md9}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo apt install libboost-\/all-\/dev}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md10}{}\doxysubsubsection{Submodules}\label{md_README_autotoc_md10}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd folder/to/this/project/}
+\DoxyCodeLine{git submodule init}
+\DoxyCodeLine{git submodule update}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md11}{}\doxysubsubsection{Libraries that need to be linked (option -\/l)}\label{md_README_autotoc_md11}
+
+\begin{DoxyItemize}
+\item Poco\+Foundation
+\item Poco\+Net\+S\+SL
+\item Poco\+Net
+\item Poco\+Crypto
+\item boost\+\_\+system
+\item boost\+\_\+filesystem
+\item boost\+\_\+iostreams
+\item boost\+\_\+locale
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md12}{}\doxysection{Usage}\label{md_README_autotoc_md12}
+The source code cannot be compiled by itself as there is no main function included. It is thought to be used in other software as a library.\hypertarget{md_README_autotoc_md13}{}\doxysubsection{Documentation}\label{md_README_autotoc_md13}
+The documentation was generated with the help of Doxygen. It is an H\+T\+ML document and can be found in $\ast$./doc/html/index.html$\ast$. Open that file with your favourite browser.\hypertarget{md_README_autotoc_md14}{}\doxysubsection{Example}\label{md_README_autotoc_md14}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "ig/constants/Constants.h"}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "ig/Api.h"}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <memory>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keyword}{const} \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \mbox{\hyperlink{classig_1_1Api_a97454267ac90948c5371a4f0f571a037}{ig::Api::ptr}} api = std::make\_shared<ig::Api>(\textcolor{stringliteral}{"the\_username"}, \textcolor{stringliteral}{"the\_password"}, \mbox{\hyperlink{structig_1_1Constants_a4646c357bdab5ee9ccc9bc79e5d32308}{ig::Constants::folder}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{    std::string all\_comments = api-\/>get\_media\_comments\_all(\mbox{\hyperlink{classig_1_1Api_aea0920568307a0adb8c3c9c44ef30322}{ig::Api::get\_media\_id}}(\textcolor{stringliteral}{"https://www.instagram.com/p/B6WuipPF2H-\//"}));}
+\DoxyCodeLine{    std::string likers = api-\/>get\_media\_likers(\mbox{\hyperlink{classig_1_1Api_aea0920568307a0adb8c3c9c44ef30322}{ig::Api::get\_media\_id}}(\textcolor{stringliteral}{"https://www.instagram.com/p/B6bV0\_ygLQe/"}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} EXIT\_SUCCESS;}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md15}{}\doxysection{Changelog}\label{md_README_autotoc_md15}
+The changelog can be seen on the documentation\textquotesingle{}s main page.\hypertarget{md_README_autotoc_md16}{}\doxysection{F\+AQ}\label{md_README_autotoc_md16}
+
+\begin{DoxyItemize}
+\item Q\+: Is it safe to use this library?
+\item A\+: This question cannot be answered with yes or no. If you really depend on logging in on the Instagram servers you can be happy that you have found this repository. In the other case, that you just want to test it I cannot really recommend you to do so. Do not understand me wrong. This software is more likely to work than not but things can go wrong. It may happen to you that you cannot log in which is caused by your account. If you try to log in with a different account it should work. This situation occurs frequently. In one case I was not able to log in a long time with this project after trying to log but with the official Android app everything worked fine. In worse cases, my accounts were banned temporarily, not deleted. The account was still visible from third accounts but I was not able to log in with them for like 9 hours after that time they worked like before. The ban\textquotesingle{}s duration may vary.\textbackslash{} Whenever unexpected errors occur, the software will inform you via the error log.\textbackslash{} The good part is that as soon as you logged in and got the proper cookies. You are safe for as long as the cookies are valid. I have never experienced problems after the login process despite one time when one of my account was deleted due to massive liking and commenting. Do not do that! I turned away from this kind of abuse and so should you.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+
+\begin{DoxyItemize}
+\item Q\+: Are the cookies saved or is it necessary to login again every time?
+\item A\+: Of course they are. Just log in once and use the cookies for approximately quarter a year.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+
+\begin{DoxyItemize}
+\item Q\+: The A\+PI requests me to solve a challenge manually. What do I need to do?
+\item A\+: Just follow the instructions sent with the message. There is no reason to worry. Your session is still valid but Instagram blocks requests from it as long as you have not solved the challenge. The challenge is nothing remarkable. It is a simple captcha. You will encounter it when you log in to Instagram in your browser.
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md17}{}\doxysection{Safe usage}\label{md_README_autotoc_md17}
+Everything you read here in this section is not required but I would recommend you follow suit this advice.
+\begin{DoxyItemize}
+\item Do not keep too many open sessions which happens if you only log in to Instagram with your account but do not log out and instead just delete the cookies and additional app information. Thus, call the logout member function if you no longer want to use that specific session. This will also delete the proper files from your machine for you. It is a security risk and should make Instagram suspicious if there are to many open sessions for one account. Go to \href{https://www.instagram.com/session/login_activity/}{\texttt{ this page}} when logged in in your browser and manage your open sessions if your forgot to log out and just deleted your cookies.
+\item After the login go to \href{https://www.instagram.com/session/login_activity/}{\texttt{ this page}} in your browser again and approve your login. You will encounter the information that a device logged in. Just tell Instagram that that was you by clicking the proper button.
+\item Go \href{https://www.instagram.com/session/login_activity/}{\texttt{ here}} regularly to check your sessions.
+\item You should use an account with a verified mobile number. You do not even need a S\+IM card for this. Consider \href{https://sms-activate.ru/en/}{\texttt{ this service}}.
+\item Make the account look trustworthy. Set up a profile picture, follow some accounts, like and comment on some posts.
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md18}{}\doxysection{Thanks to}\label{md_README_autotoc_md18}
+These repositories helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my first code for this project.
+\begin{DoxyItemize}
+\item \href{https://github.com/instagrambot/instabot}{\texttt{ https\+://github.\+com/instagrambot/instabot}}
+\item \href{https://github.com/LevPasha/Instagram-API-python}{\texttt{ https\+://github.\+com/\+Lev\+Pasha/\+Instagram-\/\+A\+P\+I-\/python}}
+\item \href{https://github.com/ping/instagram_private_api}{\texttt{ https\+://github.\+com/ping/instagram\+\_\+private\+\_\+api}}
+\item \href{https://github.com/itsMoji/Instagram_SSL_Pinning}{\texttt{ https\+://github.\+com/its\+Moji/\+Instagram\+\_\+\+S\+S\+L\+\_\+\+Pinning}} 
+\end{DoxyItemize}
