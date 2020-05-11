@@ -26,17 +26,17 @@ This software is built with the help of third party libraries. It is shown below
 
 #### Poco
 ```sh
-sudo apt install libpoco-dev
+sudo pacman -S poco
 ```
 
 #### rapidjson
 ```sh
-sudo apt install rapidjson-dev
+sudo pacman -S rapidjson
 ```
 
 #### boost
 ```sh
-sudo apt install libboost-all-dev
+sudo pacman -S boost
 ```
 
 #### Submodules
