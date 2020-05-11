@@ -15,7 +15,11 @@
  * @mainpage instagram-private-api
  * @author Matheus Gabriel Werny de Lima
  * @copyright GNU General Public License v2.0
- * @version 0.5.7 (01.05.2020)
+ * @version
+ * 0.5.8 (11.05.2020)
+ * - Submodule and readme update.
+ * @version
+ * 0.5.7 (01.05.2020)
  * - Regenerated the documentation.
  * @version
  * 0.5.6 (29.04.2020)
