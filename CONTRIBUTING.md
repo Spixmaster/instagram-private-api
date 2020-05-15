@@ -1,4 +1,4 @@
-# Contributing v0.0.30 (29.04.2020)
+# Contributing v0.0.31 (15.05.2020)
 This file may content irrelevant content as all my projects include the same CONTRIBUTING.md for easier maintenance. I want to keep this file as simple as possible. Therefore, all rules a grouped in suitable subsections. Overall, British English is used as language for all text.
 
 ## 1. Description on how to contribute
@@ -87,7 +87,7 @@ Contributing works as always by forking the repository and then making a pull re
  */
 ```
 
-#### 2.1.3 The main page
+#### 2.1.3. The main page
 The main file of the project shall contain the @mainpage Doxygen comment block. Add version logs to it. Here you see an example:
 ```
 /**
@@ -170,14 +170,15 @@ struct Chat
 }
 ```
 
-## 5. Rapidjson
+## 5. Libraries
+### 5.1. Rapidjson (C++)
 1. IsObject() checks whether the passed string is a JSON object and IsArray() checks whether it is a JSON array.
 2. doc.HasMember() and so on assert that doc is an object. The function even crashes if it is called on a json array.
 3. If member of JSON object is accessed which does not exist the programme crashes.
 4. Parsing is allowed even if the provided string is not JSON at all.
 5. To get the array size call .GetArray().Size.
 
-### 5.1 Example
+#### 5.1.1. Example
 ```cpp
 rapidjson::Document doc;
 doc.Parse(str.c_str());
@@ -195,3 +196,8 @@ if(doc.IsObject() || doc.IsArray())
 
 const rapidjson::Value &items = doc["items"];
 ```
+
+### 5.2. Puppeteer (JavaScript)
+1. Ensure that elements exist: `await page.waitForSelector("input[name='username']", {timeout: Constants.srch_timeout()});`
+2. Close browser instances at the end.
+3. By default, use `await page.goto(url, {waitUntil: "domcontentloaded"});` if no JavaScript needs to be loaded by the page. Otherwise, `await page.goto(url, {waitUntil: "networkidle0"});` needs to be used.

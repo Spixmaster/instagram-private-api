@@ -19,7 +19,7 @@ These instructions show how to set up the project right in eclipse.
 4. Select all content from the cloned project.
 
 ### Compiler
-You need to use a C++20 compiler for compilation.
+You need to use a C++17 compiler for compilation.
 
 ### Dependencies
 This software is built with the help of third party libraries. It is shown below how to install them.
