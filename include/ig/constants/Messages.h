@@ -203,6 +203,7 @@ namespace ig
 		/**
 		 * @brief Returns a message which informs that the login was successful.
 		 * @param[in] cookie_file The file to which the cookies are written.
+		 * @return The message.
 		 */
 		static std::string successful_login(const std::string &cookie_file) noexcept;
 	};
