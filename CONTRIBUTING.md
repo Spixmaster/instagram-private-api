@@ -1,4 +1,4 @@
-# Contributing v0.0.31 (15.05.2020)
+# Contributing v1.0.0 (23.05.2020)
 This file may content irrelevant content as all my projects include the same CONTRIBUTING.md for easier maintenance. I want to keep this file as simple as possible. Therefore, all rules a grouped in suitable subsections. Overall, British English is used as language for all text.
 
 ## 1. Description on how to contribute
@@ -62,7 +62,7 @@ Contributing works as always by forking the repository and then making a pull re
 * @version
 
 ##### 2.1.1.3. Commands to create links (work only in page documentation block)
-* @section <subsection-name> (subsection title) - subsection-name(), subsection title(title)
+* @subsection <subsection-name> (subsection title) - subsection-name(), subsection title(title)
 * @section <section-name> (section title) - section-name(), section title(title)
 * @paragraph <paragraph-name> (paragraph title) - paragraph-name, paragraph title(title)
 
