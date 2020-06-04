@@ -1,5 +1,5 @@
-# Contributing v1.0.0 (23.05.2020)
-This file may content irrelevant content as all my projects include the same CONTRIBUTING.md for easier maintenance. I want to keep this file as simple as possible. Therefore, all rules a grouped in suitable subsections. Overall, British English is used as language for all text.
+# Contributing v1.0.1 (04.06.2020)
+This file may contain irrelevant content as all my projects include the same CONTRIBUTING.md for easier maintenance. I want to keep this file as simple as possible. Therefore, all rules are grouped in suitable subsections. Overall, British English is used as language for all text.
 
 ## 1. Description on how to contribute
 Contributing works as always by forking the repository and then making a pull request.
@@ -7,7 +7,7 @@ Contributing works as always by forking the repository and then making a pull re
 ## 2. Commenting
 * The Doxygen syntax is used. 
 * Everything is commented so that Doxygen does not output any error on documentation creation: classes, structs, functions, member variables. Additional comments are voluntary.
-* All Doxygen comments are sentences in most cases if useful. There, sentence endings are to use either way. The reason is that Doxygen will add them too either way.
+* All Doxygen comments are sentences in most cases if useful. Sentence endings are to use either way. The reason is that Doxygen will add them too either way.
 * Non-Doxygen comments shall be sentences except those which structure like the ones used in classes.
 * // only for single a comment, otherwise /**/.
 * In dynamic programming languages, the first word of the description shall contain the type.
@@ -114,8 +114,8 @@ Comments are put only in .h and not in .cpp where the definitions are.
 
 ## 3. General programming behaviour by experience with C++
 1. Always close open files.
-2. Error handling: I prefer returning error messages or default values than throwing an exception but it depends on the use case. By throwing exception all the time in libraries, it bulks the source code and at the end there would not be a positive effect. Take for example a function that reads out file content. Good practice is to return nothing if the files does not exist and save a suitable message in the error log. If we threw an exception the file content would still be empty and we needed to use several try-catch blocks.
-3. Have a struct "Constants" with version and release.
+2. Error handling: I prefer returning error messages or default values than throwing an exception but it depends on the use case. By throwing exception all the time in libraries, it bulks the source code and at the end there would not be a positive effect. Take for example a function that reads out file content. Good practice is to return nothing if the files does not exist and save a suitable message in the error log. If we threw an exception, the file content would still be empty and we would needed to use several try-catch blocks.
+3. Have a struct "Constants" with version and the version's release date.
 4. Have a class "Messages" with stored strings which are sent to the user. This simplifies translations a lot. Do not use string concatenation in this file as it makes translations impossible! Always use string formatting or template strings in here.
 5. Prefer functions over overloaded operators.
 ```
@@ -144,6 +144,7 @@ remove()            --> std::remove()
 9. Leave blank lines before and after compound statements like conditions and loops.
 10. Write error messages to a log and not to stderr.
 11. Check the stdout of the programme.
+12. Declare all variables const if possible.
 
 ## 4. OOP
 1. For every class or struct:
@@ -159,9 +160,9 @@ typedef std::shared_ptr<class> ptr;
 //Destructors
 //Member functions
 ```
-3. Member variables have prefix "m_" if they are not static.
-4. Make all member function "const" and "noexcept" if possible.
-5. If a class or struct needs to contain an other object include the class' ptr member variable (std::shared_ptr<ObjectX> ptr) but only if the object is not from the STL (std::map, std::vector, std::string and so on). That would be too much. Data types of normal objects cannot cope with forward declarations of their type which is needed when objects include each other as a type.
+3. Member variables have the prefix "m_" if they are not static.
+4. Make all member functions "const" (not the return value) and "noexcept" if possible.
+5. If a class or struct needs to contain an other object, include the class' "ptr" member variable (std::shared_ptr<ObjectX> ptr) but only if the object is not from the STL (std::map, std::vector, std::string and so on). That would be too much. Data types of normal objects cannot cope with forward declarations of their type which is needed when objects include each other as a type.
 ```cpp
 struct Message;
 struct Chat
@@ -172,11 +173,11 @@ struct Chat
 
 ## 5. Libraries
 ### 5.1. Rapidjson (C++)
-1. IsObject() checks whether the passed string is a JSON object and IsArray() checks whether it is a JSON array.
-2. doc.HasMember() and so on assert that doc is an object. The function even crashes if it is called on a json array.
-3. If member of JSON object is accessed which does not exist the programme crashes.
+1. "IsObject()" checks whether the passed string is a JSON object and "IsArray()" checks whether it is a JSON array.
+2. "doc.HasMember()" and so on assert that doc is an object. The function even crashes if it is called on a json array.
+3. If member of JSON object is accessed which does not exist, the programme crashes.
 4. Parsing is allowed even if the provided string is not JSON at all.
-5. To get the array size call .GetArray().Size.
+5. To get the array size call ".GetArray().Size".
 
 #### 5.1.1. Example
 ```cpp
