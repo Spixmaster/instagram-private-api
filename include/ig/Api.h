@@ -16,6 +16,11 @@
  * @author Matheus Gabriel Werny de Lima
  * @copyright GNU General Public License v2.0
  * @version
+ * 0.5.18 (04.06.2020)
+ * - Code revision.
+ * - Submodule updated.
+ * - Contributing update.
+ * @version
  * 0.5.17 (31.05.2020)
  * - Submodule update.
  * @version

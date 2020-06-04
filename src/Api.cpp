@@ -66,7 +66,7 @@ namespace ig
 		{
 			//m_x_google_ad_id
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_google_ad_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_google_ad_id"));
 
 				if(!val.empty())
 					m_x_google_ad_id = val;
@@ -76,7 +76,7 @@ namespace ig
 
 			//m_x_pigeon_session_id
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_pigeon_session_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_pigeon_session_id"));
 
 				if(!val.empty())
 					m_x_pigeon_session_id = val;
@@ -86,7 +86,7 @@ namespace ig
 
 			//m_x_ig_device_id
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_device_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_device_id"));
 
 				if(!val.empty())
 					m_x_ig_device_id = val;
@@ -96,7 +96,7 @@ namespace ig
 
 			//m_x_ig_android_id
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_android_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_android_id"));
 
 				if(!val.empty())
 					m_x_ig_android_id = val;
@@ -106,7 +106,7 @@ namespace ig
 
 			//m_useragent
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_useragent"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_useragent"));
 
 				if(!val.empty())
 					m_useragent = val;
@@ -116,7 +116,7 @@ namespace ig
 
 			//m_x_ig_www_claim
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_www_claim"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_www_claim"));
 
 				if(!val.empty())
 					m_x_ig_www_claim = val;
@@ -126,7 +126,7 @@ namespace ig
 
 			//m_authorization
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_authorization"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_authorization"));
 
 				if(!val.empty())
 					m_authorization = val;
@@ -136,7 +136,7 @@ namespace ig
 
 			//m_phone_id
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_phone_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_phone_id"));
 
 				if(!val.empty())
 					m_phone_id = val;
@@ -146,7 +146,7 @@ namespace ig
 
 			//m_last_seen_feed_media_id
 			{
-				std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_seen_feed_media_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_seen_feed_media_id"));
 
 				if(!val.empty())
 					m_last_seen_feed_media_id = val;
@@ -156,7 +156,7 @@ namespace ig
 
 			//m_last_app_opening
 			{
-				std::string entry = tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_app_opening");
+				const std::string entry = tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_app_opening");
 				if(!entry.empty())
 					m_last_app_opening = tools::Tools::get_num_ln_end(entry);
 				else
@@ -234,7 +234,7 @@ namespace ig
 			devices.push_back(std::make_shared<ZteAxon7>());
 
 			srand(tools::Tools::get_seed());
-			int random_index = std::rand() % devices.size();
+			const int random_index = std::rand() % devices.size();
 			m_device = devices.at(random_index);
 
 			//Generate new uuids.
@@ -369,18 +369,18 @@ namespace ig
 
 	void Api::set_cookie_str() noexcept
 	{
-		std::string temp;
+		std::string tmp;
 
 		for(std::size_t j = 0; j < m_cookies.size(); ++j)
 		{
-			temp.append(m_cookies.at(j).get_name() + "=" + m_cookies.at(j).get_value());
+			tmp.append(m_cookies.at(j).get_name() + "=" + m_cookies.at(j).get_value());
 
 			//Check whether a semicolon is needed.
 			if(j != m_cookies.size() - 1)
-				temp.append("; ");
+				tmp.append("; ");
 		}
 
-		m_cookie_str = temp;
+		m_cookie_str = tmp;
 	}
 
 	void Api::update_data(const std::vector<tools::HttpCookie> &http_cookies) noexcept
@@ -482,10 +482,11 @@ namespace ig
 
 	std::string Api::get_feed_view_info() const noexcept
 	{
-		srand(tools::Tools::get_seed());
+		std::srand(tools::Tools::get_seed());
 
 		//feed_view_info
 		std::string feed_view_info;
+
 		//The condition is needed because if the user has no feed (when having subscribed to nobody) it cannot be that madia_pct is set.
 		if(!m_last_seen_feed_media_id.empty())
 		{
