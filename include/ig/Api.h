@@ -16,6 +16,9 @@
  * @author Matheus Gabriel Werny de Lima
  * @copyright GNU General Public License v2.0
  * @version
+ * 0.5.20 (15.06.2020)
+ * -Submodule update.
+ * @version
  * 0.5.19 (06.06.2020)
  * - Submodule update.
  * - Added a .pot file.
