@@ -18,7 +18,6 @@
  * @version
  * 0.5.22 (16.06.2020)
  * - Submodule update.
- * - Readme update.
  * @version
  * 0.5.21 (16.06.2020)
  * - Submodule update.
