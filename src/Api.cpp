@@ -66,7 +66,7 @@ namespace ig
 		{
 			//m_x_google_ad_id
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_google_ad_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_x_google_ad_id"));
 
 				if(!val.empty())
 					m_x_google_ad_id = val;
@@ -76,7 +76,7 @@ namespace ig
 
 			//m_x_pigeon_session_id
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_pigeon_session_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_x_pigeon_session_id"));
 
 				if(!val.empty())
 					m_x_pigeon_session_id = val;
@@ -86,7 +86,7 @@ namespace ig
 
 			//m_x_ig_device_id
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_device_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_x_ig_device_id"));
 
 				if(!val.empty())
 					m_x_ig_device_id = val;
@@ -96,7 +96,7 @@ namespace ig
 
 			//m_x_ig_android_id
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_android_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_x_ig_android_id"));
 
 				if(!val.empty())
 					m_x_ig_android_id = val;
@@ -106,7 +106,7 @@ namespace ig
 
 			//m_useragent
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_useragent"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_useragent"));
 
 				if(!val.empty())
 					m_useragent = val;
@@ -116,7 +116,7 @@ namespace ig
 
 			//m_x_ig_www_claim
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_x_ig_www_claim"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_x_ig_www_claim"));
 
 				if(!val.empty())
 					m_x_ig_www_claim = val;
@@ -126,7 +126,7 @@ namespace ig
 
 			//m_authorization
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_authorization"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_authorization"));
 
 				if(!val.empty())
 					m_authorization = val;
@@ -136,7 +136,7 @@ namespace ig
 
 			//m_phone_id
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_phone_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_phone_id"));
 
 				if(!val.empty())
 					m_phone_id = val;
@@ -146,7 +146,7 @@ namespace ig
 
 			//m_last_seen_feed_media_id
 			{
-				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_seen_feed_media_id"));
+				const std::string val = tools::Tools::get_file_ln_val(tools::Tools::get_file_ln_w_key(m_file_app_info, "m_last_seen_feed_media_id"));
 
 				if(!val.empty())
 					m_last_seen_feed_media_id = val;
@@ -156,7 +156,7 @@ namespace ig
 
 			//m_last_app_opening
 			{
-				const std::string entry = tools::Tools::get_file_ln_w_srch(m_file_app_info, "m_last_app_opening");
+				const std::string entry = tools::Tools::get_file_ln_w_key(m_file_app_info, "m_last_app_opening");
 				if(!entry.empty())
 					m_last_app_opening = tools::Tools::get_num_ln_end(entry);
 				else
