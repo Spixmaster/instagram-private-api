@@ -459,7 +459,7 @@ namespace ig
 		if(doc.IsObject())
 			if(doc.HasMember("feed_items"))
 				if(doc["feed_items"].IsArray())
-					if(doc["feed_items"].Size() > 0)
+					if(!doc["feed_items"].GetArray().Empty())
 						if(doc["feed_items"][0].HasMember("media_or_ad"))
 							if(doc["feed_items"][0]["media_or_ad"].HasMember("id"))
 								if(doc["feed_items"][0]["media_or_ad"]["id"].IsString())
@@ -1563,11 +1563,9 @@ namespace ig
 			}
 		}
 
-		if(result.size() >= 2)
-		{
-			result.pop_back();
-			result.pop_back();
-		}
+		for(int j = 0; j < 2; ++j)
+			if(!result.empty())
+				result.pop_back();
 
 		return result.append("]");
 	}
@@ -1720,7 +1718,7 @@ namespace ig
 
 					if(items.IsArray())
 					{
-						if(items.GetArray().Size() > 0)
+						if(!items.GetArray().Empty())
 						{
 							const rapidjson::Value &media_info = items[0];
 
@@ -1804,7 +1802,7 @@ namespace ig
 
 				if(items.IsArray())
 				{
-					if(items.GetArray().Size() > 0)
+					if(!items.GetArray().Empty())
 					{
 						const rapidjson::Value &media_info = items[0];
 
@@ -1904,7 +1902,7 @@ namespace ig
 
 				if(items.IsArray())
 				{
-					if(items.GetArray().Size() > 0)
+					if(!items.GetArray().Empty())
 					{
 						const rapidjson::Value &media_info = items[0];
 
