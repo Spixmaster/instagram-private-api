@@ -1,4 +1,4 @@
-# Contributing v1.0.1 (04.06.2020)
+# Contributing v1.0.2 (20.06.2020)
 This file may contain irrelevant content as all my projects include the same CONTRIBUTING.md for easier maintenance. I want to keep this file as simple as possible. Therefore, all rules are grouped in suitable subsections. Overall, British English is used as language for all text.
 
 ## 1. Description on how to contribute
@@ -145,6 +145,8 @@ remove()            --> std::remove()
 10. Write error messages to a log and not to stderr.
 11. Check the stdout of the programme.
 12. Declare all variables const if possible.
+13. Use the empty() instead of checking the size if possible.
+14. When it needs to be searched in files for a key or value always look for the whole key or value as partial searches are not distinct.
 
 ## 4. OOP
 1. For every class or struct:
@@ -173,11 +175,11 @@ struct Chat
 
 ## 5. Libraries
 ### 5.1. Rapidjson (C++)
-1. "IsObject()" checks whether the passed string is a JSON object and "IsArray()" checks whether it is a JSON array.
+1. "doc.IsObject()" checks whether the passed string is a JSON object and "doc.IsArray()" checks whether it is a JSON array.
 2. "doc.HasMember()" and so on assert that doc is an object. The function even crashes if it is called on a json array.
 3. If member of JSON object is accessed which does not exist, the programme crashes.
 4. Parsing is allowed even if the provided string is not JSON at all.
-5. To get the array size call ".GetArray().Size".
+5. To get the array size call "doc.GetArray().Size()".
 
 #### 5.1.1. Example
 ```cpp
