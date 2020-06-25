@@ -14,7 +14,10 @@
 /**
  * @mainpage instagram-private-api
  * @author Matheus Gabriel Werny de Lima
- * @copyright GNU General Public License v2.0
+ * @copyright Apache-2.0 License
+ * @version
+ * 0.5.29 (25.06.2020)
+ * - License changed.
  * @version
  * 0.5.28 (22.06.2020)
  * - Submodule update.
