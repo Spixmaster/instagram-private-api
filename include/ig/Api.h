@@ -16,6 +16,9 @@
  * @author Matheus Gabriel Werny de Lima
  * @copyright Apache-2.0 License
  * @version
+ * 0.5.30 (26.06.2020)
+ * - File updated.
+ * @version
  * 0.5.29 (25.06.2020)
  * - License changed.
  * @version
