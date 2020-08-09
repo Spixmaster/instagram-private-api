@@ -2,22 +2,6 @@
 A C++ library for the Instagram API. As Instagram does not provide a public API for developers this library pretends to be an Instagram account logging in from a mobile device.
 
 ## Installation
-### As a submodule
-```sh
-cd to/your/project
-git submodule add *link-to-this-repo*
-```
-
-### As a contributor
-The project needs to be set up properly in your IDE to be able to compile it.
-
-#### Example eclipse
-These instructions show how to set up the project right in eclipse.
-1. Clone the project to anywhere.
-2. Create a new eclipse project.
-3. Right click on the project > "Import" > "General" > "File System".
-4. Select all content from the cloned project.
-
 ### Compiler
 You need to use a C++17 compiler for compilation.
 
@@ -29,12 +13,12 @@ This software is built with the help of third party libraries. It is shown below
 sudo pacman -S poco
 ```
 
-#### rapidjson
+#### Rapidjson
 ```sh
 sudo pacman -S rapidjson
 ```
 
-#### boost
+#### Boost
 ```sh
 sudo pacman -S boost
 ```
@@ -48,19 +32,39 @@ git submodule update
 
 #### Libraries that need to be linked (option -l)
 * PocoFoundation
-* PocoNetSSL
 * PocoNet
+* PocoNetSSL
 * PocoCrypto
 * boost_system
 * boost_filesystem
 * boost_iostreams
 * boost_locale
 
+### Submodule
+```sh
+cd to/your/project/
+git submodule add *link-to-this-repo*
+```
+
+### Makefile
+```sh
+cd to/this/project/
+cmake .
+make -j
+```
+
+## Eclipse setup
+These instructions show how to set up the project in eclipse.
+1. Clone the project.
+2. Create a new eclipse project.
+3. Right click on the eclipse project > "Import" > "General" > "File System".
+4. Select all content from the cloned project.
+
 ## Usage
-The source code cannot be compiled by itself as there is no main function included. It is thought to be used in other software as a library.
+This project is thought to be used in other software as a library.
 
 ### Documentation
-The documentation was generated with the help of Doxygen. It is an HTML document and can be found in *./doc/html/index.html*. Open that file with your favourite browser.
+The documentation is generated with the help of Doxygen. It is an HTML document and can be found in *./doc/html/index.html*. Open that file with your favourite browser.
 
 ### Example
 ```cpp
