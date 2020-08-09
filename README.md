@@ -50,7 +50,7 @@ git submodule add *link-to-this-repo*
 ```sh
 cd to/this/project/
 cmake .
-make -j
+make -j 4
 ```
 
 ## Eclipse setup
@@ -107,7 +107,7 @@ Everything you read here in this section is not required but I would recommend y
 * Make the account look trustworthy. Set up a profile picture, follow some accounts, like and comment on some posts.
 
 ## Thanks to
-These repositories helped me a lot and I want to thank them. Without the help of the existing source code I would not have been able to write my first code for this project.
+These repositories helped me a lot and I want to thank them. Without the help of the existing source code, I would not have been able to write my first code for this project.
 * https://github.com/instagrambot/instabot
 * https://github.com/LevPasha/Instagram-API-python
 * https://github.com/ping/instagram_private_api
