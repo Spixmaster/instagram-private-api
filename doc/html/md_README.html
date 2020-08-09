@@ -69,58 +69,60 @@ $(function() {
 <h1><a class="anchor" id="autotoc_md1"></a>
 Installation</h1>
 <h2><a class="anchor" id="autotoc_md2"></a>
-As a submodule</h2>
-<div class="fragment"><div class="line">cd to/your/project</div>
-<div class="line">git submodule add *link-to-this-repo*</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md3"></a>
-As a contributor</h2>
-<p>The project needs to be set up properly in your IDE to be able to compile it.</p>
-<h3><a class="anchor" id="autotoc_md4"></a>
-Example eclipse</h3>
-<p>These instructions show how to set up the project right in eclipse.</p><ol type="1">
-<li>Clone the project to anywhere.</li>
-<li>Create a new eclipse project.</li>
-<li>Right click on the project &gt; "Import" &gt; "General" &gt; "File System".</li>
-<li>Select all content from the cloned project.</li>
-</ol>
-<h2><a class="anchor" id="autotoc_md5"></a>
 Compiler</h2>
 <p>You need to use a C++17 compiler for compilation.</p>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h2><a class="anchor" id="autotoc_md3"></a>
 Dependencies</h2>
 <p>This software is built with the help of third party libraries. It is shown below how to install them.</p>
-<h3><a class="anchor" id="autotoc_md7"></a>
+<h3><a class="anchor" id="autotoc_md4"></a>
 Poco</h3>
 <div class="fragment"><div class="line">sudo pacman -S poco</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md8"></a>
-rapidjson</h3>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md5"></a>
+Rapidjson</h3>
 <div class="fragment"><div class="line">sudo pacman -S rapidjson</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md9"></a>
-boost</h3>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md6"></a>
+Boost</h3>
 <div class="fragment"><div class="line">sudo pacman -S boost</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md10"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md7"></a>
 Submodules</h3>
 <div class="fragment"><div class="line">cd folder/to/this/project/</div>
 <div class="line">git submodule init</div>
 <div class="line">git submodule update</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md11"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md8"></a>
 Libraries that need to be linked (option -l)</h3>
 <ul>
 <li>PocoFoundation</li>
-<li>PocoNetSSL</li>
 <li>PocoNet</li>
+<li>PocoNetSSL</li>
 <li>PocoCrypto</li>
 <li>boost_system</li>
-<li>boost_filesystem</li>
 <li>boost_iostreams</li>
+<li>boost_filesystem</li>
 <li>boost_locale</li>
 </ul>
+<h2><a class="anchor" id="autotoc_md9"></a>
+Submodule</h2>
+<div class="fragment"><div class="line">cd to/your/project/</div>
+<div class="line">git submodule add *link-to-this-repo*</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md10"></a>
+Makefile</h2>
+<div class="fragment"><div class="line">cd to/this/project/</div>
+<div class="line">cmake .</div>
+<div class="line">make -j</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md11"></a>
+Eclipse setup</h1>
+<p>These instructions show how to set up the project in eclipse.</p><ol type="1">
+<li>Clone the project.</li>
+<li>Create a new eclipse project.</li>
+<li>Right click on the eclipse project &gt; "Import" &gt; "General" &gt; "File System".</li>
+<li>Select all content from the cloned project.</li>
+</ol>
 <h1><a class="anchor" id="autotoc_md12"></a>
 Usage</h1>
-<p>The source code cannot be compiled by itself as there is no main function included. It is thought to be used in other software as a library.</p>
+<p>This project is thought to be used in other software as a library.</p>
 <h2><a class="anchor" id="autotoc_md13"></a>
 Documentation</h2>
-<p>The documentation was generated with the help of Doxygen. It is an HTML document and can be found in *./doc/html/index.html*. Open that file with your favourite browser.</p>
+<p>The documentation is generated with the help of Doxygen. It is an HTML document and can be found in *./doc/html/index.html*. Open that file with your favourite browser.</p>
 <h2><a class="anchor" id="autotoc_md14"></a>
 Example</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ig/constants/Constants.h&quot;</span></div>
@@ -176,7 +178,7 @@ Thanks to</h1>
 </div><!-- PageDoc -->
 <div class="ttc" id="aclassig_1_1Api_html_aea0920568307a0adb8c3c9c44ef30322"><div class="ttname"><a href="classig_1_1Api.html#aea0920568307a0adb8c3c9c44ef30322">ig::Api::get_media_id</a></div><div class="ttdeci">static std::string get_media_id(const std::string &amp;ig_post) noexcept</div><div class="ttdoc">Gets the media id of an Instagram post.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1622</div></div>
 <div class="ttc" id="astructig_1_1Constants_html_a4646c357bdab5ee9ccc9bc79e5d32308"><div class="ttname"><a href="structig_1_1Constants.html#a4646c357bdab5ee9ccc9bc79e5d32308">ig::Constants::folder</a></div><div class="ttdeci">static const std::string folder</div><div class="ttdoc">The base folder where all files are stored.</div><div class="ttdef"><b>Definition:</b> Constants.h:107</div></div>
-<div class="ttc" id="aclassig_1_1Api_html_a97454267ac90948c5371a4f0f571a037"><div class="ttname"><a href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ig::Api::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; Api &gt; ptr</div><div class="ttdoc">A pointer of itself.</div><div class="ttdef"><b>Definition:</b> Api.h:148</div></div>
+<div class="ttc" id="aclassig_1_1Api_html_a97454267ac90948c5371a4f0f571a037"><div class="ttname"><a href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ig::Api::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; Api &gt; ptr</div><div class="ttdoc">A pointer of itself.</div><div class="ttdef"><b>Definition:</b> Api.h:152</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

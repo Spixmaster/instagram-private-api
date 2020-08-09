@@ -1,56 +1,62 @@
 A C++ library for the Instagram A\+PI. As Instagram does not provide a public A\+PI for developers this library pretends to be an Instagram account logging in from a mobile device.\hypertarget{md_README_autotoc_md1}{}\doxysection{Installation}\label{md_README_autotoc_md1}
-\hypertarget{md_README_autotoc_md2}{}\doxysubsection{As a submodule}\label{md_README_autotoc_md2}
-
-\begin{DoxyCode}{0}
-\DoxyCodeLine{cd to/your/project}
-\DoxyCodeLine{git submodule add *link-\/to-\/this-\/repo*}
-\end{DoxyCode}
-\hypertarget{md_README_autotoc_md3}{}\doxysubsection{As a contributor}\label{md_README_autotoc_md3}
-The project needs to be set up properly in your I\+DE to be able to compile it.\hypertarget{md_README_autotoc_md4}{}\doxysubsubsection{Example eclipse}\label{md_README_autotoc_md4}
-These instructions show how to set up the project right in eclipse.
-\begin{DoxyEnumerate}
-\item Clone the project to anywhere.
-\item Create a new eclipse project.
-\item Right click on the project $>$ \char`\"{}\+Import\char`\"{} $>$ \char`\"{}\+General\char`\"{} $>$ \char`\"{}\+File System\char`\"{}.
-\item Select all content from the cloned project.
-\end{DoxyEnumerate}\hypertarget{md_README_autotoc_md5}{}\doxysubsection{Compiler}\label{md_README_autotoc_md5}
-You need to use a C++17 compiler for compilation.\hypertarget{md_README_autotoc_md6}{}\doxysubsection{Dependencies}\label{md_README_autotoc_md6}
-This software is built with the help of third party libraries. It is shown below how to install them.\hypertarget{md_README_autotoc_md7}{}\doxysubsubsection{Poco}\label{md_README_autotoc_md7}
+\hypertarget{md_README_autotoc_md2}{}\doxysubsection{Compiler}\label{md_README_autotoc_md2}
+You need to use a C++17 compiler for compilation.\hypertarget{md_README_autotoc_md3}{}\doxysubsection{Dependencies}\label{md_README_autotoc_md3}
+This software is built with the help of third party libraries. It is shown below how to install them.\hypertarget{md_README_autotoc_md4}{}\doxysubsubsection{Poco}\label{md_README_autotoc_md4}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{sudo pacman -\/S poco}
 \end{DoxyCode}
-\hypertarget{md_README_autotoc_md8}{}\doxysubsubsection{rapidjson}\label{md_README_autotoc_md8}
+\hypertarget{md_README_autotoc_md5}{}\doxysubsubsection{Rapidjson}\label{md_README_autotoc_md5}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{sudo pacman -\/S rapidjson}
 \end{DoxyCode}
-\hypertarget{md_README_autotoc_md9}{}\doxysubsubsection{boost}\label{md_README_autotoc_md9}
+\hypertarget{md_README_autotoc_md6}{}\doxysubsubsection{Boost}\label{md_README_autotoc_md6}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{sudo pacman -\/S boost}
 \end{DoxyCode}
-\hypertarget{md_README_autotoc_md10}{}\doxysubsubsection{Submodules}\label{md_README_autotoc_md10}
+\hypertarget{md_README_autotoc_md7}{}\doxysubsubsection{Submodules}\label{md_README_autotoc_md7}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{cd folder/to/this/project/}
 \DoxyCodeLine{git submodule init}
 \DoxyCodeLine{git submodule update}
 \end{DoxyCode}
-\hypertarget{md_README_autotoc_md11}{}\doxysubsubsection{Libraries that need to be linked (option -\/l)}\label{md_README_autotoc_md11}
+\hypertarget{md_README_autotoc_md8}{}\doxysubsubsection{Libraries that need to be linked (option -\/l)}\label{md_README_autotoc_md8}
 
 \begin{DoxyItemize}
 \item Poco\+Foundation
-\item Poco\+Net\+S\+SL
 \item Poco\+Net
+\item Poco\+Net\+S\+SL
 \item Poco\+Crypto
 \item boost\+\_\+system
-\item boost\+\_\+filesystem
 \item boost\+\_\+iostreams
+\item boost\+\_\+filesystem
 \item boost\+\_\+locale
-\end{DoxyItemize}\hypertarget{md_README_autotoc_md12}{}\doxysection{Usage}\label{md_README_autotoc_md12}
-The source code cannot be compiled by itself as there is no main function included. It is thought to be used in other software as a library.\hypertarget{md_README_autotoc_md13}{}\doxysubsection{Documentation}\label{md_README_autotoc_md13}
-The documentation was generated with the help of Doxygen. It is an H\+T\+ML document and can be found in $\ast$./doc/html/index.html$\ast$. Open that file with your favourite browser.\hypertarget{md_README_autotoc_md14}{}\doxysubsection{Example}\label{md_README_autotoc_md14}
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md9}{}\doxysubsection{Submodule}\label{md_README_autotoc_md9}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd to/your/project/}
+\DoxyCodeLine{git submodule add *link-\/to-\/this-\/repo*}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md10}{}\doxysubsection{Makefile}\label{md_README_autotoc_md10}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd to/this/project/}
+\DoxyCodeLine{cmake .}
+\DoxyCodeLine{make -\/j}
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md11}{}\doxysection{Eclipse setup}\label{md_README_autotoc_md11}
+These instructions show how to set up the project in eclipse.
+\begin{DoxyEnumerate}
+\item Clone the project.
+\item Create a new eclipse project.
+\item Right click on the eclipse project $>$ \char`\"{}\+Import\char`\"{} $>$ \char`\"{}\+General\char`\"{} $>$ \char`\"{}\+File System\char`\"{}.
+\item Select all content from the cloned project.
+\end{DoxyEnumerate}\hypertarget{md_README_autotoc_md12}{}\doxysection{Usage}\label{md_README_autotoc_md12}
+This project is thought to be used in other software as a library.\hypertarget{md_README_autotoc_md13}{}\doxysubsection{Documentation}\label{md_README_autotoc_md13}
+The documentation is generated with the help of Doxygen. It is an H\+T\+ML document and can be found in $\ast$./doc/html/index.html$\ast$. Open that file with your favourite browser.\hypertarget{md_README_autotoc_md14}{}\doxysubsection{Example}\label{md_README_autotoc_md14}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "ig/constants/Constants.h"}}

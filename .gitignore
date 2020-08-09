@@ -1,8 +1,13 @@
-#Eclipse files
+#Eclipse
 .cproject
 .project
 .settings/
-
-#Builts
 Debug/
 Release/
+
+#Cmake
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+libtools-cpp.a
+Makefile
