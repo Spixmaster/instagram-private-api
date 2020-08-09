@@ -10,7 +10,7 @@ add_library("${PROJECT_NAME}" STATIC
     "./src/constants/Messages.cpp"
     
     "./src/devices/Device.cpp"
-    "./src/devices/HuawiMate9Pro.cpp"
+    "./src/devices/HuaweiMate9Pro.cpp"
     "./src/devices/LgG5.cpp"
     "./src/devices/OnePlus3T.cpp"
     "./src/devices/OnePlus7.cpp"
@@ -24,6 +24,7 @@ add_library("${PROJECT_NAME}" STATIC
 
 #Headers
 target_include_directories("${PROJECT_NAME}" PRIVATE "./include/")
+target_include_directories("${PROJECT_NAME}" PRIVATE "./tools-cpp/include/")
 
 #Libraries
 target_link_libraries("${PROJECT_NAME}" PocoFoundation)

@@ -9,5 +9,5 @@ Release/
 CMakeFiles/
 cmake_install.cmake
 CMakeCache.txt
-libtools-cpp.a
+libinstagram-private-api.a
 Makefile
