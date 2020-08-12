@@ -16,6 +16,10 @@
  * @author Matheus Gabriel Werny de Lima
  * @copyright Apache-2.0 License
  * @version
+ * 0.5.38 (12.08.2020)
+ * - Submodule update.
+ * - Cmake update.
+ * @version
  * 0.5.37 (12.08.2020)
  * - Submodule update.
  * - Cmake update.
