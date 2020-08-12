@@ -2,8 +2,6 @@
 .cproject
 .project
 .settings/
-Debug/
-Release/
 
 #Cmake
 build/

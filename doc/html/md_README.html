@@ -110,20 +110,12 @@ Makefile</h2>
 <div class="line">cmake .</div>
 <div class="line">make -j 4</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md11"></a>
-Eclipse setup</h1>
-<p>These instructions show how to set up the project in eclipse.</p><ol type="1">
-<li>Clone the project.</li>
-<li>Create a new eclipse project.</li>
-<li>Right click on the eclipse project &gt; "Import" &gt; "General" &gt; "File System".</li>
-<li>Select all content from the cloned project.</li>
-</ol>
-<h1><a class="anchor" id="autotoc_md12"></a>
 Usage</h1>
 <p>This project is thought to be used in other software as a library.</p>
-<h2><a class="anchor" id="autotoc_md13"></a>
+<h2><a class="anchor" id="autotoc_md12"></a>
 Documentation</h2>
 <p>The documentation is generated with the help of Doxygen. It is an HTML document and can be found in *./doc/html/index.html*. Open that file with your favourite browser.</p>
-<h2><a class="anchor" id="autotoc_md14"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 Example</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ig/constants/Constants.h&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &quot;ig/Api.h&quot;</span></div>
@@ -138,10 +130,10 @@ Example</h2>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md15"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md14"></a>
 Changelog</h1>
 <p>The changelog can be seen on the documentation's main page.</p>
-<h1><a class="anchor" id="autotoc_md16"></a>
+<h1><a class="anchor" id="autotoc_md15"></a>
 FAQ</h1>
 <ul>
 <li>Q: Is it safe to use this library?</li>
@@ -157,7 +149,7 @@ FAQ</h1>
 <li>Q: The API requests me to solve a challenge manually. What do I need to do?</li>
 <li>A: Just follow the instructions sent with the message. There is no reason to worry. Your session is still valid but Instagram blocks requests from it as long as you have not solved the challenge. The challenge is nothing remarkable. It is a simple captcha. You will encounter it when you log in to Instagram in your browser.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md17"></a>
+<h1><a class="anchor" id="autotoc_md16"></a>
 Safe usage</h1>
 <p>Everything you read here in this section is not required but I would recommend you follow suit this advice.</p><ul>
 <li>Do not keep too many open sessions which happens if you only log in to Instagram with your account but do not log out and instead just delete the cookies and additional app information. Thus, call the logout member function if you no longer want to use that specific session. This will also delete the proper files from your machine for you. It is a security risk and should make Instagram suspicious if there are to many open sessions for one account. Go to <a href="https://www.instagram.com/session/login_activity/">this page</a> when logged in in your browser and manage your open sessions if your forgot to log out and just deleted your cookies.</li>
@@ -166,7 +158,7 @@ Safe usage</h1>
 <li>You should use an account with a verified mobile number. You do not even need a SIM card for this. Consider <a href="https://sms-activate.ru/en/">this service</a>.</li>
 <li>Make the account look trustworthy. Set up a profile picture, follow some accounts, like and comment on some posts.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md18"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 Thanks to</h1>
 <p>These repositories helped me a lot and I want to thank them. Without the help of the existing source code, I would not have been able to write my first code for this project.</p><ul>
 <li><a href="https://github.com/instagrambot/instabot">https://github.com/instagrambot/instabot</a></li>
@@ -178,7 +170,7 @@ Thanks to</h1>
 </div><!-- PageDoc -->
 <div class="ttc" id="aclassig_1_1Api_html_aea0920568307a0adb8c3c9c44ef30322"><div class="ttname"><a href="classig_1_1Api.html#aea0920568307a0adb8c3c9c44ef30322">ig::Api::get_media_id</a></div><div class="ttdeci">static std::string get_media_id(const std::string &amp;ig_post) noexcept</div><div class="ttdoc">Gets the media id of an Instagram post.</div><div class="ttdef"><b>Definition:</b> Api.cpp:1622</div></div>
 <div class="ttc" id="astructig_1_1Constants_html_a4646c357bdab5ee9ccc9bc79e5d32308"><div class="ttname"><a href="structig_1_1Constants.html#a4646c357bdab5ee9ccc9bc79e5d32308">ig::Constants::folder</a></div><div class="ttdeci">static const std::string folder</div><div class="ttdoc">The base folder where all files are stored.</div><div class="ttdef"><b>Definition:</b> Constants.h:107</div></div>
-<div class="ttc" id="aclassig_1_1Api_html_a97454267ac90948c5371a4f0f571a037"><div class="ttname"><a href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ig::Api::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; Api &gt; ptr</div><div class="ttdoc">A pointer of itself.</div><div class="ttdef"><b>Definition:</b> Api.h:160</div></div>
+<div class="ttc" id="aclassig_1_1Api_html_a97454267ac90948c5371a4f0f571a037"><div class="ttname"><a href="classig_1_1Api.html#a97454267ac90948c5371a4f0f571a037">ig::Api::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; Api &gt; ptr</div><div class="ttdoc">A pointer of itself.</div><div class="ttdef"><b>Definition:</b> Api.h:164</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

@@ -53,13 +53,6 @@ cmake .
 make -j 4
 ```
 
-## Eclipse setup
-These instructions show how to set up the project in eclipse.
-1. Clone the project.
-2. Create a new eclipse project.
-3. Right click on the eclipse project > "Import" > "General" > "File System".
-4. Select all content from the cloned project.
-
 ## Usage
 This project is thought to be used in other software as a library.
 
